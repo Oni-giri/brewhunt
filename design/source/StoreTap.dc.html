@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Brewhunt — koekeishiya/formulae</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#F4F7FB}
+a{color:#1F5FD6}a:hover{color:#16449B}
+@keyframes sheetIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.menu-btn{display:none}
+.flink:hover{color:#FFFFFF!important}
+@media (max-width:760px){.nav-links{display:none!important}.menu-btn{display:flex}.flink{min-height:44px!important}}
+@media (max-width:480px){.hide-xs{display:none}}
+</style>
+</helmet>
+<div style="position: relative; background: #F4F7FB; color: #1D1D1F; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased">
+
+<section style="position: relative; padding: 20px 0 64px; background: #F4F7FB">
+<div style="position: relative; z-index: 5; padding: 0 24px">
+<header style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1112px; margin: 0 auto; padding: 8px 8px 8px 18px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E6E8EE; box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 10px 30px -18px rgba(8,25,80,0.35)">
+<a href="LandingStore.dc.html" style="display: flex; align-items: center; gap: 6px; color: #1D1D1F; text-decoration: none; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-weight: 600; font-size: 18px; letter-spacing: -0.02em">
+<img src="assets/brewhunt-flask-128.png" alt="" width="46" height="46" style="display: block; flex: none; width: 46px; height: 46px; margin: -8px -2px -6px -6px">
+<span style="font-size: 20px; letter-spacing: -0.035em; margin-top: 3px">Brewhunt</span>
+</a>
+<nav class="nav-links" aria-label="Main" style="display: flex; gap: 4px 22px; font-size: 15px">
+<a href="StoreHome.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Discover</a>
+<a href="StoreCharts.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Top charts</a>
+<a href="StoreCategory.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Categories</a>
+<a href="StoreNew.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">New</a>
+<a href="LandingStore.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">For developers</a>
+</nav>
+<span style="display: flex; align-items: center; gap: 6px">
+<button type="button" aria-label="Search" aria-expanded="{{ searchOpen }}" onClick="{{ toggleSearch }}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; border: 0; cursor: pointer">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+</button>
+<button type="button" class="menu-btn" aria-label="Menu" aria-expanded="{{ menuOpen }}" onClick="{{ toggleMenu }}" style="align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+</button>
+</span>
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+<nav aria-label="Main (mobile)" onKeyDown="{{ menuKey }}" style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; display: flex; flex-direction: column; padding: 8px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E6E8EE; box-shadow: 0 20px 40px -20px rgba(8,25,80,0.5)">
+<a href="StoreHome.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px">Discover</a>
+<a href="StoreCharts.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px">Top charts</a>
+<a href="StoreCategory.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px">Categories</a>
+<a href="StoreNew.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px">New</a>
+<a href="LandingStore.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px">For developers</a>
+</nav>
+</sc-if>
+<sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
+<form action="StoreBrowse.dc.html" role="search" onKeyDown="{{ searchKey }}" style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 20px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E6E8EE; box-shadow: 0 20px 40px -20px rgba(8,25,80,0.5)">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6E6E73" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<label for="hdr-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search apps</label>
+<input id="hdr-q" name="q" type="search" placeholder="Search apps and tools" style="flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; font: inherit; font-size: 17px; color: #1D1D1F; outline: none">
+<button type="submit" style="height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">Search</button>
+</form>
+</sc-if>
+</header>
+</div>
+
+<div style="max-width: 1160px; margin: 0 auto; padding: 36px 24px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+<nav aria-label="Breadcrumb" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; margin: -10px 0; font-size: 14px; color: #5E6068">
+<a href="StoreHome.dc.html" style="display: inline-flex; align-items: center; min-height: 44px">Discover</a><span aria-hidden="true">›</span><a href="StoreBrowse.dc.html" style="display: inline-flex; align-items: center; min-height: 44px">Community taps</a><span aria-hidden="true">›</span><span aria-current="page">koekeishiya/formulae</span>
+</nav>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px 40px">
+<div style="flex: 999 1 520px; min-width: 0; display: flex; align-items: center; gap: 24px">
+<span style="width: 96px; height: 96px; flex: none; border-radius: 50%; background: linear-gradient(160deg, #3A3A40, #0E0E10); box-shadow: 0 0 0 4px #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-weight: 700; font-size: 30px; color: #FFFFFF">ko</span>
+<div style="min-width: 0; display: flex; flex-direction: column; gap: 10px">
+<h1 style="margin: 0; color: #1D1D1F; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 44px; line-height: 1.05; font-weight: 500; letter-spacing: -0.03em; overflow-wrap: anywhere">koekeishiya/formulae</h1>
+<p style="margin: 0; color: #5E6068; font-size: 17px">An independent developer's tap with two command-line tools for window tiling and hotkeys.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="display: inline-flex; align-items: center; height: 24px; padding: 0 12px; box-sizing: border-box; border-radius: 999px; white-space: nowrap; line-height: 1; border: 1px dashed #5E6068; color: #1D1D1F; font-size: 13px; font-weight: 600">Community tap</span>
+<span style="display: inline-flex; align-items: center; height: 24px; padding: 0 12px; box-sizing: border-box; border-radius: 999px; white-space: nowrap; line-height: 1; background: #FFFFFF; border: 1px solid #E6E8EE; color: #1D1D1F; font-size: 13px">koekeishiya/homebrew-formulae</span>
+<span style="display: inline-flex; align-items: center; height: 24px; padding: 0 12px; box-sizing: border-box; border-radius: 999px; white-space: nowrap; line-height: 1; background: #FFFFFF; border: 1px solid #E6E8EE; color: #1D1D1F; font-size: 13px">Updated [n] days ago</span>
+</div>
+</div>
+</div>
+<div style="flex: 1 1 360px; max-width: 420px; display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E6E8EE; box-shadow: 0 24px 50px -28px rgba(8,25,80,0.6)">
+<span style="font-size: 14px; font-weight: 600; color: #5E6068">Add this tap</span>
+<code style="padding: 13px 16px; border-radius: 12px; background: #10132A; color: #F2F2F5; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; white-space: nowrap; overflow-x: auto">brew tap koekeishiya/formulae</code>
+<button type="button" onClick="{{ copyTap }}" style="height: 48px; border: 0; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">{{ copyTapLabel }}</button>
+<span style="font-size: 14px; color: #5E6068">Optional: installing a package by its full name adds the tap for you.</span>
+</div>
+</div>
+</div>
+</section>
+
+<main style="max-width: 1160px; margin: 0 auto; padding: 8px 24px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 40px">
+
+<section aria-label="Safety" style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; padding: 20px 24px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E6E8EE; box-shadow: inset 0 0 0 1.5px #D5D8E0">
+<span style="width: 44px; height: 44px; flex: none; border-radius: 12px; background: #1D1D1F; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"></path><path d="M12 8v5"></path><circle cx="12" cy="16.5" r="0.6"></circle></svg></span>
+<span style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 2px">
+<span style="font-weight: 700">Community tap — not reviewed by Homebrew</span>
+<span style="font-size: 15px; color: #5E6068">Packages here come straight from the developer's own repository. Look at the source and its activity before you install.</span>
+</span>
+<a href="#" style="display: flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; text-decoration: none; font-weight: 600; font-size: 15px">View source</a>
+</section>
+
+<section aria-label="Tap stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 12px">
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 18px 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E6E8EE">
+<span style="font-size: 14px; color: #5E6068">{{ s.label }}</span>
+<span style="font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 28px; font-weight: 600; letter-spacing: -0.02em">{{ s.value }}</span>
+</div>
+</sc-for>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 600; color: #5E6068">In this tap</span>
+<h2 style="margin: 0; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 32px; line-height: 1.05; font-weight: 600; letter-spacing: -0.03em">Packages</h2>
+</div>
+<ul style="list-style: none; margin: 0; padding: 8px 24px; border-radius: 28px; background: #FFFFFF; border: 1px solid #E6E8EE">
+<sc-for list="{{ pkgs }}" as="p" hint-placeholder-count="2">
+<li style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-top: 1px solid #F0F0F3">
+<a href="StorePackage.dc.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 16px; color: #1D1D1F; text-decoration: none">
+<span style="width: 56px; height: 56px; flex: none; border-radius: 13px; background: linear-gradient(160deg, #3A3A40, #0E0E10); display: flex; align-items: center; justify-content: center; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-weight: 700; font-size: 20px; color: #FFFFFF">{{ p.ini }}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-weight: 700">{{ p.name }}</span>
+<span style="font-size: 15px; color: #5E6068">{{ p.line }}</span>
+<span style="font-size: 13px; color: #6E6E73">Command-line tool · v[x.y.z]</span>
+</span>
+</a>
+<span class="hide-xs" style="font-size: 14px; color: #5E6068; white-space: nowrap">[n]k installs · 30d</span>
+<button type="button" onClick="{{ p.get }}" aria-label="Get {{ p.name }}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+</sc-for>
+</ul>
+</section>
+
+<section style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; padding: 28px 32px; border-radius: 28px; background: linear-gradient(180deg, #CFE3FA, #EAF3FD)">
+<span style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em">Maintain this tap?</span>
+<span style="color: #2B3140">Claim it to add descriptions and screenshots, and see who's installing your tools.</span>
+</span>
+<a href="LandingStore.dc.html" style="display: flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; text-decoration: none; font-weight: 600">Claim this tap</a>
+</section>
+
+</main>
+
+<footer style="margin-top: 64px; background: radial-gradient(ellipse 50% 60% at 85% 0%, rgba(47,107,255,0.28), rgba(47,107,255,0) 70%), #10132A; color: #C3C7D6">
+<div style="max-width: 1160px; margin: 0 auto; padding: 48px 24px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 36px">
+<div style="display: flex; flex-wrap: wrap; gap: 32px 56px">
+<div style="flex: 1 1 260px; max-width: 320px; display: flex; flex-direction: column; gap: 14px">
+<a href="LandingStore.dc.html" style="display: flex; align-items: center; gap: 6px; color: #FFFFFF; text-decoration: none; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-weight: 600; font-size: 18px">
+<img src="assets/brewhunt-flask-128.png" alt="" width="46" height="46" style="display: block; flex: none; width: 46px; height: 46px; margin: -8px -2px -6px -6px">
+<span style="font-size: 20px; letter-spacing: -0.035em; margin-top: 3px">Brewhunt</span>
+</a>
+<span>The app store for everything you can install with Homebrew.</span>
+</div>
+<nav aria-label="Footer" style="flex: 999 1 560px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 28px 24px">
+<sc-for list="{{ footerCols }}" as="col" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px">{{ col.title }}</span>
+<sc-for list="{{ col.links }}" as="l" hint-placeholder-count="4">
+<a href="{{ l.href }}" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">{{ l.label }}</a>
+</sc-for>
+</div>
+</sc-for>
+</nav>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; padding: 20px 0 28px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: #A9AEC4">
+<span style="max-width: 720px">© 2026 Brewhunt. Not affiliated with the Homebrew project or Apple. App names and icons belong to their developers.</span>
+<span style="display: flex; gap: 20px"><a href="#" class="flink" style="color: #C3C7D6; text-decoration: none">Privacy</a><a href="#" class="flink" style="color: #C3C7D6; text-decoration: none">Terms</a></span>
+</div>
+</div>
+</footer>
+
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheet }}" style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(10,16,40,0.45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px)">
+<div role="dialog" aria-modal="true" aria-labelledby="sheet-title" onClick="{{ stop }}" onKeyDown="{{ sheetKey }}" style="width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 18px; padding: 28px; border-radius: 28px; background: #FFFFFF; box-shadow: 0 40px 80px -30px rgba(8,25,80,0.6); animation: sheetIn 0.25s ease-out both">
+<div style="display: flex; align-items: center; gap: 14px">
+<span style="width: 60px; height: 60px; flex: none; border-radius: 14px; background: linear-gradient(160deg, #3A3A40, #0E0E10); display: flex; align-items: center; justify-content: center; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-weight: 700; font-size: 22px; color: #FFFFFF">{{ sheet.ini }}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span id="sheet-title" style="font-size: 22px; font-weight: 700; letter-spacing: -0.015em">{{ sheet.name }}</span>
+<span style="font-size: 14px; color: #5E6068">{{ sheet.line }}</span>
+</span>
+<button type="button" aria-label="Close" onClick="{{ closeSheet }}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 600; color: #5E6068">Install with Homebrew</span>
+<code style="padding: 14px 16px; border-radius: 12px; background: #10132A; color: #F2F2F5; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; overflow-x: auto; white-space: nowrap">{{ sheet.cmd }}</code>
+<span style="font-size: 14px; color: #5E6068">From an independent developer's tap — not reviewed by Homebrew.</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button type="button" onClick="{{ copyCmd }}" style="flex: 1 1 160px; height: 48px; border: 0; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">{{ copyLabel }}</button>
+<a href="StorePackage.dc.html" style="flex: 1 1 160px; display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; text-decoration: none; font-weight: 600">View app page</a>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { menu: false, sheet: '', copied: false, tapCopied: false };
+  }
+  renderVals() {
+    const s = this.state;
+    const pk = (key, name, line, ini) => ({ key, name, line, ini, cmd: 'brew install koekeishiya/formulae/' + name, get: () => this.setState({ sheet: key, copied: false }) });
+    const pkgs = [
+      pk('yabai', 'yabai', 'A tiling window manager for macOS based on binary space partitioning', 'ya'),
+      pk('skhd', 'skhd', 'Simple hotkey daemon for macOS', 'sk')
+    ];
+    const sheet = s.sheet ? pkgs.find((p) => p.key === s.sheet) : pkgs[0];
+    return {
+      pkgs,
+      stats: [
+        { label: 'Packages', value: '2' },
+        { label: 'Installs · 30 days', value: '[n]k' },
+        { label: 'GitHub stars', value: '[n]' },
+        { label: 'Last commit', value: '[n] days ago' }
+      ],
+      copyTapLabel: s.tapCopied ? 'Copied ✓' : 'Copy command',
+      copyTap: () => this.setState({ tapCopied: true }),
+      menuOpen: !!this.state.menu, searchOpen: !!this.state.search,
+      toggleMenu: (e) => {
+        const btn = e && e.currentTarget; const open = !this.state.menu;
+        this.setState({ menu: open, search: false });
+        if (open && btn) setTimeout(() => { const h = btn.closest('header'); const a = h && h.querySelector('nav[aria-label="Main (mobile)"] a'); if (a) a.focus(); }, 0);
+      },
+      menuKey: (e) => {
+        if (e.key !== 'Escape') return;
+        const h = e.currentTarget.closest('header'); this.setState({ menu: false });
+        setTimeout(() => { const b = h && h.querySelector('.menu-btn'); if (b) b.focus(); }, 0);
+      },
+      toggleSearch: (e) => {
+        const btn = e && e.currentTarget; const open = !this.state.search;
+        this.setState({ search: open, menu: false });
+        if (open && btn) setTimeout(() => { const h = btn.closest('header'); const i = h && h.querySelector('form[role="search"] input'); if (i) i.focus(); }, 0);
+      },
+      searchKey: (e) => {
+        if (e.key !== 'Escape') return;
+        const h = e.currentTarget.closest('header'); this.setState({ search: false });
+        setTimeout(() => { const b = h && h.querySelector('button[aria-label="Search"]'); if (b) b.focus(); }, 0);
+      },
+      sheetOpen: !!s.sheet, sheet,
+      closeSheet: () => this.setState({ sheet: '' }),
+      stop: (e) => e.stopPropagation(),
+      sheetKey: (e) => { if (e.key === 'Escape') this.setState({ sheet: '' }); },
+      copyLabel: s.copied ? 'Copied ✓' : 'Copy command',
+      copyCmd: () => this.setState({ copied: true }),
+      footerCols: [
+        { title: 'Discover', links: [{ label: 'Top charts', href: 'StoreCharts.dc.html' }, { label: 'New this week', href: 'StoreNew.dc.html' }, { label: "Editor's picks", href: 'StoreHome.dc.html' }, { label: 'Collections', href: 'StoreBrowse.dc.html' }] },
+        { title: 'Categories', links: [{ label: 'Windows & desktop', href: 'StoreCategory.dc.html' }, { label: 'Menu bar', href: 'StoreCategory.dc.html' }, { label: 'Terminal tools', href: 'StoreCategory.dc.html' }, { label: 'All categories', href: 'StoreCategory.dc.html' }] },
+        { title: 'Developers', links: [{ label: 'Claim your app', href: 'LandingStore.dc.html' }, { label: 'List your tap', href: 'LandingStore.dc.html' }] },
+        { title: 'Help', links: [{ label: 'Setup guide', href: 'LandingStore.dc.html' }, { label: 'How rankings work', href: '#' }, { label: 'Is it safe?', href: '#' }, { label: 'RSS feeds', href: 'StoreNew.dc.html' }] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

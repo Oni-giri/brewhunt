@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Brewhunt — Browse and search</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#F4F7FB}
+a{color:#1F5FD6}a:hover{color:#16449B}
+@keyframes sheetIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.lift{transition:transform .25s ease, box-shadow .25s ease}
+.lift:hover{transform:translateY(-3px);box-shadow:0 24px 40px -24px rgba(8,25,80,.4)}
+.menu-btn{display:none}
+.flink:hover{color:#FFFFFF!important}
+.filters-btn{display:none}
+@media (max-width:760px){.filters{display:none!important;max-width:none!important}.filters.open{display:flex!important}.filters-btn{display:flex}.nav-links{display:none!important}.menu-btn{display:flex}.flink{min-height:44px!important}}
+@media (max-width:480px){.hide-xs{display:none}}
+@media (prefers-reduced-motion:reduce){.lift{transition:none}.lift:hover{transform:none}}
+</style>
+</helmet>
+<div style="position: relative; background: #F4F7FB; color: #1D1D1F; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased">
+
+<section style="position: relative; padding: 20px 0 56px; background: #F4F7FB">
+<div style="position: relative; z-index: 5; padding: 0 24px">
+<header style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1112px; margin: 0 auto; padding: 8px 8px 8px 18px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E6E8EE; box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 10px 30px -18px rgba(8,25,80,0.35)">
+<a href="LandingStore.dc.html" style="display: flex; align-items: center; gap: 6px; color: #1D1D1F; text-decoration: none; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-weight: 600; font-size: 18px; letter-spacing: -0.02em">
+<img src="assets/brewhunt-flask-128.png" alt="" width="46" height="46" style="display: block; flex: none; width: 46px; height: 46px; margin: -8px -2px -6px -6px">
+<span style="font-size: 20px; letter-spacing: -0.035em; margin-top: 3px">Brewhunt</span>
+</a>
+<nav class="nav-links" aria-label="Main" style="display: flex; gap: 4px 22px; font-size: 15px">
+<a href="StoreHome.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Discover</a>
+<a href="StoreCharts.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Top charts</a>
+<a href="StoreCategory.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Categories</a>
+<a href="StoreNew.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">New</a>
+<a href="LandingStore.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">For developers</a>
+</nav>
+<span style="display: flex; align-items: center; gap: 6px">
+<button type="button" aria-label="Search" aria-expanded="{{ searchOpen }}" onClick="{{ toggleSearch }}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; border: 0; cursor: pointer">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+</button>
+<button type="button" class="menu-btn" aria-label="Menu" aria-expanded="{{ menuOpen }}" onClick="{{ toggleMenu }}" style="align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+</button>
+</span>
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+<nav aria-label="Main (mobile)" onKeyDown="{{ menuKey }}" style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; display: flex; flex-direction: column; padding: 8px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E6E8EE; box-shadow: 0 20px 40px -20px rgba(8,25,80,0.5)">
+<a href="StoreHome.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px">Discover</a>
+<a href="StoreCharts.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px">Top charts</a>
+<a href="StoreCategory.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px">Categories</a>
+<a href="StoreNew.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px">New</a>
+<a href="LandingStore.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px">For developers</a>
+</nav>
+</sc-if>
+<sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
+<form action="StoreBrowse.dc.html" role="search" onKeyDown="{{ searchKey }}" style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 20px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E6E8EE; box-shadow: 0 20px 40px -20px rgba(8,25,80,0.5)">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6E6E73" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<label for="hdr-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search apps</label>
+<input id="hdr-q" name="q" type="search" placeholder="Search apps and tools" style="flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; font: inherit; font-size: 17px; color: #1D1D1F; outline: none">
+<button type="submit" style="height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">Search</button>
+</form>
+</sc-if>
+</header>
+</div>
+<div style="max-width: 1160px; margin: 0 auto; padding: 48px 24px 0; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 40px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; color: #1D1D1F; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 48px; line-height: 1.05; font-weight: 500; letter-spacing: -0.035em">Results for “{{ q }}”</h1>
+<p style="margin: 0; color: #5E6068; font-size: 17px">{{ count }} apps and tools · sorted by relevance</p>
+</div>
+<form action="StoreBrowse.dc.html" role="search" style="flex: 1 1 300px; max-width: 460px; min-width: 0; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 20px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E6E8EE; box-shadow: 0 20px 40px -24px rgba(8,25,80,0.6)">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6E6E73" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<label for="br-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search apps</label>
+<input id="br-q" name="q" type="search" value="{{ q }}" onChange="{{ setQ }}" style="flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; font: inherit; font-size: 17px; color: #1D1D1F; outline: none">
+<button type="submit" style="height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">Search</button>
+</form>
+</div>
+</section>
+
+<main style="max-width: 1160px; margin: 0 auto; padding: 8px 24px 0; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+<aside id="filters" aria-label="Filters" class="filters {{ filtersCls }}" style="flex: 1 1 240px; max-width: 280px; display: flex; flex-direction: column; gap: 4px; padding: 20px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E6E8EE">
+<sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+<fieldset style="margin: 0; padding: 12px 0; border: 0; border-bottom: 1px solid #F0F0F3; display: flex; flex-direction: column">
+<legend style="padding: 0 0 6px; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-weight: 600; font-size: 15px">{{ g.title }}</legend>
+<sc-for list="{{ g.opts }}" as="o" hint-placeholder-count="3">
+<label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; cursor: pointer">
+<input type="radio" name="{{ g.id }}" checked="{{ o.on }}" onChange="{{ o.pick }}" style="width: 18px; height: 18px; margin: 0; accent-color: #2F6BFF">
+<span style="flex: 1">{{ o.label }}</span>
+</label>
+</sc-for>
+</fieldset>
+</sc-for>
+<fieldset style="margin: 0; padding: 12px 0 4px; border: 0; display: flex; flex-direction: column">
+<legend style="padding: 0 0 6px; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-weight: 600; font-size: 15px">Category</legend>
+<sc-for list="{{ catOpts }}" as="c" hint-placeholder-count="5">
+<label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; cursor: pointer">
+<input type="checkbox" checked="{{ c.on }}" onChange="{{ c.pick }}" style="width: 18px; height: 18px; margin: 0; accent-color: #2F6BFF">
+<span style="flex: 1">{{ c.label }}</span>
+<span style="font-size: 13px; color: #6E6E73">[n]</span>
+</label>
+</sc-for>
+</fieldset>
+</aside>
+
+<section aria-label="Results" style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<span style="display: flex; align-items: center; gap: 12px">
+<button type="button" class="filters-btn" aria-controls="filters" aria-expanded="{{ filtersOpen }}" onClick="{{ toggleFilters }}" style="align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 1px solid #E6E8EE; border-radius: 999px; background: #FFFFFF; color: #1D1D1F; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"></path></svg>{{ filtersLabel }}</button>
+<span style="font-size: 15px; color: #5E6068">Showing {{ shown }} of {{ count }}</span>
+</span>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 15px">Sort by
+<select value="{{ sort }}" onChange="{{ setSort }}" style="height: 44px; padding: 0 14px; border: 1px solid #E6E8EE; border-radius: 999px; background: #FFFFFF; font: inherit; color: #1D1D1F">
+<option value="relevance">Relevance</option>
+<option value="installs">Most installed</option>
+<option value="trending">Trending</option>
+<option value="newest">Newest</option>
+<option value="updated">Recently updated</option>
+</select>
+</label>
+</div>
+<sc-if value="{{ hasActive }}" hint-placeholder-val="{{ true }}">
+<div role="list" aria-label="Active filters" style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<sc-for list="{{ active }}" as="f" hint-placeholder-count="2">
+<span role="listitem"><button type="button" onClick="{{ f.remove }}" aria-label="Remove filter: {{ f.label }}" style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 10px 0 14px; border: 0; border-radius: 999px; background: #E8F0FF; color: #16449B; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">{{ f.label }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></span>
+</sc-for>
+<button type="button" onClick="{{ reset }}" style="height: 44px; padding: 0 8px; border: 0; background: transparent; color: #1F5FD6; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Clear all</button>
+</div>
+</sc-if>
+<ul style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 12px">
+<sc-for list="{{ results }}" as="r" hint-placeholder-count="6">
+<li style="display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E6E8EE">
+<a href="StorePackage.dc.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 56px; height: 56px; flex: none; border-radius: 13px; background: {{ r.tint }}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; color: {{ r.ink }}; font-family: {{ r.font }}">{{ r.ini }}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px">
+<span style="font-weight: 700">{{ r.name }}</span>
+<sc-if value="{{ r.community }}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; height: 20px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; white-space: nowrap; line-height: 1; border: 1px dashed #5E6068; font-size: 12px; font-weight: 600">Community</span></sc-if>
+</span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">{{ r.line }}</span>
+<span style="font-size: 13px; color: #6E6E73">{{ r.kind }} · [n]k installs</span>
+</span>
+</a>
+<button type="button" onClick="{{ r.get }}" aria-label="Get {{ r.name }}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+</sc-for>
+</ul>
+<sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+<div style="padding: 32px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E6E8EE; text-align: center; color: #5E6068">No matches with these filters. <button type="button" onClick="{{ reset }}" style="border: 0; background: transparent; color: #1F5FD6; font: inherit; font-weight: 600; cursor: pointer; padding: 10px">Clear filters</button></div>
+</sc-if>
+<button type="button" style="align-self: center; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; font: inherit; font-weight: 600; cursor: pointer">Show more results</button>
+</section>
+
+</main>
+
+<footer style="margin-top: 64px; background: radial-gradient(ellipse 50% 60% at 85% 0%, rgba(47,107,255,0.28), rgba(47,107,255,0) 70%), #10132A; color: #C3C7D6">
+<div style="max-width: 1160px; margin: 0 auto; padding: 48px 24px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 36px">
+<div style="display: flex; flex-wrap: wrap; gap: 32px 56px">
+<div style="flex: 1 1 260px; max-width: 320px; display: flex; flex-direction: column; gap: 14px">
+<a href="LandingStore.dc.html" style="display: flex; align-items: center; gap: 6px; color: #FFFFFF; text-decoration: none; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-weight: 600; font-size: 18px">
+<img src="assets/brewhunt-flask-128.png" alt="" width="46" height="46" style="display: block; flex: none; width: 46px; height: 46px; margin: -8px -2px -6px -6px">
+<span style="font-size: 20px; letter-spacing: -0.035em; margin-top: 3px">Brewhunt</span>
+</a>
+<span>The app store for everything you can install with Homebrew.</span>
+</div>
+<nav aria-label="Footer" style="flex: 999 1 560px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 28px 24px">
+<sc-for list="{{ footerCols }}" as="col" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px">{{ col.title }}</span>
+<sc-for list="{{ col.links }}" as="l" hint-placeholder-count="4">
+<a href="{{ l.href }}" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">{{ l.label }}</a>
+</sc-for>
+</div>
+</sc-for>
+</nav>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; padding: 20px 0 28px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: #A9AEC4">
+<span style="max-width: 720px">© 2026 Brewhunt. Not affiliated with the Homebrew project or Apple. App names and icons belong to their developers.</span>
+<span style="display: flex; gap: 20px"><a href="#" class="flink" style="color: #C3C7D6; text-decoration: none">Privacy</a><a href="#" class="flink" style="color: #C3C7D6; text-decoration: none">Terms</a></span>
+</div>
+</div>
+</footer>
+
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheet }}" style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(10,16,40,0.45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px)">
+<div role="dialog" aria-modal="true" aria-labelledby="sheet-title" onClick="{{ stop }}" onKeyDown="{{ sheetKey }}" style="width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 18px; padding: 28px; border-radius: 28px; background: #FFFFFF; box-shadow: 0 40px 80px -30px rgba(8,25,80,0.6); animation: sheetIn 0.25s ease-out both">
+<div style="display: flex; align-items: center; gap: 14px">
+<span style="width: 60px; height: 60px; flex: none; border-radius: 14px; background: {{ sheet.tint }}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 22px; color: {{ sheet.ink }}; font-family: {{ sheet.font }}">{{ sheet.ini }}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span id="sheet-title" style="font-size: 22px; font-weight: 700; letter-spacing: -0.015em">{{ sheet.name }}</span>
+<span style="font-size: 14px; color: #5E6068">{{ sheet.line }}</span>
+</span>
+<button type="button" aria-label="Close" onClick="{{ closeSheet }}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 600; color: #5E6068">Install with Homebrew</span>
+<code style="padding: 14px 16px; border-radius: 12px; background: #10132A; color: #F2F2F5; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; overflow-x: auto; white-space: nowrap">{{ sheet.cmd }}</code>
+<sc-if value="{{ sheet.community }}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; color: #5E6068">From an independent developer's tap — not reviewed by Homebrew.</span></sc-if>
+<span style="font-size: 14px; color: #5E6068">Paste it in Terminal. Don't have Homebrew yet? <a href="LandingStore.dc.html">Set it up first</a>.</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button type="button" onClick="{{ copyCmd }}" style="flex: 1 1 160px; height: 48px; border: 0; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">{{ copyLabel }}</button>
+<a href="StorePackage.dc.html" style="flex: 1 1 160px; display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; text-decoration: none; font-weight: 600">View app page</a>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":2000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { menu: false, search: false, filters: false, sheet: '', copied: false, q: 'window', sort: 'relevance', type: 'all', source: 'all', updated: 'any', cats: { 'Windows & desktop': true } };
+  }
+  renderVals() {
+    const mono = "ui-monospace, 'SF Mono', Menlo, monospace";
+    const T = {
+      win: ['linear-gradient(160deg, #5AA9FF, #1F5FD6)', '#FFFFFF'], auto: ['linear-gradient(160deg, #FFB347, #F26B1D)', '#FFFFFF'],
+      tile: ['linear-gradient(160deg, #7BE495, #1E9E5A)', '#FFFFFF'], aero: ['linear-gradient(160deg, #C3A6FF, #6B3FD6)', '#FFFFFF'],
+      zoom: ['linear-gradient(160deg, #FF8FB1, #E0336E)', '#FFFFFF'], term: ['linear-gradient(160deg, #3A3A40, #0E0E10)', '#FFFFFF']
+    };
+    const mk = (key, name, line, k, cmd, opts) => ({
+      key, name, line, inst: opts.inst || 0, trend: opts.trend || 0, added: opts.added || 0, upd: opts.upd || 0, tint: T[k][0], ink: T[k][1], cmd,
+      cli: !!opts.cli, mac: !opts.cli, community: !!opts.community, official: !opts.community,
+      kind: opts.cli ? 'Command-line tool' : 'Mac app',
+      ini: opts.cli ? name.slice(0, 2) : name.charAt(0), font: opts.cli ? mono : 'inherit',
+      get: () => this.setState({ sheet: key, copied: false })
+    });
+    const all = [
+      mk('rectangle', 'Rectangle', 'Snap windows with keyboard shortcuts', 'win', 'brew install --cask rectangle', { inst: 9, trend: 3, added: 2, upd: 6 }),
+      mk('alttab', 'AltTab', 'Windows-style window switcher', 'win', 'brew install --cask alt-tab', { inst: 8, trend: 5, added: 4, upd: 8 }),
+      mk('amethyst', 'Amethyst', 'Automatic tiling window manager', 'tile', 'brew install --cask amethyst', { inst: 6, trend: 2, added: 1, upd: 3 }),
+      mk('aerospace', 'AeroSpace', 'i3-like tiling window manager', 'aero', 'brew install --cask nikitabobko/tap/aerospace', { community: true, inst: 7, trend: 9, added: 8, upd: 7 }),
+      mk('yabai', 'yabai', 'Tiling window manager, run from the terminal', 'term', 'brew install koekeishiya/formulae/yabai', { cli: true, community: true, inst: 5, trend: 4, added: 3, upd: 5 }),
+      mk('rectanglepro', 'Rectangle Pro', 'Rectangle with extra power-user features', 'win', 'brew install --cask rectangle-pro', { inst: 3, trend: 6, added: 7, upd: 4 }),
+      mk('hammerspoon', 'Hammerspoon', 'Automate your Mac with Lua scripts', 'auto', 'brew install --cask hammerspoon', { inst: 4, trend: 1, added: 0, upd: 2 }),
+      mk('moom', 'Moom', 'Move and zoom windows with mouse or keyboard', 'zoom', 'brew install --cask moom', { inst: 2, trend: 0, added: 5, upd: 1 })
+    ];
+    const s = this.state;
+    const results = all.filter((a) =>
+      (s.type === 'all' || (s.type === 'mac' && a.mac) || (s.type === 'cli' && a.cli)) &&
+      (s.source === 'all' || (s.source === 'official' && a.official) || (s.source === 'community' && a.community)));
+    const sortKey = { installs: 'inst', trending: 'trend', newest: 'added', updated: 'upd' }[s.sort];
+    if (sortKey) results.sort((x, y) => y[sortKey] - x[sortKey]);
+    const labels = { type: { mac: 'Mac apps', cli: 'Command-line tools' }, source: { official: 'Official catalog', community: 'Community taps' }, updated: { month: 'Updated past month', year: 'Updated past year' } };
+    const defaults = { type: 'all', source: 'all', updated: 'any' };
+    const active = [];
+    Object.keys(defaults).forEach((k) => { if (s[k] !== defaults[k]) active.push({ label: labels[k][s[k]], remove: () => this.setState({ [k]: defaults[k] }) }); });
+    Object.keys(s.cats).filter((c) => s.cats[c]).forEach((c) => active.push({ label: c, remove: () => this.setState({ cats: { ...this.state.cats, [c]: false } }) }));
+    const radio = (id, title, key, opts) => ({
+      id, title,
+      opts: opts.map((o) => ({ label: o[1], on: s[key] === o[0], pick: () => this.setState({ [key]: o[0] }) }))
+    });
+    const groups = [
+      radio('type', 'Type', 'type', [['all', 'Everything'], ['mac', 'Mac apps'], ['cli', 'Command-line tools']]),
+      radio('source', 'Source', 'source', [['all', 'All sources'], ['official', 'Official catalog'], ['community', 'Community taps']]),
+      radio('updated', 'Updated', 'updated', [['any', 'Any time'], ['month', 'Past month'], ['year', 'Past year']])
+    ];
+    const catOpts = ['Windows & desktop', 'Productivity', 'Utilities', 'Developer', 'Menu bar'].map((label) => ({
+      label, on: !!s.cats[label],
+      pick: () => this.setState({ cats: { ...this.state.cats, [label]: !this.state.cats[label] } })
+    }));
+    const sheet = s.sheet ? all.find((a) => a.key === s.sheet) : all[0];
+    return {
+      results, groups, catOpts, count: '[n]', shown: results.length, empty: results.length === 0,
+      reset: () => this.setState({ type: 'all', source: 'all', updated: 'any', cats: {} }),
+      q: s.q, setQ: (e) => this.setState({ q: e.target.value }),
+      sort: s.sort, setSort: (e) => this.setState({ sort: e.target.value }),
+      active, hasActive: active.length > 0,
+      filtersOpen: !!s.filters, filtersCls: s.filters ? 'open' : '',
+      filtersLabel: active.length ? 'Filters (' + active.length + ')' : 'Filters',
+      toggleFilters: () => this.setState({ filters: !this.state.filters }),
+      menuOpen: !!this.state.menu, searchOpen: !!this.state.search,
+      toggleMenu: (e) => {
+        const btn = e && e.currentTarget; const open = !this.state.menu;
+        this.setState({ menu: open, search: false });
+        if (open && btn) setTimeout(() => { const h = btn.closest('header'); const a = h && h.querySelector('nav[aria-label="Main (mobile)"] a'); if (a) a.focus(); }, 0);
+      },
+      menuKey: (e) => {
+        if (e.key !== 'Escape') return;
+        const h = e.currentTarget.closest('header'); this.setState({ menu: false });
+        setTimeout(() => { const b = h && h.querySelector('.menu-btn'); if (b) b.focus(); }, 0);
+      },
+      toggleSearch: (e) => {
+        const btn = e && e.currentTarget; const open = !this.state.search;
+        this.setState({ search: open, menu: false });
+        if (open && btn) setTimeout(() => { const h = btn.closest('header'); const i = h && h.querySelector('form[role="search"] input'); if (i) i.focus(); }, 0);
+      },
+      searchKey: (e) => {
+        if (e.key !== 'Escape') return;
+        const h = e.currentTarget.closest('header'); this.setState({ search: false });
+        setTimeout(() => { const b = h && h.querySelector('button[aria-label="Search"]'); if (b) b.focus(); }, 0);
+      },
+      sheetOpen: !!s.sheet, sheet,
+      closeSheet: () => this.setState({ sheet: '' }),
+      stop: (e) => e.stopPropagation(),
+      sheetKey: (e) => { if (e.key === 'Escape') this.setState({ sheet: '' }); },
+      copyLabel: s.copied ? 'Copied ✓' : 'Copy command',
+      copyCmd: () => this.setState({ copied: true }),
+      footerCols: [
+        { title: 'Discover', links: [{ label: 'Top charts', href: 'StoreCharts.dc.html' }, { label: 'New this week', href: 'StoreNew.dc.html' }, { label: "Editor's picks", href: 'StoreHome.dc.html' }, { label: 'Collections', href: 'StoreBrowse.dc.html' }] },
+        { title: 'Categories', links: [{ label: 'Windows & desktop', href: 'StoreCategory.dc.html' }, { label: 'Menu bar', href: 'StoreCategory.dc.html' }, { label: 'Terminal tools', href: 'StoreCategory.dc.html' }, { label: 'All categories', href: 'StoreCategory.dc.html' }] },
+        { title: 'Developers', links: [{ label: 'Claim your app', href: 'LandingStore.dc.html' }, { label: 'List your tap', href: 'LandingStore.dc.html' }] },
+        { title: 'Help', links: [{ label: 'Setup guide', href: 'LandingStore.dc.html' }, { label: 'How rankings work', href: '#' }, { label: 'Is it safe?', href: '#' }, { label: 'RSS feeds', href: 'StoreNew.dc.html' }] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

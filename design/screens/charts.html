@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<title>Brewhunt — Top charts</title>
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#F4F7FB}
+a{color:#1F5FD6}a:hover{color:#16449B}
+@keyframes sheetIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.lift{transition:transform .25s ease, box-shadow .25s ease}
+.lift:hover{transform:translateY(-3px);box-shadow:0 24px 40px -24px rgba(8,25,80,.4)}
+.menu-btn{display:none}
+.flink:hover{color:#FFFFFF!important}
+@media (max-width:760px){.hide-sm{display:none}.nav-links{display:none!important}.menu-btn{display:flex}.flink{min-height:44px!important}}
+@media (max-width:480px){.hide-xs{display:none}}
+@media (max-width:480px){.hide-xs{display:none}}
+@media (prefers-reduced-motion:reduce){.lift{transition:none}.lift:hover{transform:none}}
+</style>
+</head>
+<body>
+
+
+<div style="position: relative; background: #F4F7FB; color: #1D1D1F; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased">
+
+<section style="position: relative; padding: 20px 0 56px; background: #F4F7FB">
+<div style="position: relative; z-index: 5; padding: 0 24px">
+<header style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1112px; margin: 0 auto; padding: 8px 8px 8px 18px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E6E8EE; box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 10px 30px -18px rgba(8,25,80,0.35)">
+<a href="landing.html" style="display: flex; align-items: center; gap: 6px; color: #1D1D1F; text-decoration: none; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-weight: 600; font-size: 18px; letter-spacing: -0.02em">
+<img src="../assets/brewhunt-flask-128.png" alt="" width="46" height="46" style="display: block; flex: none; width: 46px; height: 46px; margin: -8px -2px -6px -6px">
+<span style="font-size: 20px; letter-spacing: -0.035em; margin-top: 3px">Brewhunt</span>
+</a>
+<nav class="nav-links" aria-label="Main" style="display: flex; gap: 4px 22px; font-size: 15px">
+<a href="home.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Discover</a>
+<a href="charts.html" aria-current="page" style="color: #1D1D1F; text-decoration: none; padding: 12px 0; font-weight: 700">Top charts</a>
+<a href="category.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Categories</a>
+<a href="new.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">New</a>
+<a href="landing.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">For developers</a>
+</nav>
+<span style="display: flex; align-items: center; gap: 6px">
+<button type="button" aria-label="Search" aria-expanded="false" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; border: 0; cursor: pointer">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+</button>
+<button type="button" class="menu-btn" aria-label="Menu" aria-expanded="false" style="align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+</button>
+</span>
+
+
+</header>
+</div>
+<div style="max-width: 1160px; margin: 0 auto; padding: 40px 24px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 40px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; color: #1D1D1F; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 36px; line-height: 1.1; font-weight: 600; letter-spacing: -0.025em">Top charts</h1>
+<p style="margin: 0; max-width: 600px; color: #5E6068; font-size: 17px">The most-installed apps and tools on Homebrew, refreshed daily from its public install analytics.</p>
+</div>
+<div role="group" aria-label="Period" style="display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: #E8E8ED">
+
+<button type="button" aria-pressed="true" style="height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.12); font: inherit; font-size: 15px; font-weight: 600; color: #1D1D1F; cursor: pointer">30 days</button>
+
+<button type="button" aria-pressed="false" style="height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; box-shadow: none; font: inherit; font-size: 15px; font-weight: 400; color: #1D1D1F; cursor: pointer">90 days</button>
+
+<button type="button" aria-pressed="false" style="height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; box-shadow: none; font: inherit; font-size: 15px; font-weight: 400; color: #1D1D1F; cursor: pointer">1 year</button>
+
+</div>
+</div>
+<div role="tablist" aria-label="Chart" style="align-self: flex-start; display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: 999px; background: #E8E8ED">
+
+<button type="button" role="tab" aria-selected="true" aria-controls="chart-panel" tabindex="0" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; color: #1D1D1F; box-shadow: 0 1px 3px rgba(0,0,0,0.12); cursor: pointer">Mac apps</button>
+
+
+
+<button type="button" role="tab" aria-selected="false" aria-controls="chart-panel" tabindex="-1" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: transparent; font: inherit; font-size: 15px; color: #3A3A3C; cursor: pointer">Command-line tools</button>
+
+
+<button type="button" role="tab" aria-selected="false" aria-controls="chart-panel" tabindex="-1" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: transparent; font: inherit; font-size: 15px; color: #3A3A3C; cursor: pointer">Community taps</button>
+
+</div>
+</div>
+</section>
+
+<main style="max-width: 1160px; margin: 0 auto; padding: 8px 24px 0; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+<section id="chart-panel" role="tabpanel" aria-label="Mac apps" style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; padding: 8px 24px 16px; border-radius: 28px; background: #FFFFFF; border: 1px solid #E6E8EE">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; padding: 16px 0 12px">
+<h2 style="margin: 0; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 26px; font-weight: 600; letter-spacing: -0.02em">Mac apps</h2>
+<span style="font-size: 14px; color: #6E6E73">Installs · 30 days</span>
+</div>
+<ol style="list-style: none; margin: 0; padding: 0">
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">1</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #5AA9FF, #1F5FD6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">R</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">Rectangle</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Snap windows with keyboard shortcuts</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Windows &amp; desktop</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get Rectangle" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">2</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #FFE88A, #F2B705); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #3A2A00; font-family: inherit">R</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">Raycast</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Launcher and productivity toolkit</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Productivity</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get Raycast" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">3</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #FF8FB1, #E0336E); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">I</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">IINA</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Modern video player for macOS</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Video &amp; audio</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get IINA" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">4</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #FFB347, #F26B1D); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">M</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">Maccy</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Clipboard history, light and fast</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Productivity</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get Maccy" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">5</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #C3A6FF, #6B3FD6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">S</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">Stats</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">System monitor in your menu bar</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Menu bar</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #6E6E73">↓ [n]%</span>
+</span>
+<button type="button" aria-label="Get Stats" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">6</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #5AA9FF, #1F5FD6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">A</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">AltTab</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Windows-style window switcher</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Windows &amp; desktop</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get AltTab" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">7</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #B79CFF, #7442E0); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">O</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">Obsidian</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Notes in local Markdown files</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Productivity</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get Obsidian" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">8</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #FF8FB1, #E0336E); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">V</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">VLC</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Plays almost any media file</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Video &amp; audio</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #6E6E73">↓ [n]%</span>
+</span>
+<button type="button" aria-label="Get VLC" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">9</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #3A3A40, #0E0E10); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">G</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">Ghostty</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Fast, native terminal emulator</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Developer</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1F5FD6">New</span>
+</span>
+<button type="button" aria-label="Get Ghostty" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">10</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #C3A6FF, #6B3FD6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">I</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">Ice</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Tidy up a crowded menu bar</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Menu bar</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get Ice" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">11</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #7BE495, #1E9E5A); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">S</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">Shottr</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Screenshots with annotation and OCR</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Screenshots</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get Shottr" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">12</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #7FE3E0, #159C9A); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">A</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">AppCleaner</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Uninstall apps and their leftovers</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Utilities</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #6E6E73">↓ [n]%</span>
+</span>
+<button type="button" aria-label="Get AppCleaner" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">13</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #7FE3E0, #159C9A); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">K</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">Keka</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Compress and extract archives</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Utilities</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get Keka" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">14</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #B8C2D3, #5B6577); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">M</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">MonitorControl</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Brightness for external displays</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Windows &amp; desktop</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get MonitorControl" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+<li style="display: flex; align-items: center; gap: 14px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="flex: none; width: 28px; font-size: 17px; font-weight: 600; color: #6E6E73; text-align: right">15</span>
+<a href="app.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; color: #1D1D1F; text-decoration: none">
+<span style="width: 48px; height: 48px; flex: none; border-radius: 11px; background: linear-gradient(160deg, #C3A6FF, #6B3FD6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #FFFFFF; font-family: inherit">I</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px"><span style="font-weight: 700">Itsycal</span></span>
+<span style="font-size: 14px; color: #5E6068; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">Tiny calendar in the menu bar</span>
+</span>
+</a>
+<span class="hide-sm" style="flex: none; width: 150px; font-size: 14px; color: #5E6068">Menu bar</span>
+<span class="hide-xs" style="flex: none; width: 76px; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-weight: 700">[n]k</span>
+<span style="font-size: 13px; color: #1E7A46">↑ [n]%</span>
+</span>
+<button type="button" aria-label="Get Itsycal" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; cursor: pointer">Get</button>
+</li>
+
+</ol>
+
+<button type="button" style="align-self: center; margin-top: 12px; height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; font: inherit; font-weight: 600; cursor: pointer">Show top 100</button>
+</section>
+
+<aside style="flex: 1 1 300px; max-width: 380px; display: flex; flex-direction: column; gap: 16px">
+<section style="display: flex; flex-direction: column; padding: 20px 24px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E6E8EE">
+<h2 style="margin: 0 0 4px; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 20px; font-weight: 600">Climbing fast</h2>
+<span style="font-size: 14px; color: #5E6068; margin-bottom: 8px">Biggest jump in installs vs. the previous period.</span>
+<ul style="list-style: none; margin: 0; padding: 0">
+
+<li style="border-top: 1px solid #F0F0F3">
+<a href="app.html" style="display: flex; align-items: center; gap: 12px; min-height: 56px; color: #1D1D1F; text-decoration: none">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 8px; background: linear-gradient(160deg, #3A3A40, #0E0E10); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #FFFFFF; font-family: inherit">G</span>
+<span style="flex: 1; min-width: 0; font-weight: 600">Ghostty</span>
+<span style="font-size: 14px; font-weight: 600; color: #1E7A46">↑ [n]%</span>
+</a>
+</li>
+
+<li style="border-top: 1px solid #F0F0F3">
+<a href="app.html" style="display: flex; align-items: center; gap: 12px; min-height: 56px; color: #1D1D1F; text-decoration: none">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 8px; background: linear-gradient(160deg, #C3A6FF, #6B3FD6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #FFFFFF; font-family: inherit">A</span>
+<span style="flex: 1; min-width: 0; font-weight: 600">AeroSpace</span>
+<span style="font-size: 14px; font-weight: 600; color: #1E7A46">↑ [n]%</span>
+</a>
+</li>
+
+<li style="border-top: 1px solid #F0F0F3">
+<a href="app.html" style="display: flex; align-items: center; gap: 12px; min-height: 56px; color: #1D1D1F; text-decoration: none">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 8px; background: linear-gradient(160deg, #3A3A40, #0E0E10); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #FFFFFF; font-family: ui-monospace, 'SF Mono', Menlo, monospace">oc</span>
+<span style="flex: 1; min-width: 0; font-weight: 600">opencode</span>
+<span style="font-size: 14px; font-weight: 600; color: #1E7A46">↑ [n]%</span>
+</a>
+</li>
+
+<li style="border-top: 1px solid #F0F0F3">
+<a href="app.html" style="display: flex; align-items: center; gap: 12px; min-height: 56px; color: #1D1D1F; text-decoration: none">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 8px; background: linear-gradient(160deg, #3A3A40, #0E0E10); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #FFFFFF; font-family: ui-monospace, 'SF Mono', Menlo, monospace">la</span>
+<span style="flex: 1; min-width: 0; font-weight: 600">lazygit</span>
+<span style="font-size: 14px; font-weight: 600; color: #1E7A46">↑ [n]%</span>
+</a>
+</li>
+
+<li style="border-top: 1px solid #F0F0F3">
+<a href="app.html" style="display: flex; align-items: center; gap: 12px; min-height: 56px; color: #1D1D1F; text-decoration: none">
+<span style="width: 36px; height: 36px; flex: none; border-radius: 8px; background: linear-gradient(160deg, #C3A6FF, #6B3FD6); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #FFFFFF; font-family: inherit">I</span>
+<span style="flex: 1; min-width: 0; font-weight: 600">Ice</span>
+<span style="font-size: 14px; font-weight: 600; color: #1E7A46">↑ [n]%</span>
+</a>
+</li>
+
+</ul>
+</section>
+<section style="display: flex; flex-direction: column; gap: 8px; padding: 20px 24px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E6E8EE">
+<h2 style="margin: 0; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 20px; font-weight: 600">How rankings work</h2>
+<p style="margin: 0; font-size: 15px; color: #5E6068">Ranked by install events from Homebrew's opt-out analytics. They count installs, not active users, so read them as relative popularity.</p>
+<a href="#" style="align-self: flex-start; padding: 10px 0; font-size: 15px; font-weight: 600">More about the data</a>
+</section>
+</aside>
+
+</main>
+
+<footer style="margin-top: 64px; background: radial-gradient(ellipse 50% 60% at 85% 0%, rgba(47,107,255,0.28), rgba(47,107,255,0) 70%), #10132A; color: #C3C7D6">
+<div style="max-width: 1160px; margin: 0 auto; padding: 48px 24px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 36px">
+<div style="display: flex; flex-wrap: wrap; gap: 32px 56px">
+<div style="flex: 1 1 260px; max-width: 320px; display: flex; flex-direction: column; gap: 14px">
+<a href="landing.html" style="display: flex; align-items: center; gap: 6px; color: #FFFFFF; text-decoration: none; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-weight: 600; font-size: 18px">
+<img src="../assets/brewhunt-flask-128.png" alt="" width="46" height="46" style="display: block; flex: none; width: 46px; height: 46px; margin: -8px -2px -6px -6px">
+<span style="font-size: 20px; letter-spacing: -0.035em; margin-top: 3px">Brewhunt</span>
+</a>
+<span>The app store for everything you can install with Homebrew.</span>
+</div>
+<nav aria-label="Footer" style="flex: 999 1 560px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 28px 24px">
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px">Discover</span>
+
+<a href="charts.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">Top charts</a>
+
+<a href="new.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">New this week</a>
+
+<a href="home.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">Editor's picks</a>
+
+<a href="search.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">Collections</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px">Categories</span>
+
+<a href="category.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">Windows &amp; desktop</a>
+
+<a href="category.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">Menu bar</a>
+
+<a href="category.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">Terminal tools</a>
+
+<a href="category.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">All categories</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px">Developers</span>
+
+<a href="landing.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">Claim your app</a>
+
+<a href="landing.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">List your tap</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px">Help</span>
+
+<a href="landing.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">Setup guide</a>
+
+<a href="#" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">How rankings work</a>
+
+<a href="#" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">Is it safe?</a>
+
+<a href="new.html" class="flink" style="display: flex; align-items: center; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">RSS feeds</a>
+
+</div>
+
+</nav>
+</div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; padding: 20px 0 28px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: #A9AEC4">
+<span style="max-width: 720px">© 2026 Brewhunt. Not affiliated with the Homebrew project or Apple. App names and icons belong to their developers.</span>
+<span style="display: flex; gap: 20px"><a href="#" class="flink" style="color: #C3C7D6; text-decoration: none">Privacy</a><a href="#" class="flink" style="color: #C3C7D6; text-decoration: none">Terms</a></span>
+</div>
+</div>
+</footer>
+
+
+
+</div>
+
+
+
+
+</body></html>

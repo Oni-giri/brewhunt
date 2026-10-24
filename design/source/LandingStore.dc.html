@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Brewhunt — Discover great Mac apps</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;display=swap">
+<style>
+body{margin:0;background:#F4F7FB}
+a{color:#1F5FD6}a:hover{color:#16449B}
+@keyframes marqL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes marqR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@keyframes sheetIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.wall:hover .track,.wall:focus-within .track{animation-play-state:paused!important}
+.lift{transition:transform .25s ease, box-shadow .25s ease}
+.lift:hover{transform:translateY(-4px);box-shadow:0 24px 40px -24px rgba(8,25,80,.4)}
+.menu-btn{display:none}
+.flink:hover{color:#FFFFFF!important}
+#nl-email::placeholder{color:#A9AEC4}
+@media (max-width:480px){.hide-xs{display:none}}
+@media (max-width:760px){.flink{min-height:44px!important}}
+@media (max-width:760px){.nav-links{display:none!important}.menu-btn{display:flex}.hide-sm{display:none}}
+@media (prefers-reduced-motion:reduce){.track{animation:none!important}.lift{transition:none}.lift:hover{transform:none}}
+</style>
+</helmet>
+<div style="position: relative; background: #F4F7FB; color: #1D1D1F; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased">
+
+<section style="position: relative; overflow: hidden; padding: 20px 0 36px; background: radial-gradient(ellipse 60% 16% at 12% 100%, rgba(255,255,255,0.95), rgba(255,255,255,0) 70%), radial-gradient(ellipse 55% 14% at 88% 100%, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%), linear-gradient(180deg, #1A3FBF 0%, #2459D8 30%, #2F6BE0 62%, #7DB4F2 78%, #CFE5FA 92%, #F4F7FB 100%)">
+
+<div style="position: relative; z-index: 5; padding: 0 24px">
+<header style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1080px; margin: 0 auto; padding: 8px 8px 8px 18px; border-radius: 999px; background: rgba(255,255,255,0.78); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 10px 30px -16px rgba(8,25,80,0.45)">
+<a href="LandingStore.dc.html" style="display: flex; align-items: center; gap: 6px; color: #1D1D1F; text-decoration: none; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-weight: 600; font-size: 18px; letter-spacing: -0.02em">
+<img src="assets/brewhunt-flask-128.png" alt="" width="46" height="46" style="display: block; flex: none; width: 46px; height: 46px; margin: -8px -2px -6px -6px">
+<span style="font-size: 20px; letter-spacing: -0.035em; margin-top: 3px">Brewhunt</span>
+</a>
+<nav class="nav-links" aria-label="Main" style="display: flex; gap: 4px 22px; font-size: 15px">
+<a href="StoreHome.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Discover</a>
+<a href="StoreCharts.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Top charts</a>
+<a href="StoreCategory.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">Categories</a>
+<a href="StoreNew.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">New</a>
+<a href="#devs" style="color: #1D1D1F; text-decoration: none; padding: 12px 0">For developers</a>
+</nav>
+<span style="display: flex; align-items: center; gap: 6px">
+<a href="StoreBrowse.dc.html" aria-label="Search" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: #EDEEF2; color: #1D1D1F">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+</a>
+<a href="StoreHome.dc.html" class="hide-sm" style="display: flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; text-decoration: none; font-weight: 600; font-size: 15px">Browse apps</a>
+<button type="button" class="menu-btn" aria-label="Menu" aria-expanded="{{ menuOpen }}" onClick="{{ toggleMenu }}" style="align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+</button>
+</span>
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+<nav aria-label="Main (mobile)" style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; display: flex; flex-direction: column; padding: 8px; border-radius: 20px; background: #FFFFFF; box-shadow: 0 20px 40px -20px rgba(8,25,80,0.5)">
+<a href="StoreHome.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px; border-radius: 12px">Discover</a>
+<a href="StoreCharts.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px; border-radius: 12px">Top charts</a>
+<a href="StoreCategory.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px; border-radius: 12px">Categories</a>
+<a href="StoreNew.dc.html" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px; border-radius: 12px">New</a>
+<a href="#devs" style="color: #1D1D1F; text-decoration: none; padding: 12px 14px; border-radius: 12px">For developers</a>
+</nav>
+</sc-if>
+</header>
+</div>
+
+<div style="max-width: 980px; margin: 0 auto; padding: 56px 24px 0; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px">
+<span style="display: flex; align-items: center; gap: 10px; padding: 6px 16px 6px 8px; border-radius: 999px; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.35); font-size: 14px; font-weight: 500; color: #FFFFFF"><span aria-hidden="true" style="display: flex"><span style="width: 14px; height: 14px; border-radius: 3px; background: linear-gradient(160deg, #FFB347, #F26B1D); display: block"></span><span style="width: 14px; height: 14px; margin-left: -4px; border-radius: 3px; background: linear-gradient(160deg, #7BE495, #1E9E5A); display: block"></span><span style="width: 14px; height: 14px; margin-left: -4px; border-radius: 3px; background: linear-gradient(160deg, #C3A6FF, #6B3FD6); display: block"></span></span>The app store for everything you can install with Homebrew</span>
+<h1 style="margin: 0; color: #FFFFFF; font-family: 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; font-size: clamp(44px, 6.2vw, 80px); line-height: 1.06; font-weight: 500; letter-spacing: -0.035em; text-wrap: balance">Discover great Mac apps.<br>Thousands <span aria-hidden="true" style="display: inline-flex; vertical-align: -0.06em"><span style="width: 0.74em; height: 0.74em; border-radius: 0.17em; transform: rotate(-10deg); background: linear-gradient(160deg, #FFB347, #F26B1D); box-shadow: inset 0 0.03em 0 rgba(255,255,255,0.55), 0 0.12em 0.24em rgba(8,25,80,0.35); display: block"></span><span style="width: 0.74em; height: 0.74em; margin-left: -0.22em; border-radius: 0.17em; transform: rotate(7deg) translateY(-0.06em); background: linear-gradient(160deg, #7BE495, #1E9E5A); box-shadow: inset 0 0.03em 0 rgba(255,255,255,0.55), 0 0.12em 0.24em rgba(8,25,80,0.35); display: block"></span><span style="width: 0.74em; height: 0.74em; margin-left: -0.22em; border-radius: 0.17em; transform: rotate(-4deg); background: linear-gradient(160deg, #C3A6FF, #6B3FD6); box-shadow: inset 0 0.03em 0 rgba(255,255,255,0.55), 0 0.12em 0.24em rgba(8,25,80,0.35); display: block"></span></span> of them.</h1>
+<p style="margin: 0; max-width: 600px; font-size: 20px; color: #FFFFFF; text-wrap: pretty">Curated by people, ranked by real installs, refreshed every day — from big names to brilliant tools you've never heard of.</p>
+<form style="display: flex; align-items: center; gap: 8px; width: 100%; max-width: 620px; margin-top: 6px; padding: 8px 8px 8px 22px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; box-shadow: 0 24px 50px -28px rgba(8,25,80,0.6)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6E6E73" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+<label for="ls-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search apps</label>
+<input id="ls-q" type="search" placeholder="Search apps, tools and categories" style="flex: 1; min-width: 0; height: 48px; border: 0; background: transparent; font: inherit; font-size: 18px; color: #1D1D1F; outline: none">
+<a href="StoreBrowse.dc.html" style="display: flex; align-items: center; height: 48px; padding: 0 24px; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; text-decoration: none; font-weight: 600">Search</a>
+</form>
+<div role="list" aria-label="Popular searches" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px">
+<sc-for list="{{ popular }}" as="q" hint-placeholder-count="5">
+<a role="listitem" href="StoreCategory.dc.html" style="display: flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 999px; background: #FFFFFF; color: #1D1D1F; text-decoration: none; font-size: 15px; box-shadow: 0 8px 20px -14px rgba(8,25,80,0.6)">{{ q }}</a>
+</sc-for>
+</div>
+<a href="#setup" style="color: #FFFFFF; font-size: 15px; font-weight: 500; text-decoration: underline; text-underline-offset: 4px; padding: 10px 0">New to Homebrew? Set it up in a minute →</a>
+</div>
+
+<div style="position: relative; margin-top: 48px">
+<div class="wall" aria-label="Apps in the store" onMouseEnter="{{ wallEnter }}" onMouseLeave="{{ wallLeave }}" onFocus="{{ wallEnter }}" onBlur="{{ wallLeave }}" style="padding: 10px 0 30px; display: flex; flex-direction: column; gap: 16px; transform: perspective(1600px) rotateX(14deg); transform-origin: 50% 0; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%)">
+<sc-for list="{{ rows }}" as="row" hint-placeholder-count="3">
+<div style="overflow: hidden">
+<div class="track" style="display: flex; gap: 16px; width: max-content; animation: {{ row.anim }}; animation-play-state: {{ playState }}">
+<sc-for list="{{ row.items }}" as="a" hint-placeholder-count="8">
+<a href="StorePackage.dc.html" class="lift" title="{{ a.name }} — {{ a.line }}" style="flex: none; width: 270px; display: flex; align-items: center; gap: 14px; padding: 14px; box-sizing: border-box; border-radius: 20px; background: {{ a.cardBg }}; color: {{ a.cardInk }}; text-decoration: none; box-shadow: 0 18px 40px -22px rgba(8,25,80,0.55)">
+<span style="width: 56px; height: 56px; flex: none; border-radius: 13px; background: {{ a.tint }}; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 22px; color: {{ a.ink }}; font-family: {{ a.font }}">{{ a.ini }}</span>
+<span style="min-width: 0; display: flex; flex-direction: column">
+<span style="font-weight: 700; font-size: 16px; letter-spacing: -0.01em">{{ a.name }}</span>
+<span style="font-size: 13px; opacity: 0.75; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ a.line }}</span>
+</span>
+</a>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: flex-end; max-width: 1160px; margin: 0 auto; padding: 0 24px">
+<button type="button" onClick="{{ togglePause }}" aria-pressed="{{ paused }}" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(255,255,255,0.85); box-shadow: 0 6px 16px -10px rgba(8,25,80,0.5); color: #1D1D1F; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">
+<sc-if value="{{ paused }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"></path></svg>Play</sc-if>
+<sc-if value="{{ playing }}" hint-placeholder-val="{{ true }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"></path></svg>Pause</sc-if>
+</button>
+</div>
+</div>
+</section>
+
+<main style="max-width: 1160px; margin: 0 auto; padding: 32px 24px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 64px">
+
+<section style="display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 600; color: #5E6068">Charts</span>
+<h2 style="margin: 0; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 44px; line-height: 1.05; font-weight: 600; letter-spacing: -0.03em">Top charts</h2>
+<p style="margin: 0; font-size: 15px; color: #5E6068">Ranked by installs, from Homebrew's public install data. Updated daily.</p>
+</div>
+<div role="tablist" aria-label="Period" style="display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: #E8E8ED">
+<sc-for list="{{ periods }}" as="p" hint-placeholder-count="2">
+<sc-if value="{{ p.on }}" hint-placeholder-val="{{ false }}"><button type="button" role="tab" aria-selected="true" onClick="{{ p.pick }}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #FFFFFF; font: inherit; font-size: 15px; font-weight: 600; color: #1D1D1F; box-shadow: 0 1px 3px rgba(0,0,0,0.12); cursor: pointer">{{ p.label }}</button></sc-if>
+<sc-if value="{{ p.off }}" hint-placeholder-val="{{ true }}"><button type="button" role="tab" aria-selected="false" onClick="{{ p.pick }}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: transparent; font: inherit; font-size: 15px; color: #3A3A3C; cursor: pointer">{{ p.label }}</button></sc-if>
+</sc-for>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(480px, 100%), 1fr)); gap: 20px">
+<sc-for list="{{ charts }}" as="ch" hint-placeholder-count="2">
+<div style="padding: 12px 28px 20px; border-radius: 28px; background: #FFFFFF">
+<div style="display: flex; align-items: baseline; justify-content: space-between; padding: 16px 0 8px">
+<h3 style="margin: 0; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 22px; font-weight: 600; letter-spacing: -0.02em">{{ ch.title }}</h3>
+<a href="StoreCharts.dc.html" style="font-size: 15px; padding: 10px 0">See all</a>
+</div>
+<ol style="list-style: none; margin: 0; padding: 0">
+<sc-for list="{{ ch.items }}" as="a" hint-placeholder-count="5">
+<li style="display: flex; align-items: center; gap: 16px; padding: 12px 0; border-top: 1px solid #F0F0F3">
+<span style="width: 22px; font-size: 17px; font-weight: 600; color: #6E6E73">{{ a.rank }}</span>
+<a href="StorePackage.dc.html" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 16px; color: #1D1D1F; text-decoration: none">
+<span style="width: 52px; height: 52px; flex: none; border-radius: 12px; background: {{ a.tint }}; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; color: {{ a.ink }}; font-family: {{ a.font }}">{{ a.ini }}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span style="font-weight: 700; font-size: 16px">{{ a.name }}</span>
+<span style="font-size: 14px; color: #6E6E73; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ a.line }}</span>
+</span>
+</a>
+<span class="hide-xs" style="font-size: 13px; color: #6E6E73; white-space: nowrap">{{ a.stat }}</span>
+<button type="button" onClick="{{ a.get }}" aria-label="Get {{ a.name }}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer">Get</button>
+</li>
+</sc-for>
+</ol>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 600; color: #5E6068">Fresh</span>
+<h2 style="margin: 0; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 44px; line-height: 1.05; font-weight: 600; letter-spacing: -0.03em">New this week</h2>
+<p style="margin: 0; font-size: 15px; color: #5E6068">Just added to Homebrew, or spotted in independent developers' taps.</p>
+</div>
+<a href="StoreNew.dc.html" style="font-size: 15px; font-weight: 600; padding: 10px 0">See all new</a>
+</div>
+<ul aria-label="New this week" style="list-style: none; margin: 0; padding: 2px 2px 12px; display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory">
+<sc-for list="{{ fresh }}" as="n" hint-placeholder-count="6">
+<li style="flex: none; width: 250px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 14px; padding: 20px; box-sizing: border-box; border-radius: 20px; background: #FFFFFF">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px">
+<a href="StorePackage.dc.html" aria-label="{{ n.name }}" style="width: 56px; height: 56px; flex: none; border-radius: 13px; background: {{ n.tint }}; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 22px; color: {{ n.ink }}; text-decoration: none; font-family: {{ n.font }}">{{ n.ini }}</a>
+<sc-if value="{{ n.official }}" hint-placeholder-val="{{ true }}"><span style="padding: 2px 10px; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; font-size: 12px; font-weight: 600">Official</span></sc-if>
+<sc-if value="{{ n.community }}" hint-placeholder-val="{{ false }}"><span style="padding: 1px 9px; border-radius: 999px; border: 1px dashed #5E6068; color: #1D1D1F; font-size: 12px; font-weight: 600">Community</span></sc-if>
+</div>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<a href="StorePackage.dc.html" style="color: #1D1D1F; text-decoration: none; font-weight: 700; font-size: 16px">{{ n.name }}</a>
+<span style="font-size: 14px; color: #6E6E73">{{ n.line }}</span>
+</span>
+<span style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto">
+<span style="font-size: 13px; color: #6E6E73">Added {{ n.when }}</span>
+<button type="button" onClick="{{ n.get }}" aria-label="Get {{ n.name }}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer">Get</button>
+</span>
+</li>
+</sc-for>
+</ul>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 600; color: #5E6068">Editor's picks</span>
+<h2 style="margin: 0; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 44px; line-height: 1.05; font-weight: 600; letter-spacing: -0.03em; text-wrap: balance">Free, open source, and better than what came with your Mac.</h2>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 20px">
+<sc-for list="{{ picks }}" as="p" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 20px; padding: 24px; border-radius: 20px; background: #FFFFFF">
+<a href="StorePackage.dc.html" aria-label="See {{ p.name }}" class="lift" style="height: 190px; border-radius: 12px; background: radial-gradient(ellipse 60% 40% at 50% 110%, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%), linear-gradient(180deg, #2459D8, #A9CFF6); display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 14px; text-decoration: none">[Screenshot of {{ p.name }}]</a>
+<span style="display: flex; align-items: center; gap: 14px">
+<span style="width: 60px; height: 60px; flex: none; border-radius: 14px; background: {{ p.tint }}; box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.5), 0 10px 20px -12px rgba(8,25,80,0.45); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; color: {{ p.ink }}">{{ p.ini }}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<a href="StorePackage.dc.html" style="color: #1D1D1F; text-decoration: none; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 24px; font-weight: 600; letter-spacing: -0.02em">{{ p.name }}</a>
+<span style="font-size: 14px; color: #5E6068">{{ p.cat }} · Free · Open source</span>
+</span>
+<button type="button" onClick="{{ p.get }}" aria-label="Get {{ p.name }}" style="height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1F5FD6; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer">Get</button>
+</span>
+<span style="font-size: 17px; color: #3A3A3C">{{ p.blurb }}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 600; color: #5E6068">Categories</span>
+<h2 style="margin: 0; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 44px; line-height: 1.05; font-weight: 600; letter-spacing: -0.03em">Browse by what you need</h2>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 12px">
+<sc-for list="{{ cats }}" as="c" hint-placeholder-count="8">
+<a href="StoreCategory.dc.html" class="lift" style="display: flex; align-items: center; gap: 18px; padding: 18px 20px; border-radius: 20px; background: #FFFFFF; color: #1D1D1F; text-decoration: none">
+<span style="display: flex; flex: none; width: 96px">
+<sc-for list="{{ c.stack }}" as="s" hint-placeholder-count="3">
+<span style="width: 40px; height: 40px; margin-right: -12px; border-radius: 9px; background: {{ s.tint }}; box-shadow: 0 0 0 2px #FFFFFF, 0 6px 12px -8px rgba(8,25,80,0.4); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: {{ s.ink }}; font-family: {{ s.font }}">{{ s.ini }}</span>
+</sc-for>
+</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 19px; font-weight: 600; letter-spacing: -0.015em">{{ c.title }}</span>
+<span style="font-size: 14px; color: #5E6068; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ c.examples }}</span>
+</span>
+<span style="flex: none; font-size: 14px; color: #5E6068">[n]</span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8E9099" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+</a>
+</sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-wrap: wrap; align-items: center; gap: 40px; padding: 40px; border-radius: 28px; background: radial-gradient(ellipse 60% 60% at 90% 0%, rgba(47,107,255,0.35), rgba(47,107,255,0) 70%), #10132A; color: #F2F2F5">
+<div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 14px; font-weight: 600; color: #A9AEC4">Not just apps</span>
+<h2 style="margin: 0; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 44px; line-height: 1.05; font-weight: 600; letter-spacing: -0.03em">The best command-line tools, too.</h2>
+<p style="margin: 0; color: #C3C7D6; font-size: 18px">For developers and the terminal-curious: the tools power users install on every new Mac.</p>
+<a href="StoreCharts.dc.html" style="align-self: flex-start; color: #FFFFFF; font-weight: 600; padding: 10px 0">Browse command-line tools →</a>
+</div>
+<ul style="flex: 1 1 460px; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 10px">
+<sc-for list="{{ clis }}" as="c" hint-placeholder-count="6">
+<li>
+<button type="button" onClick="{{ c.get }}" aria-label="Get {{ c.name }}" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 12px 12px 12px 16px; border: 0; border-radius: 12px; background: rgba(255,255,255,0.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); font: inherit; text-align: left; cursor: pointer">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; font-weight: 600; color: #9CC7FF">{{ c.name }}</span>
+<span style="font-size: 14px; color: #C3C7D6">{{ c.line }}</span>
+</span>
+<span aria-hidden="true" style="flex: none; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.12); color: #FFFFFF; font-size: 13px; font-weight: 700">Get</span>
+</button>
+</li>
+</sc-for>
+</ul>
+</section>
+
+<section id="setup" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 40px; padding: 32px; border-radius: 28px; background: #FFFFFF">
+<div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 360px">
+<span style="font-size: 14px; font-weight: 600; color: #5E6068">Getting started</span>
+<span style="font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 26px; font-weight: 600; letter-spacing: -0.02em">Installing takes one line.</span>
+<span style="color: #5E6068">Every app comes with its Homebrew command: hit Get, paste it in Terminal, done. New to Homebrew? Paste this once first.</span>
+</div>
+<span style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; flex: 1 1 420px; min-width: 0; justify-content: flex-end">
+<code style="flex: 1 1 280px; min-width: 0; padding: 13px 16px; border-radius: 12px; background: #10132A; color: #F2F2F5; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code>
+<button type="button" onClick="{{ copySetup }}" style="height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">{{ setupLabel }}</button>
+</span>
+</section>
+
+<section id="devs" style="display: flex; flex-wrap: wrap; align-items: center; gap: 32px 56px; padding: 40px; border-radius: 28px; background: radial-gradient(ellipse 50% 40% at 15% 110%, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%), linear-gradient(180deg, #CFE3FA, #EAF3FD)">
+<div style="flex: 1 1 420px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 14px; font-weight: 600; color: #3A4152">For developers</span>
+<h2 style="margin: 0; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 44px; line-height: 1.05; font-weight: 600; letter-spacing: -0.03em; text-wrap: balance">Built a Mac app? Get it in front of the people who'll love it.</h2>
+<p style="margin: 0; color: #2B3140; font-size: 18px">Claim your listing, add screenshots and a proper description, and see who's installing. Promotion options are coming soon.</p>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
+<a href="#" style="display: flex; align-items: center; justify-content: center; height: 48px; padding: 0 26px; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; text-decoration: none; font-weight: 600">Join the waitlist</a>
+<span style="font-size: 14px; color: #2B3140">Free while in beta</span>
+</div>
+</section>
+
+</main>
+
+<footer style="margin-top: 64px; background: radial-gradient(ellipse 50% 60% at 85% 0%, rgba(47,107,255,0.28), rgba(47,107,255,0) 70%), #10132A; color: #C3C7D6">
+<div style="max-width: 1160px; margin: 0 auto; padding: 56px 24px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 48px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 48px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1)">
+<div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Geist', -apple-system, system-ui, sans-serif; font-size: 28px; font-weight: 600; letter-spacing: -0.025em; color: #FFFFFF">The weekly pick</span>
+<span>Five new and noteworthy Mac apps in your inbox every Friday. No spam, unsubscribe anytime.</span>
+</div>
+<form style="flex: 1 1 420px; display: flex; flex-wrap: wrap; gap: 10px">
+<label for="nl-email" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Email address</label>
+<input id="nl-email" type="email" placeholder="you@example.com" style="flex: 1 1 240px; min-width: 0; height: 48px; padding: 0 20px; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.45); border-radius: 999px; background: rgba(255,255,255,0.06); font: inherit; color: #FFFFFF; outline: none">
+<button type="button" onClick="{{ subscribe }}" style="height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: #FFFFFF; color: #10132A; font: inherit; font-weight: 600; cursor: pointer">{{ subscribeLabel }}</button>
+</form>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 40px 56px">
+<div style="flex: 1 1 260px; max-width: 320px; display: flex; flex-direction: column; gap: 14px">
+<a href="LandingStore.dc.html" style="display: flex; align-items: center; gap: 6px; color: #FFFFFF; text-decoration: none; font-family: 'Geist', -apple-system, system-ui, sans-serif; font-weight: 600; font-size: 18px; letter-spacing: -0.02em">
+<img src="assets/brewhunt-flask-128.png" alt="" width="46" height="46" style="display: block; flex: none; width: 46px; height: 46px; margin: -8px -2px -6px -6px">
+<span style="font-size: 20px; letter-spacing: -0.035em; margin-top: 3px">Brewhunt</span>
+</a>
+<span>The app store for everything you can install with Homebrew. Curated by people, ranked by real installs.</span>
+</div>
+<nav aria-label="Footer" style="flex: 999 1 560px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 32px 24px">
+<sc-for list="{{ footerCols }}" as="col" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px">{{ col.title }}</span>
+<sc-for list="{{ col.links }}" as="l" hint-placeholder-count="5">
+<a href="{{ l.href }}" class="flink" style="display: flex; align-items: center; gap: 8px; min-height: 30px; color: #C3C7D6; text-decoration: none; font-size: 15px">{{ l.label }}<sc-if value="{{ l.soon }}" hint-placeholder-val="{{ false }}"><span style="padding: 1px 8px; border-radius: 999px; background: rgba(255,255,255,0.1); font-size: 12px; color: #A9AEC4">Soon</span></sc-if></a>
+</sc-for>
+</div>
+</sc-for>
+</nav>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px; padding: 24px 0 32px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: #A9AEC4">
+<span style="max-width: 720px">© 2026 Brewhunt. An independent project — not affiliated with the Homebrew project or Apple. App names and icons belong to their developers. Install numbers come from Homebrew's public, opt-out analytics.</span>
+<span style="display: flex; flex-wrap: wrap; gap: 4px 20px"><a href="#" class="flink" style="color: #C3C7D6; text-decoration: none; padding: 10px 0">Privacy</a><a href="#" class="flink" style="color: #C3C7D6; text-decoration: none; padding: 10px 0">Terms</a><a href="#" class="flink" style="color: #C3C7D6; text-decoration: none; padding: 10px 0">Contact</a></span>
+</div>
+
+</div>
+</footer>
+
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheet }}" style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(10,16,40,0.45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px)">
+<div role="dialog" aria-modal="true" aria-labelledby="sheet-title" onClick="{{ stop }}" onKeyDown="{{ sheetKey }}" style="width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 18px; padding: 28px; border-radius: 28px; background: #FFFFFF; box-shadow: 0 40px 80px -30px rgba(8,25,80,0.6); animation: sheetIn 0.25s ease-out both">
+<div style="display: flex; align-items: center; gap: 14px">
+<span style="width: 60px; height: 60px; flex: none; border-radius: 14px; background: {{ sheet.tint }}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 22px; color: {{ sheet.ink }}; font-family: {{ sheet.font }}">{{ sheet.ini }}</span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+<span id="sheet-title" style="font-size: 22px; font-weight: 700; letter-spacing: -0.015em">{{ sheet.name }}</span>
+<span style="font-size: 14px; color: #5E6068">{{ sheet.line }}</span>
+</span>
+<button type="button" aria-label="Close" onClick="{{ closeSheet }}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 600; color: #5E6068">Install with Homebrew</span>
+<code style="padding: 14px 16px; border-radius: 12px; background: #10132A; color: #F2F2F5; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 14px; overflow-x: auto; white-space: nowrap">{{ sheet.cmd }}</code>
+<span style="font-size: 14px; color: #5E6068">Paste it in Terminal. Don't have Homebrew yet? <a href="#setup" onClick="{{ closeSheet }}">Set it up first</a>.</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button type="button" onClick="{{ copyCmd }}" style="flex: 1 1 160px; height: 48px; border: 0; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer">{{ copyLabel }}</button>
+<a href="StorePackage.dc.html" style="flex: 1 1 160px; display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 999px; background: #EDEEF2; color: #1D1D1F; text-decoration: none; font-weight: 600">View app page</a>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":4600}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { period: 'week', paused: false, hover: false, menu: false, sheet: '', copied: false, setupCopied: false, subscribed: false };
+  }
+  renderVals() {
+    const T = {
+      win: ['linear-gradient(160deg, #5AA9FF, #1F5FD6)', '#FFFFFF'], clip: ['linear-gradient(160deg, #FFB347, #F26B1D)', '#FFFFFF'],
+      shot: ['linear-gradient(160deg, #7BE495, #1E9E5A)', '#FFFFFF'], bar: ['linear-gradient(160deg, #C3A6FF, #6B3FD6)', '#FFFFFF'],
+      video: ['linear-gradient(160deg, #FF8FB1, #E0336E)', '#FFFFFF'], prod: ['linear-gradient(160deg, #FFE88A, #F2B705)', '#3A2A00'],
+      util: ['linear-gradient(160deg, #7FE3E0, #159C9A)', '#FFFFFF'], disp: ['linear-gradient(160deg, #B8C2D3, #5B6577)', '#FFFFFF'],
+      notes: ['linear-gradient(160deg, #B79CFF, #7442E0)', '#FFFFFF'], term: ['linear-gradient(160deg, #3A3A40, #0E0E10)', '#FFFFFF']
+    };
+    const mono = "ui-monospace, 'SF Mono', Menlo, monospace";
+    const mk = (key, name, line, cat, k, token, isCli) => ({
+      key, name, line, cat, tint: T[k][0], ink: T[k][1],
+      ini: isCli ? name.slice(0, 2) : name.charAt(0), font: isCli ? mono : 'inherit',
+      cmd: 'brew install ' + (isCli ? '' : '--cask ') + token,
+      get: () => this.setState({ sheet: key, copied: false })
+    });
+    const list = [
+      mk('rectangle', 'Rectangle', 'Snap windows with keyboard shortcuts', 'Windows', 'win', 'rectangle'),
+      mk('maccy', 'Maccy', 'Clipboard history, light and fast', 'Clipboard', 'clip', 'maccy'),
+      mk('shottr', 'Shottr', 'Screenshots with annotation and OCR', 'Screenshots', 'shot', 'shottr'),
+      mk('stats', 'Stats', 'System monitor in your menu bar', 'Menu bar', 'bar', 'stats'),
+      mk('iina', 'IINA', 'Modern video player for macOS', 'Video', 'video', 'iina'),
+      mk('ice', 'Ice', 'Tidy up a crowded menu bar', 'Menu bar', 'bar', 'jordanbaird-ice'),
+      mk('raycast', 'Raycast', 'Launcher and productivity toolkit', 'Productivity', 'prod', 'raycast'),
+      mk('alttab', 'AltTab', 'Windows-style window switcher', 'Windows', 'win', 'alt-tab'),
+      mk('keka', 'Keka', 'Compress and extract archives', 'Utilities', 'util', 'keka'),
+      mk('appcleaner', 'AppCleaner', 'Uninstall apps and their leftovers', 'Utilities', 'util', 'appcleaner'),
+      mk('itsycal', 'Itsycal', 'Tiny calendar in the menu bar', 'Menu bar', 'bar', 'itsycal'),
+      mk('monitorcontrol', 'MonitorControl', 'Brightness for external displays', 'Displays', 'disp', 'monitorcontrol'),
+      mk('kya', 'KeepingYouAwake', 'Keep your Mac from sleeping', 'Utilities', 'util', 'keepingyouawake'),
+      mk('vlc', 'VLC', 'Plays almost any media file', 'Video', 'video', 'vlc'),
+      mk('obsidian', 'Obsidian', 'Notes in local Markdown files', 'Notes', 'notes', 'obsidian'),
+      mk('ghostty', 'Ghostty', 'Fast, native terminal emulator', 'Developer', 'term', 'ghostty'),
+      mk('fzf', 'fzf', 'Fuzzy-find anything', 'Terminal', 'term', 'fzf', true),
+      mk('ripgrep', 'ripgrep', 'Search file contents, fast', 'Terminal', 'term', 'ripgrep', true),
+      mk('bat', 'bat', 'cat with syntax highlighting', 'Terminal', 'term', 'bat', true),
+      mk('eza', 'eza', 'A modern replacement for ls', 'Terminal', 'term', 'eza', true),
+      mk('zoxide', 'zoxide', 'A smarter cd', 'Terminal', 'term', 'zoxide', true),
+      mk('btop', 'btop', 'Resource monitor in the terminal', 'Terminal', 'term', 'btop', true),
+      mk('lazygit', 'lazygit', 'Simple terminal UI for git', 'Terminal', 'term', 'lazygit', true),
+      mk('ytdlp', 'yt-dlp', 'Download audio and video', 'Terminal', 'term', 'yt-dlp', true)
+    ];
+    const apps = {};
+    list.forEach((a) => { apps[a.key] = a; });
+    const freshDefs = [
+      ['n1', '[Screenshot app]', 'shot', 'S', true, 'today'],
+      ['n2', '[Menu bar utility]', 'bar', 'M', false, 'today'],
+      ['n3', '[CLI tool]', 'term', 'cl', true, 'yesterday'],
+      ['n4', '[Video app]', 'video', 'V', true, 'Monday'],
+      ['n5', '[Window tool]', 'win', 'W', false, 'Sunday'],
+      ['n6', '[Notes app]', 'notes', 'N', true, 'Saturday']
+    ];
+    const fresh = freshDefs.map((d) => {
+      const isCli = d[2] === 'term';
+      const a = mk(d[0], d[1], '[What it does, in one line]', '', d[2], isCli ? '[formula-name]' : '[cask-name]', isCli);
+      return { ...a, ini: d[3], official: d[4], community: !d[4], when: d[5] };
+    });
+    fresh.forEach((a) => { apps[a.key] = a; });
+    const s = this.state;
+    const light = (a) => ({ ...a, cardBg: '#FFFFFF', cardInk: '#1D1D1F' });
+    const dark = (a) => ({ ...a, cardBg: '#1A1C24', cardInk: '#F2F2F5', tint: 'linear-gradient(160deg, #3A3D48, #22242C)' });
+    const r1 = ['rectangle', 'maccy', 'shottr', 'stats', 'iina', 'ice', 'raycast', 'alttab'].map((k) => light(apps[k]));
+    const r2 = ['keka', 'appcleaner', 'itsycal', 'monitorcontrol', 'kya', 'vlc', 'obsidian', 'ghostty'].map((k) => light(apps[k]));
+    const r3 = ['fzf', 'ripgrep', 'bat', 'eza', 'zoxide', 'btop', 'lazygit', 'ytdlp'].map((k) => dark(apps[k]));
+    const rows = [
+      { items: r1.concat(r1), anim: 'marqL 95s linear infinite' },
+      { items: r2.concat(r2), anim: 'marqR 110s linear infinite' },
+      { items: r3.concat(r3), anim: 'marqL 90s linear infinite' }
+    ];
+    const periods = [{ id: 'week', label: 'This week' }, { id: 'month', label: 'This month' }]
+      .map((p) => ({ ...p, on: p.id === s.period, off: p.id !== s.period, pick: () => this.setState({ period: p.id }) }));
+    const macOrder = s.period === 'week' ? ['ice', 'rectangle', 'shottr', 'iina', 'maccy'] : ['rectangle', 'iina', 'raycast', 'maccy', 'stats'];
+    const cliOrder = s.period === 'week' ? ['ghostty', 'lazygit', 'zoxide', 'eza', 'btop'] : ['fzf', 'ripgrep', 'bat', 'ytdlp', 'zoxide'];
+    const charts = [
+      { title: 'Mac apps', items: macOrder.map((k, i) => ({ ...apps[k], rank: i + 1, stat: '[n]k installs' })) },
+      { title: 'Command-line tools', items: cliOrder.map((k, i) => ({ ...apps[k], rank: i + 1, stat: '[n]k installs' })) }
+    ];
+    const picks = [
+      { ...apps.rectangle, blurb: 'Snap windows to halves, thirds and corners with a keystroke. The first thing many people install on a new Mac.' },
+      { ...apps.ice, blurb: "Hide the icons you don't need and keep the menu bar calm — even on a MacBook with a notch." },
+      { ...apps.iina, blurb: 'A video player that feels like it belongs on a Mac, and opens just about any file you throw at it.' }
+    ];
+    const st = (ks) => ks.map((k) => ({ tint: apps[k].tint, ink: apps[k].ink, ini: apps[k].ini, font: apps[k].font }));
+    const cat = (title, ks) => ({ title, stack: st(ks), examples: ks.map((k) => apps[k].name).join(', ') });
+    const cats = [
+      cat('Windows & desktop', ['rectangle', 'alttab', 'monitorcontrol']),
+      cat('Menu bar', ['ice', 'stats', 'itsycal']),
+      cat('Screenshots & recording', ['shottr']),
+      cat('Video & audio', ['iina', 'vlc', 'ytdlp']),
+      cat('Productivity', ['raycast', 'obsidian', 'maccy']),
+      cat('Utilities', ['keka', 'appcleaner', 'kya']),
+      cat('Developer', ['ghostty', 'lazygit', 'fzf']),
+      cat('Terminal tools', ['ripgrep', 'bat', 'eza'])
+    ];
+    const clis = ['fzf', 'ripgrep', 'bat', 'eza', 'zoxide', 'btop'].map((k) => apps[k]);
+    const sheet = s.sheet ? apps[s.sheet] : list[0];
+    return {
+      rows, periods, charts, picks, cats, clis, fresh,
+      sheetKey: (e) => { if (e.key === 'Escape') this.setState({ sheet: '' }); },
+      popular: ['window manager', 'clipboard', 'menu bar', 'video player', 'terminal'],
+      paused: s.paused, playing: !s.paused, playState: (s.paused || s.hover) ? 'paused' : 'running',
+      wallEnter: () => { if (!this.state.hover) this.setState({ hover: true }); },
+      wallLeave: () => { if (this.state.hover) this.setState({ hover: false }); },
+      togglePause: () => this.setState({ paused: !this.state.paused }),
+      menuOpen: s.menu, toggleMenu: () => this.setState({ menu: !this.state.menu }),
+      sheetOpen: !!s.sheet, sheet,
+      closeSheet: () => this.setState({ sheet: '' }),
+      stop: (e) => e.stopPropagation(),
+      copyLabel: s.copied ? 'Copied ✓' : 'Copy command',
+      copyCmd: () => this.setState({ copied: true }),
+      subscribeLabel: s.subscribed ? "You're in ✓" : 'Subscribe',
+      subscribe: () => this.setState({ subscribed: true }),
+      footerCols: [
+        { title: 'Discover', links: [
+          { label: 'Top charts', href: 'StoreCharts.dc.html' }, { label: 'New this week', href: 'StoreNew.dc.html' },
+          { label: "Editor's picks", href: 'StoreHome.dc.html' }, { label: 'Collections', href: 'StoreBrowse.dc.html' },
+          { label: 'Command-line tools', href: 'StoreCharts.dc.html' }] },
+        { title: 'Categories', links: [
+          { label: 'Windows & desktop', href: 'StoreCategory.dc.html' }, { label: 'Menu bar', href: 'StoreCategory.dc.html' },
+          { label: 'Video & audio', href: 'StoreCategory.dc.html' }, { label: 'Productivity', href: 'StoreCategory.dc.html' },
+          { label: 'All categories', href: 'StoreCategory.dc.html' }] },
+        { title: 'Developers', links: [
+          { label: 'Claim your app', href: '#devs' }, { label: 'List your tap', href: '#devs' },
+          { label: 'Install stats', href: '#devs', soon: true }, { label: 'Promote your app', href: '#devs', soon: true }] },
+        { title: 'Help', links: [
+          { label: 'Setup guide', href: '#setup' }, { label: 'How rankings work', href: '#' },
+          { label: 'Is it safe?', href: '#' }, { label: 'RSS feeds', href: 'StoreNew.dc.html' }, { label: 'About', href: '#' }] }
+      ].map((c) => ({ ...c, links: c.links.map((l) => ({ soon: false, ...l })) })),
+      setupLabel: s.setupCopied ? 'Copied ✓' : 'Copy',
+      copySetup: () => this.setState({ setupCopied: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

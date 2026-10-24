@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="beer" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFC21F"/>
+      <stop offset="1" stop-color="#F29A00"/>
+    </linearGradient>
+    <clipPath id="inside"><circle cx="14" cy="18.6" r="9.8"/></clipPath>
+  </defs>
+  <!-- outline pass -->
+  <g fill="#6F87B2">
+    <circle cx="14" cy="18.6" r="12.4"/>
+    <g transform="rotate(45 14 18.6)">
+      <rect x="9.9" y="1.6" width="8.2" height="12" rx="1.6"/>
+      <rect x="8.3" y="0.4" width="11.4" height="4.6" rx="2.3"/>
+    </g>
+  </g>
+  <!-- glass fill pass -->
+  <g fill="#DCE6F4">
+    <circle cx="14" cy="18.6" r="11"/>
+    <g transform="rotate(45 14 18.6)">
+      <rect x="11.3" y="3" width="5.4" height="11" rx="0.8"/>
+      <rect x="9.7" y="1.8" width="8.6" height="1.8" rx="0.9"/>
+    </g>
+  </g>
+  <!-- beer + foam -->
+  <g clip-path="url(#inside)">
+    <rect x="2" y="16.4" width="24" height="14" fill="url(#beer)"/>
+    <path d="M3 17.6 C5 14.2 7.6 14.4 9 15.4 C10.6 13.2 13.8 13.2 15.2 15 C16.8 13.4 19.8 13.8 20.8 15.6 C22.4 14.8 24.6 15.6 25 17.4 L25 18.6 C21 19.6 18 17.8 14 18.6 C10 19.4 7 19.4 3 18.6 Z" fill="#FFFFFF"/>
+    <circle cx="11" cy="23" r="1.5" fill="#FFE07A"/>
+  </g>
+  <!-- glass highlight -->
+  <path d="M6.2 15.2 A9 9 0 0 1 10.4 10.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+</svg>
