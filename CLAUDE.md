@@ -31,13 +31,17 @@ When the design and these docs disagree, ask. Placeholder values in the designs 
 - **Not affiliated** with Homebrew or Apple. Keep the footer disclaimer. Don't use Homebrew's logo.
 - No real app icons or screenshots until a developer claims a listing. Use the initial-letter gradient tiles from the designs.
 
-## Stack (default, open to change)
+## Stack
 
-- Next.js (App Router) + TypeScript, statically generated app pages, rebuilt daily from the data pipeline.
-- Styling: CSS variables for the tokens in `docs/DESIGN-SYSTEM.md` (Tailwind is fine if mapped to the same tokens).
-- Fonts: Geist (headings, wordmark) via `next/font` or self-hosted; system font stack for body.
-- Search: client-side index (e.g. FlexSearch/MiniSearch) built at build time; move to a server index only if it gets too big.
-- Hosting: Vercel or Cloudflare Pages. Daily data refresh via a scheduled job (GitHub Actions).
+The site is static: about 15k app pages plus lists, rebuilt once a day from Homebrew's data. Keep it that way. It must be hostable as plain files anywhere (Cloudflare Pages, Netlify, GitHub Pages, or nginx on a VPS), with no Node server in production.
+
+- **Astro + TypeScript**, `output: 'static'`. One page per package via `getStaticPaths()` from the data pipeline's output.
+- **Interactivity as small islands or plain scripts**, only where the design needs it: install sheet, mobile menu and header search, search filters and sort, tabs and segmented controls, chart hover, marquee pause. Prefer vanilla TS or tiny components (Preact/Svelte islands are fine). No client JS on pages that don't need it.
+- **Styling:** CSS variables for the tokens in `docs/DESIGN-SYSTEM.md`, scoped Astro component styles. Tailwind is fine if mapped to the same tokens.
+- **Fonts:** Geist self-hosted (e.g. `@fontsource/geist`) for headings and the wordmark; system font stack for body.
+- **Search:** Pagefind, which indexes the built HTML at build time, so search needs no server. Filters map to Pagefind filters (type, source, category).
+- **Hosting:** Cloudflare Pages by default (free, static, fast). A daily GitHub Actions job fetches data, builds and deploys.
+- **Later** (developer claims, accounts): add a small separate API or Astro server endpoints only then. Don't add a server for v1.
 
 ## Working conventions
 

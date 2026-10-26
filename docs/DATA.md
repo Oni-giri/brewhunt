@@ -30,7 +30,7 @@ A scheduled job (GitHub Actions, daily):
 5. **Installs over time chart:** comes from your own accumulated daily snapshots (Homebrew only publishes rolling windows). Start collecting from day one; until there's history, show only the stat cards.
 6. Enrich community packages for the top N taps (metadata, descriptions, homepage).
 7. Join with the curated `content/` file (categories, picks, collections).
-8. Rebuild the static site (or revalidate the affected pages).
+8. Write the joined data as JSON files the Astro build reads, rebuild the static site (Pagefind indexes it as the last build step) and deploy.
 
 ## Data model (sketch)
 

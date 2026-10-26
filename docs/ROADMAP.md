@@ -1,8 +1,9 @@
 # Roadmap
 
 ## M0 · Foundations
-- [ ] Scaffold Next.js + TypeScript, lint/format, CI.
-- [ ] Design tokens as CSS variables (`docs/DESIGN-SYSTEM.md`), Geist font, base layout, header pill + footer + mobile menu.
+- [ ] Scaffold Astro (static output) + TypeScript, lint/format, CI that builds the site.
+- [ ] Design tokens as CSS variables (`docs/DESIGN-SYSTEM.md`), self-hosted Geist, base layout, header pill + footer + mobile menu.
+- [ ] Deploy the empty shell to Cloudflare Pages so every later change ships for real.
 - [ ] Brand assets and `<head>` tags (`design/README.md`).
 
 ## M1 · Data pipeline
@@ -16,7 +17,7 @@
 - [ ] App page `/app/[token]`, statically generated for every package, with SEO metadata + structured data.
 - [ ] Install sheet (Get) component with copy-to-clipboard.
 - [ ] Discover home `/discover`.
-- [ ] Search `/search` with client-side index, filters, sort, mobile filter toggle.
+- [ ] Search `/search` with Pagefind (filters for type, source, category), sort, mobile filter toggle.
 
 ## M3 · Lists
 - [ ] Top charts `/charts`.
@@ -30,5 +31,28 @@
 - [ ] Accessibility pass (keyboard, focus, contrast, 390px layouts), performance pass.
 - [ ] Deploy to the production domain.
 
-## Later
-- Developer claim flow, uploaded icons/screenshots, promotion, newsletter backend, user accounts.
+## Beyond v1: the long-term roadmap
+
+### v1.x · Richer discovery
+- Weekly "New this week" newsletter and RSS feeds per category.
+- More editorial: collections ("Set up a new Mac", "Menu bar essentials"), staff picks with short write-ups.
+- "Alternatives to …" pages (an SEO goldmine: "rectangle alternatives mac").
+- Compare two apps side by side.
+- Real app icons pulled from cask metadata or app bundles where licensing allows.
+
+### v2 · Brewfile builder
+- Pick apps while browsing, then export a ready-to-run `Brewfile` (or a one-line `brew install` for all of them).
+- Shareable setups: "My Mac setup" pages people can publish and share ("dotfiles for apps").
+- Import an existing Brewfile to see your setup and get suggestions.
+
+### v3 · For developers
+- Claim a listing (verify via GitHub repo ownership), add icon, screenshots, description, links.
+- Verified badge and a developer dashboard with install trends.
+- Help get a tap or cask into Homebrew; launch announcements in "New this week".
+- Promoted placements, clearly labelled. This is the business model.
+
+### v4 · Ecosystem
+- Accounts with favourites, follows, and notifications when an app updates.
+- Public API and embeddable install badges ("Install with Brewhunt") for READMEs.
+- Raycast extension / CLI companion to search Brewhunt from the terminal.
+- Beyond macOS: Linuxbrew-friendly listings.
