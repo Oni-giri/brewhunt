@@ -1,0 +1,185 @@
+---
+import Wordmark from './Wordmark.astro';
+
+// Most of these routes arrive in later milestones (docs/ROADMAP.md). Links with no planned
+// route yet (privacy, terms, safety) use the paths they will get.
+const columns = [
+  {
+    title: 'Discover',
+    links: [
+      { label: 'Top charts', href: '/charts' },
+      { label: 'New this week', href: '/new' },
+      { label: "Editor's picks", href: '/discover#editors-pick' },
+      { label: 'Collections', href: '/discover#collections' },
+    ],
+  },
+  {
+    title: 'Categories',
+    links: [
+      { label: 'Windows & desktop', href: '/category/windows-desktop' },
+      { label: 'Menu bar', href: '/category/menu-bar' },
+      { label: 'Terminal tools', href: '/category/terminal-tools' },
+      { label: 'All categories', href: '/discover#categories' },
+    ],
+  },
+  {
+    title: 'Developers',
+    links: [
+      { label: 'Claim your app', href: '/#developers' },
+      { label: 'List your tap', href: '/#developers' },
+    ],
+  },
+  {
+    title: 'Help',
+    links: [
+      { label: 'Setup guide', href: '/#setup' },
+      { label: 'How rankings work', href: '/charts#how-rankings-work' },
+      { label: 'Is it safe?', href: '/safety' },
+      { label: 'RSS feeds', href: '/new' },
+    ],
+  },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="inner">
+    <div class="top">
+      <div class="brand">
+        <Wordmark />
+        <span>The app store for everything you can install with Homebrew.</span>
+      </div>
+      <nav class="columns" aria-label="Footer">
+        {columns.map((column) => (
+          <div class="column">
+            <span class="column-title">{column.title}</span>
+            {column.links.map((link) => (
+              <a href={link.href} class="flink">
+                {link.label}
+              </a>
+            ))}
+          </div>
+        ))}
+      </nav>
+    </div>
+    <div class="legal">
+      <span class="disclaimer">
+        © {year} Brewhunt. Not affiliated with the Homebrew project or Apple. App names and icons
+        belong to their developers.
+      </span>
+      <span class="legal-links">
+        <a href="/privacy" class="flink">
+          Privacy
+        </a>
+        <a href="/terms" class="flink">
+          Terms
+        </a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: 64px;
+    background: var(--navy-glow), var(--navy);
+    color: var(--navy-text);
+  }
+
+  .inner {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 48px var(--gutter) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px 56px;
+  }
+
+  .brand {
+    flex: 1 1 260px;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    color: var(--surface);
+  }
+
+  .brand > span {
+    color: var(--navy-text);
+  }
+
+  .columns {
+    flex: 999 1 560px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+    gap: 28px 24px;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .column-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--surface);
+    margin-bottom: 4px;
+  }
+
+  .flink {
+    color: var(--navy-text);
+    text-decoration: none;
+  }
+
+  .flink:hover {
+    color: var(--surface);
+  }
+
+  .column .flink {
+    display: flex;
+    align-items: center;
+    min-height: 30px;
+    font-size: 15px;
+  }
+
+  .legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 32px;
+    padding: 20px 0 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 13px;
+    color: var(--navy-meta);
+  }
+
+  .disclaimer {
+    max-width: 720px;
+  }
+
+  .legal-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  @media (max-width: 760px) {
+    .flink,
+    .column .flink {
+      min-height: var(--touch);
+    }
+
+    .legal-links .flink {
+      display: flex;
+      align-items: center;
+    }
+  }
+</style>

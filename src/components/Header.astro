@@ -1,0 +1,305 @@
+---
+import Wordmark from './Wordmark.astro';
+import { isCurrent, mainNav } from './nav';
+
+const { pathname } = Astro.url;
+---
+
+<div class="header-wrap">
+  <header class="header" data-header>
+    <Wordmark />
+    <nav class="nav-links" aria-label="Main">
+      {mainNav.map((link) => (
+        <a href={link.href} aria-current={isCurrent(link, pathname) ? 'page' : undefined}>
+          {link.label}
+        </a>
+      ))}
+    </nav>
+    <span class="actions">
+      <button
+        type="button"
+        class="icon-btn search-btn"
+        aria-label="Search"
+        aria-expanded="false"
+        aria-controls="header-search"
+        data-search-toggle
+      >
+        <svg
+          width="17"
+          height="17"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-4-4"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="icon-btn menu-btn"
+        aria-label="Menu"
+        aria-expanded="false"
+        aria-controls="header-menu"
+        data-menu-toggle
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </span>
+
+    <nav id="header-menu" class="menu" aria-label="Main (mobile)" hidden data-menu>
+      {mainNav.map((link) => (
+        <a href={link.href} aria-current={isCurrent(link, pathname) ? 'page' : undefined}>
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <form id="header-search" class="search" action="/search" role="search" hidden data-search>
+      <svg
+        width="17"
+        height="17"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="var(--text-meta)"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="M20 20l-4-4"></path>
+      </svg>
+      <label for="header-q" class="visually-hidden">
+        Search apps
+      </label>
+      <input id="header-q" name="q" type="search" placeholder="Search apps and tools" />
+      <button type="submit">Search</button>
+    </form>
+  </header>
+</div>
+
+<script>
+  // Menu and search dropdowns: one open at a time, focus moves in on open,
+  // Escape or a click outside closes and returns focus to the toggle.
+  const header = document.querySelector<HTMLElement>('[data-header]');
+
+  if (header) {
+    const panels = {
+      menu: {
+        toggle: header.querySelector<HTMLButtonElement>('[data-menu-toggle]')!,
+        panel: header.querySelector<HTMLElement>('[data-menu]')!,
+        focusTarget: () => header.querySelector<HTMLElement>('[data-menu] a'),
+      },
+      search: {
+        toggle: header.querySelector<HTMLButtonElement>('[data-search-toggle]')!,
+        panel: header.querySelector<HTMLElement>('[data-search]')!,
+        focusTarget: () => header.querySelector<HTMLElement>('[data-search] input'),
+      },
+    };
+    type Name = keyof typeof panels;
+
+    const isOpen = (name: Name) => !panels[name].panel.hidden;
+
+    const setOpen = (name: Name, open: boolean) => {
+      panels[name].panel.hidden = !open;
+      panels[name].toggle.setAttribute('aria-expanded', String(open));
+    };
+
+    const close = (name: Name, restoreFocus: boolean) => {
+      if (!isOpen(name)) return;
+      setOpen(name, false);
+      if (restoreFocus) panels[name].toggle.focus();
+    };
+
+    for (const name of Object.keys(panels) as Name[]) {
+      panels[name].toggle.addEventListener('click', () => {
+        const open = !isOpen(name);
+        for (const other of Object.keys(panels) as Name[]) setOpen(other, false);
+        setOpen(name, open);
+        if (open) panels[name].focusTarget()?.focus();
+      });
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      for (const name of Object.keys(panels) as Name[]) {
+        if (isOpen(name) && header.contains(document.activeElement)) close(name, true);
+        else close(name, false);
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      if (header.contains(event.target as Node)) return;
+      for (const name of Object.keys(panels) as Name[]) close(name, false);
+    });
+  }
+</script>
+
+<style>
+  .header-wrap {
+    position: relative;
+    z-index: 5;
+    padding: 20px var(--gutter) 0;
+  }
+
+  .header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    /* The design sizes the pill's content box: 1112px + padding + border = 1140px outer. */
+    box-sizing: content-box;
+    max-width: var(--header-max);
+    margin: 0 auto;
+    padding: 8px 8px 8px 18px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-header);
+    color: var(--ink);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 4px 22px;
+    font-size: 15px;
+  }
+
+  .nav-links a,
+  .menu a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .nav-links a {
+    padding: 12px 0;
+  }
+
+  .nav-links a[aria-current='page'],
+  .menu a[aria-current='page'] {
+    font-weight: 700;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--touch);
+    height: var(--touch);
+    border: 0;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+  }
+
+  .search-btn {
+    background: var(--chip);
+    color: var(--ink);
+  }
+
+  .menu-btn {
+    display: none;
+    background: var(--ink);
+    color: var(--surface);
+  }
+
+  .menu,
+  .search {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-dropdown);
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    border-radius: var(--radius-card);
+  }
+
+  .menu a {
+    padding: 12px 14px;
+  }
+
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 6px 20px;
+    border-radius: var(--radius-pill);
+  }
+
+  .menu[hidden],
+  .search[hidden] {
+    display: none;
+  }
+
+  .search input {
+    flex: 1;
+    min-width: 0;
+    height: var(--touch);
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 17px;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .search:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .search button {
+    height: var(--touch);
+    padding: 0 20px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--surface);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  @media (max-width: 760px) {
+    .nav-links {
+      display: none;
+    }
+
+    .menu-btn {
+      display: flex;
+    }
+  }
+
+  @media (min-width: 761px) {
+    .menu {
+      display: none;
+    }
+  }
+</style>

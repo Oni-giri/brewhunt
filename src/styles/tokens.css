@@ -1,0 +1,65 @@
+/* Design tokens from docs/DESIGN-SYSTEM.md. Breakpoints can't be variables in media queries:
+   use 760px (nav collapses, filters fold) and 480px (secondary columns hide) literally. */
+:root {
+  /* Colour */
+  --bg: #f4f7fb;
+  --surface: #ffffff;
+  --border: #e6e8ee;
+  --divider: #f0f0f3;
+  --ink: #1d1d1f;
+  --text-body: #3a3a3c;
+  --text-secondary: #5e6068;
+  --text-meta: #6e6e73;
+  --link: #1f5fd6;
+  --link-hover: #16449b;
+  --accent: #2f6bff;
+  --chip: #edeef2;
+  --track: #e8e8ed;
+  --navy: #10132a;
+  --navy-text: #c3c7d6;
+  --navy-meta: #a9aec4; /* not in the doc; footer disclaimer row */
+  --navy-glow: radial-gradient(
+    ellipse 50% 60% at 85% 0%,
+    rgba(47, 107, 255, 0.28),
+    rgba(47, 107, 255, 0) 70%
+  ); /* not in the doc; footer top-right glow */
+  --filter-chip-bg: #e8f0ff;
+  --filter-chip-text: #16449b;
+  --trend-up: #1e7a46;
+  --sky: linear-gradient(
+    180deg,
+    #1a3fbf 0%,
+    #2459d8 30%,
+    #2f6be0 62%,
+    #7db4f2 78%,
+    #cfe5fa 92%,
+    #f4f7fb 100%
+  );
+
+  /* Type */
+  --font-heading: 'Geist', -apple-system, system-ui, sans-serif;
+  --font-body:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Layout */
+  --content-max: 1160px;
+  --header-max: 1112px;
+  --landing-header-max: 1080px;
+  --gutter: 24px;
+  --touch: 44px;
+
+  /* Radius */
+  --radius-pill: 999px;
+  --radius-panel: 28px;
+  --radius-card: 20px;
+  --radius-stage: 16px;
+  --radius-code: 12px;
+
+  /* Shadow */
+  --shadow-header: 0 1px 0 rgba(0, 0, 0, 0.04), 0 10px 30px -18px rgba(8, 25, 80, 0.35);
+  --shadow-float: 0 24px 50px -28px rgba(8, 25, 80, 0.6);
+  --shadow-lift: 0 24px 40px -24px rgba(8, 25, 80, 0.4);
+  --shadow-dropdown: 0 20px 40px -20px rgba(8, 25, 80, 0.5);
+  --shadow-search: 0 20px 40px -24px rgba(8, 25, 80, 0.6);
+}
