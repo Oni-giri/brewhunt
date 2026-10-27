@@ -142,6 +142,15 @@ const { pathname } = Astro.url;
       }
     });
 
+    // The menu only exists under 760px; close it if the viewport grows past that.
+    const desktop = window.matchMedia('(min-width: 761px)');
+    desktop.addEventListener('change', () => {
+      if (!desktop.matches || !isOpen('menu')) return;
+      const hadFocus = panels.menu.panel.contains(document.activeElement);
+      setOpen('menu', false);
+      if (hadFocus) header.querySelector<HTMLElement>('.nav-links a')?.focus();
+    });
+
     document.addEventListener('click', (event) => {
       if (header.contains(event.target as Node)) return;
       for (const name of Object.keys(panels) as Name[]) close(name, false);

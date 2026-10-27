@@ -18,7 +18,8 @@ export const mainNav: NavLink[] = [
 
 /** Page path without the `.html` (build.format: 'file') or trailing slash, e.g. `/discover`. */
 export function cleanPath(pathname: string): string {
-  return pathname.replace(/\.html$/, '').replace(/\/(index)?$/, '') || '/';
+  const path = pathname.replace(/\.html$/, '').replace(/\/+$/, '');
+  return path === '' || path === '/index' ? '/' : path;
 }
 
 export function isCurrent(link: NavLink, pathname: string): boolean {

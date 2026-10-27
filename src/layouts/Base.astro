@@ -7,10 +7,13 @@ import { cleanPath } from '../components/nav';
 interface Props {
   title: string;
   description?: string;
+  /** For pages that shouldn't be indexed or have a canonical URL, like the 404. */
+  noindex?: boolean;
 }
 
 const {
   title,
+  noindex = false,
   description = 'The app store for everything you can install with Homebrew: discover Mac apps and command-line tools, see what’s new and trending, and grab the one-line install command.',
 } = Astro.props;
 
@@ -26,7 +29,7 @@ const fullTitle = title === 'Brewhunt' ? title : `${title} · Brewhunt`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta name="theme-color" content="#F4F7FB" />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
