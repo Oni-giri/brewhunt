@@ -11,6 +11,11 @@
 
 body {
   margin: 0;
+  /* Keep the footer at the bottom of short pages. */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-body);
@@ -25,6 +30,10 @@ a {
 
 a:hover {
   color: var(--link-hover);
+}
+
+main {
+  flex: 1;
 }
 
 :focus-visible {
