@@ -25,6 +25,19 @@ const { href = '/' } = Astro.props;
     letter-spacing: -0.02em;
   }
 
+  /* The flask's negative margins leave the link 33px tall; widen the hit area to 44px
+     without changing the layout. */
+  .wordmark {
+    position: relative;
+  }
+
+  .wordmark::after {
+    content: '';
+    position: absolute;
+    inset: -6px 0;
+    min-height: var(--touch);
+  }
+
   .wordmark:hover {
     color: inherit;
   }
