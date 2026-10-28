@@ -12,8 +12,18 @@ const execFileAsync = promisify(execFile);
 // Paths that can hold packages in any tap (see tap-files.ts for the exact layout rules).
 export const PACKAGE_PATHSPECS = ['Formula', 'HomebrewFormula', 'Casks', ':(glob)*.rb'];
 
+// The environment minus any injected git config (GIT_CONFIG_COUNT/KEY_n/VALUE_n, GIT_CONFIG_PARAMETERS).
+const baseEnv = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_CONFIG')),
+);
+
 const GIT_ENV = {
-  ...process.env,
+  ...baseEnv,
+  // Ignore the machine's git config: a tap's .gitattributes could otherwise select a filter
+  // configured there (git-lfs usually is) and make checkout run it.
+  GIT_CONFIG_GLOBAL: '/dev/null',
+  GIT_CONFIG_NOSYSTEM: '1',
+  GIT_LFS_SKIP_SMUDGE: '1',
   // Fail instead of prompting for credentials when a repository is missing or private.
   GIT_TERMINAL_PROMPT: '0',
   GIT_ASKPASS: 'true',
@@ -32,6 +42,12 @@ const GIT_SAFE = [
   'credential.helper=',
   '-c',
   'core.hooksPath=/dev/null',
+  '-c',
+  'filter.lfs.process=',
+  '-c',
+  'filter.lfs.smudge=',
+  '-c',
+  'filter.lfs.required=false',
 ];
 
 export async function git(args: string[], cwd?: string, timeoutMs = 600_000): Promise<string> {
@@ -56,7 +72,7 @@ export interface CloneOptions {
 
 /** Clones without file contents (fetched lazily for checkout). Replaces `dir` if it exists. */
 export async function cloneRepo({ url, dir, since, checkout, timeoutMs }: CloneOptions) {
-  const base = ['clone', '--quiet', '--filter=blob:none', '--no-checkout', '--single-branch'];
+  const base = ['clone', '--quiet', '--filter=blob:none', '--no-checkout', '--single-branch', '--no-tags'];
   await rm(dir, { recursive: true, force: true });
   try {
     await git([...base, ...(since ? [`--shallow-since=${since}`] : ['--depth=1']), url, dir], undefined, timeoutMs);
@@ -203,7 +219,7 @@ export async function readHistory(dir: string, pathspecs = PACKAGE_PATHSPECS): P
       dir,
     ),
     git(
-      ['log', '--format=@%H%x09%s', '--name-only', '--no-renames', '--diff-merges=off', ...range, '--', ...pathspecs],
+      ['log', '--format=@%H%x09%s', '--name-only', '--no-renames', '--diff-merges=first-parent', ...range, '--', ...pathspecs],
       dir,
     ),
   ]);
@@ -237,17 +253,29 @@ const tokenOf = (path: string) => path.slice(path.lastIndexOf('/') + 1).replace(
 /**
  * The date a package was added on the default branch, or null if it was added before the
  * window. A move (same name, new path) or a rename (an old name deleted in the same commit)
- * isn't an addition.
+ * isn't an addition: follow it back to the file it replaced.
  */
-export function addedDate(history: RepoHistory, path: string, oldNames: string[] = []): string | null {
+export function addedDate(
+  history: RepoHistory,
+  path: string,
+  oldNames: string[] = [],
+  seen = new Set<string>(),
+): string | null {
+  if (seen.has(path)) return null;
+  seen.add(path);
   const changes = history.mainline.get(path) ?? [];
   // Newest first: the latest addition counts if the file was ever deleted and re-added.
   const added = changes.find((c) => c.status === 'A');
   if (!added) return null;
   const sameNames = new Set([tokenOf(path), ...oldNames]);
-  const deleted = history.deletedBy.get(added.hash) ?? [];
-  if (deleted.some((p) => sameNames.has(tokenOf(p)))) return null;
-  return added.date;
+  const previousPaths = (history.deletedBy.get(added.hash) ?? []).filter((p) => sameNames.has(tokenOf(p)));
+  if (previousPaths.length === 0) return added.date;
+  // A move or a rename: the package is as old as the file it replaced.
+  for (const previous of previousPaths) {
+    const date = addedDate(history, previous, oldNames, seen);
+    if (date) return date;
+  }
+  return null;
 }
 
 /**
@@ -259,9 +287,13 @@ export function versionSpellings(version: string): string[] {
   return comma > 0 ? [version, version.slice(0, comma)] : [version];
 }
 
+// "wget: update 1.25.0 bottle." rebuilds an existing version (e.g. for a new macOS); it isn't
+// when that version arrived.
+const BOTTLE_UPDATE = /:\s*update\s+\S+\s+bottle/i;
+
 /** Date the given version first landed, from commit subjects that name it. */
 export function versionDate(history: RepoHistory, path: string, version: string): string | null {
-  const commits = history.subjects.get(path) ?? [];
+  const commits = (history.subjects.get(path) ?? []).filter((c) => !BOTTLE_UPDATE.test(c.subject));
   for (const spelling of versionSpellings(version)) {
     const pattern = versionPattern(spelling);
     let earliest: string | null = null;

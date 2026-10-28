@@ -141,8 +141,9 @@ describe('readHistory on a real repository', () => {
     const history = await readHistory(dir, ['Formula']);
     expect(addedDate(history, 'Formula/a/alpha.rb')).toBe('2026-01-01');
     expect(addedDate(history, 'Formula/e/epsilon.rb')).toBe('2026-01-20');
-    expect(addedDate(history, 'Formula/g/gamma.rb', ['beta'])).toBeNull();
-    expect(addedDate(history, 'Formula/d/delta.rb')).toBeNull();
+    // A rename or a move is as old as the file it replaced.
+    expect(addedDate(history, 'Formula/g/gamma.rb', ['beta'])).toBe('2026-01-01');
+    expect(addedDate(history, 'Formula/d/delta.rb')).toBe('2026-01-01');
   });
 
   it('dates a version by when its commit landed on main', async () => {

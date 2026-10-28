@@ -310,7 +310,7 @@ describe('resolveDates', () => {
 
   it('dates a new package and its version from git on the first run', () => {
     const h = history({ a: '2026-10-01 foo 1.0 (new formula)', b: '2026-10-15 foo 2.0' }, '2026-10-01');
-    expect(resolveDates(draft(h), undefined, undefined, true, '2026-10-28')).toEqual({
+    expect(resolveDates(draft(h), undefined, undefined, true)).toEqual({
       firstSeen: '2026-10-01',
       updatedAt: '2026-10-15',
       updatedKind: 'version',
@@ -320,7 +320,7 @@ describe('resolveDates', () => {
 
   it("leaves dates unknown on the first run when they're older than the window", () => {
     const h = history({ a: '2026-10-20 foo: style' }, null);
-    expect(resolveDates(draft(h), undefined, undefined, true, '2026-10-28')).toEqual({
+    expect(resolveDates(draft(h), undefined, undefined, true)).toEqual({
       firstSeen: null,
       updatedAt: null,
       updatedKind: null,
@@ -332,13 +332,13 @@ describe('resolveDates', () => {
     const previous: PackageDates = { firstSeen: null, updatedAt: '2026-03-01', updatedKind: 'version', version: '2.0' };
     // A rebuild commit mentions 2.0 inside today's window; the version date must not move.
     const h = history({ a: '2026-10-20 foo: update 2.0 bottle.' }, null);
-    expect(resolveDates(draft(h), previous, undefined, false, '2026-10-28')).toEqual(previous);
+    expect(resolveDates(draft(h), previous, undefined, false)).toEqual(previous);
   });
 
   it('falls back to the last file change when a new version has no named commit', () => {
     const previous: PackageDates = { firstSeen: null, updatedAt: '2026-03-01', updatedKind: 'version', version: '1.0' };
     const h = history({ a: '2026-10-20 foo: various fixes' }, null);
-    expect(resolveDates(draft(h), previous, undefined, false, '2026-10-28')).toMatchObject({
+    expect(resolveDates(draft(h), previous, undefined, false)).toMatchObject({
       updatedAt: '2026-10-20',
       updatedKind: 'file',
     });
@@ -347,16 +347,19 @@ describe('resolveDates', () => {
   it('inherits dates through a rename', () => {
     const old: PackageDates = { firstSeen: '2025-01-01', updatedAt: '2026-03-01', updatedKind: 'version', version: '2.0' };
     const h = history({ a: '2026-10-25 foo: rename from oldfoo' }, '2026-10-25');
-    expect(resolveDates(draft(h), undefined, old, false, '2026-10-28')).toMatchObject({
+    expect(resolveDates(draft(h), undefined, old, false)).toMatchObject({
       firstSeen: '2025-01-01',
       updatedAt: '2026-03-01',
     });
   });
 
-  it('marks a version change seen without git history as today', () => {
+  it('leaves a version change seen without git history undated, then dates it from git', () => {
     const previous: PackageDates = { firstSeen: null, updatedAt: null, updatedKind: null, version: '1.0' };
-    expect(resolveDates(draft(null), previous, undefined, false, '2026-10-28')).toMatchObject({
-      updatedAt: '2026-10-28',
+    const pending = resolveDates(draft(null), previous, undefined, false);
+    expect(pending).toMatchObject({ updatedAt: null, updatedKind: null, version: '2.0' });
+    const h = history({ a: '2026-10-25 foo 2.0' }, null);
+    expect(resolveDates(draft(h), pending, undefined, false)).toMatchObject({
+      updatedAt: '2026-10-25',
       updatedKind: 'version',
     });
   });

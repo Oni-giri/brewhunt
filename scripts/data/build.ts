@@ -86,8 +86,8 @@ function nameIndex(entries: { id: string; names: string[]; others: string[] }[])
   return index;
 }
 
-const formulaVersion = (f: Formula) =>
-  f.versions.stable === null ? null : f.revision > 0 ? `${f.versions.stable}_${f.revision}` : f.versions.stable;
+// Revision bumps (1.2.3_1) rebuild the same release, so dates follow the version alone.
+const formulaVersion = (f: Formula) => f.versions.stable;
 
 function caskPlatforms(platforms: string[] | null): Package['platforms'] {
   if (!platforms?.length) return null;
@@ -158,7 +158,6 @@ export function resolveDates(
   previous: PackageDates | undefined,
   previousUnderOldName: PackageDates | undefined,
   bootstrapped: boolean,
-  today: string,
 ): PackageDates {
   const { datingVersion: version, path, history, oldNames } = draft;
   const added = history && path ? addedDate(history, path, oldNames) : null;
@@ -169,23 +168,23 @@ export function resolveDates(
   else firstSeen = added;
 
   const carried = previous ?? previousUnderOldName;
+  const sameVersion = !!carried && carried.version === version;
   let updatedAt: string | null = null;
   let updatedKind: PackageDates['updatedKind'] = null;
-  if (carried && carried.version === version) {
+  if (sameVersion && carried.updatedAt !== null) {
+    // Resolved before; an unresolved (null) date gets another try below when history exists.
     ({ updatedAt, updatedKind } = carried);
   } else if (version && version !== 'latest' && history && path) {
     const date = versionDate(history, path, version);
     if (date) {
       [updatedAt, updatedKind] = [date, 'version'];
-    } else if (carried || !bootstrapped) {
+    } else if ((carried && !sameVersion) || (!carried && !bootstrapped)) {
       // The version changed since the last run but no commit names it: use the file's last change.
       const touched = lastTouched(history, path) ?? added;
       if (touched) [updatedAt, updatedKind] = [touched, 'file'];
     }
-  } else if (carried && version && !history) {
-    // No history today (clone failed) but the version moved since the last run.
-    [updatedAt, updatedKind] = [today, 'version'];
   }
+  // Without history (clone failed) a changed version stays undated until a run can read git.
   return { firstSeen, updatedAt, updatedKind, version };
 }
 
@@ -427,15 +426,16 @@ export function buildCatalog(input: BuildInput): BuildOutput {
       previous.packages[pkg.id],
       previousUnderOldName,
       input.bootstrapped.has(draft.repo),
-      today,
     );
 
+    // Keep dates for every package read, listed or not: one that crosses the threshold later
+    // won't have its history in a later run's short git window.
+    nextState.packages[pkg.id] = dates;
     // Community packages hardly anyone installed in a year are mostly old versions and stubs.
     const recentlyAdded = !!dates.firstSeen && dates.firstSeen >= addDays(today, -30);
     if (pkg.source === 'community' && installs.d365 < COMMUNITY_MIN_INSTALLS && !recentlyAdded) {
       continue;
     }
-    nextState.packages[pkg.id] = dates;
 
     // Popularity: installs on request for formulae (not pulled in as a dependency), installs for casks.
     const popularity = onRequest ?? installs;

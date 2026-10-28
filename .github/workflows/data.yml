@@ -5,6 +5,8 @@ name: Data
 on:
   schedule:
     - cron: '17 6 * * *'
+    # Retry later in the day in case the morning run failed; an unchanged day commits nothing.
+    - cron: '17 14 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -27,13 +29,18 @@ jobs:
           persist-credentials: false
       - name: Find previous data
         id: data
-        env:
-          GH_TOKEN: ${{ github.token }}
+        # Only "no such branch" (exit 2) means a first run. Any other failure stops here: running
+        # without the previous state would overwrite the branch's history with a fresh start.
         run: |
-          if gh api "repos/$GITHUB_REPOSITORY/branches/data" --silent 2>/dev/null; then
+          status=0
+          git ls-remote --exit-code --heads "https://github.com/$GITHUB_REPOSITORY" data > /dev/null || status=$?
+          if [ "$status" -eq 0 ]; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
+          elif [ "$status" -eq 2 ]; then
             echo "::notice::No data branch yet; this run starts it."
+          else
+            echo "::error::Couldn't check for the data branch (git exit $status)."
+            exit 1
           fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: steps.data.outputs.exists == 'true'
