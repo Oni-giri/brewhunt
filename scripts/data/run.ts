@@ -7,8 +7,8 @@ import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { buildCatalog } from './build.ts';
 import { cloneRepo, readHistory, type RepoHistory } from './git.ts';
-import { fetchHomebrew } from './homebrew.ts';
-import { addDays, daysBetween } from './metrics.ts';
+import { checkHomebrew, fetchHomebrew } from './homebrew.ts';
+import { addDays } from './metrics.ts';
 import {
   readPackages,
   readSnapshots,
@@ -23,6 +23,8 @@ import { mapLimit, rankTaps, scanTap } from './taps.ts';
 const BOOTSTRAP_DAYS = 400;
 /** Later runs re-read a week before the last run, to cover late merges and missed days. */
 const OVERLAP_DAYS = 7;
+/** Share of the top taps that must be readable for the run to publish. */
+const MIN_TAPS_READ = 0.8;
 
 const { values: args } = parseArgs({
   options: {
@@ -50,7 +52,9 @@ async function main() {
   log('Fetching Homebrew API…');
   const homebrew = await fetchHomebrew({ cacheDir: args['cache-api'] ? join(workDir, 'api') : undefined });
   log(`${homebrew.formulae.length} formulae, ${homebrew.casks.length} casks`);
-  sanityCheck(homebrew, today);
+  // Refuse to publish if Homebrew's API returned something implausible.
+  const problems = checkHomebrew(homebrew, today);
+  if (problems.length) throw new Error(`Homebrew data failed sanity checks: ${problems.join('; ')}`);
 
   const trackedSince: Record<string, string> = {};
   const bootstrapped = new Set<string>();
@@ -90,7 +94,13 @@ async function main() {
     ),
   ]);
   for (const scan of taps) if (!scan.ok) delete trackedSince[scan.ref.id];
-  log(`Taps read: ${taps.filter((t) => t.ok).length}/${taps.length}`);
+  const tapsRead = taps.filter((t) => t.ok).length;
+  log(`Taps read: ${tapsRead}/${taps.length}`);
+  // A few unreadable taps are normal (deleted, private); most of them failing means GitHub or
+  // our cloning is broken, and publishing would drop new community packages.
+  if (taps.length >= 10 && tapsRead < taps.length * MIN_TAPS_READ) {
+    throw new Error(`Only ${tapsRead} of ${taps.length} taps could be read; not publishing.`);
+  }
 
   const output = buildCatalog({
     today,
@@ -121,20 +131,6 @@ async function main() {
       `${counts.community} community) and ${counts.taps} taps for analytics ending ${output.snapshotDate}`,
   );
   for (const warning of warnings) console.warn(`warning: ${warning}`);
-}
-
-/** Refuse to publish if Homebrew's API returned something implausible. */
-function sanityCheck(homebrew: Awaited<ReturnType<typeof fetchHomebrew>>, today: string) {
-  const problems: string[] = [];
-  if (homebrew.formulae.length < 5000) problems.push(`only ${homebrew.formulae.length} formulae`);
-  if (homebrew.casks.length < 5000) problems.push(`only ${homebrew.casks.length} casks`);
-  for (const [feed, periods] of Object.entries(homebrew.analytics)) {
-    const d30 = periods['30d'];
-    if (d30.counts.size < 1000) problems.push(`${feed} 30d has ${d30.counts.size} entries`);
-    const age = daysBetween(d30.end, today);
-    if (age > 7 || age < -1) problems.push(`${feed} 30d ends ${d30.end}, ${age} days from today`);
-  }
-  if (problems.length) throw new Error(`Homebrew data failed sanity checks: ${problems.join('; ')}`);
 }
 
 main().catch((error: unknown) => {

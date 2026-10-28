@@ -206,3 +206,37 @@ export async function fetchHomebrew(options: FetchOptions = {}): Promise<Homebre
     analytics,
   };
 }
+
+const PERIOD_DAYS: Record<AnalyticsPeriod, number> = { '30d': 30, '90d': 90, '365d': 365 };
+const daysBetween = (a: string, b: string) =>
+  Math.round((Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000);
+
+/**
+ * Reasons not to publish this data, or an empty list. Catches what a valid but broken response
+ * would look like: too few packages, an empty or stale window, windows ending on different
+ * days (the endpoints updating one at a time), or a longer window with fewer installs.
+ */
+export function checkHomebrew(data: HomebrewData, today: string): string[] {
+  const problems: string[] = [];
+  if (data.formulae.length < 5000) problems.push(`only ${data.formulae.length} formulae`);
+  if (data.casks.length < 5000) problems.push(`only ${data.casks.length} casks`);
+  const end = data.analytics.install['30d'].end;
+  const age = daysBetween(end, today);
+  if (age > 7 || age < -1) problems.push(`analytics end ${end}, ${age} days from today`);
+  for (const [feed, periods] of Object.entries(data.analytics)) {
+    let previous: AnalyticsFile | null = null;
+    for (const period of WINDOWS) {
+      const file = periods[period];
+      const name = `${feed} ${period}`;
+      if (file.counts.size < 1000) problems.push(`${name} has ${file.counts.size} entries`);
+      if (file.end !== end) problems.push(`${name} ends ${file.end}, not ${end}`);
+      const span = daysBetween(file.start, file.end);
+      if (Math.abs(span - PERIOD_DAYS[period]) > 2) problems.push(`${name} spans ${span} days`);
+      if (previous && (file.total < previous.total || file.counts.size < previous.counts.size)) {
+        problems.push(`${name} has fewer installs or entries than the shorter window`);
+      }
+      previous = file;
+    }
+  }
+  return problems;
+}
