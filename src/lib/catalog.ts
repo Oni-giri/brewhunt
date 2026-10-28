@@ -108,7 +108,7 @@ function build(): Catalog {
     const page = hasPage(p);
     return {
       ...p,
-      name: displayName(p),
+      name: editorial.name ?? displayName(p),
       line: editorial.tagline ?? p.desc,
       developer: editorial.developer ?? null,
       keywords: editorial.keywords ?? [],
@@ -244,11 +244,32 @@ export function pickFor(id: string): EditorsPick | null {
 
 // --- Labels ---
 
+// Cask artifacts that only put command-line programs (and their docs) in place.
+const CLI_ARTIFACTS = new Set([
+  'binary',
+  'manpage',
+  'artifact',
+  'stage_only',
+  'bash_completion',
+  'zsh_completion',
+  'fish_completion',
+  'generate_completions_from_executable',
+]);
+
+/** A cask that installs only command-line programs, no app (`dtctl`, `gcloud-cli`). */
+export const isCliCask = (p: Package) =>
+  p.kind === 'cask' && p.artifacts.length > 0 && p.artifacts.every((a) => CLI_ARTIFACTS.has(a));
+
 /** "Mac app", "Command-line tool", "Linux app". */
 export function kindLabel(p: Package): string {
-  if (p.kind === 'formula') return 'Command-line tool';
+  if (p.kind === 'formula' || isCliCask(p)) return 'Command-line tool';
   return linuxOnly(p) ? 'Linux app' : 'Mac app';
 }
+
+/** Mac apps for lists: casks that install an app (or don't say), not command-line casks. */
+export const isMacApp = (p: Package) => p.kind === 'cask' && !isCliCask(p);
+/** Command-line tools for lists: formulae and command-line casks. */
+export const isCommandLine = (p: Package) => p.kind === 'formula' || isCliCask(p);
 
 /** Readable licence: "MIT", "Public domain", or null when there's none or it's unwieldy. */
 export function licenseLabel(p: Package): string | null {

@@ -198,6 +198,8 @@ describe('buildCatalog', () => {
             disabled: false,
             dependencies: [],
             autoUpdates: false,
+            artifacts: [],
+            platforms: null,
           },
         },
         {
@@ -214,6 +216,8 @@ describe('buildCatalog', () => {
             disabled: false,
             dependencies: [],
             autoUpdates: false,
+            artifacts: [],
+            platforms: null,
           },
         },
       ],

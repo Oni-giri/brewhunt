@@ -1,0 +1,65 @@
+---
+// Coloured card for a hand-picked collection: a stack of its first four icons, eyebrow, title
+// and subtitle. The whole card is one link.
+import type { Collection } from '../../scripts/content/schema.ts';
+import type { Entry } from '../lib/catalog';
+import IconStack from './IconStack.astro';
+
+interface Props {
+  collection: Collection;
+  /** The collection's packages, resolved (collectionEntries); the first four make the stack. */
+  entries: Entry[];
+  href: string;
+  /** Card colour, any CSS colour (text is white, so keep it dark). */
+  background: string;
+  eyebrow?: string;
+}
+
+const { collection, entries, href, background, eyebrow = 'Collection' } = Astro.props;
+---
+
+<a class="card lift" href={href} style={`--card-bg:${background}`}>
+  <IconStack pkgs={entries.slice(0, 4)} size={44} overlap={10} ring={background} />
+  <span class="text">
+    <span class="eyebrow">{eyebrow}</span>
+    <span class="title">{collection.title}</span>
+    <span class="subtitle">{collection.subtitle}</span>
+  </span>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 24px;
+    border-radius: var(--radius-panel);
+    background: var(--card-bg);
+    color: #fff;
+    text-decoration: none;
+  }
+  .card:hover {
+    color: #fff;
+  }
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.8;
+  }
+  .title {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .subtitle {
+    font-size: 14px;
+    opacity: 0.85;
+  }
+</style>

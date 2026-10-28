@@ -1,0 +1,34 @@
+---
+// Overlapping icon tiles standing for a group of packages (collection cards, category rows).
+// Decorative: the group's name and its example names are always next to it.
+import AppIcon from './AppIcon.astro';
+
+interface Props {
+  pkgs: { id: string; kind: 'formula' | 'cask'; name: string; token: string }[];
+  /** Edge of each tile in px. */
+  size: number;
+  /** How far each tile slides under the previous one, in px. */
+  overlap: number;
+  /** Background behind the stack: a 2px ring in this colour separates the tiles. */
+  ring: string;
+  class?: string;
+}
+
+const { pkgs, size, overlap, ring, class: className } = Astro.props;
+---
+
+<span class:list={['stack', className]} style={`--overlap:-${overlap}px`} aria-hidden="true">
+  {pkgs.map((pkg) => (
+    <AppIcon pkg={pkg} size={size} ring={ring} />
+  ))}
+</span>
+
+<style>
+  .stack {
+    display: flex;
+    flex: none;
+  }
+  .stack > :global(.app-icon + .app-icon) {
+    margin-left: var(--overlap);
+  }
+</style>

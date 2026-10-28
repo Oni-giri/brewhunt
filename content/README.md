@@ -7,7 +7,7 @@ Brewhunt's curated layer: categories, collections, editor's picks and a few over
 | `categories.yaml` | Categories in display order, their sub-categories and packages |
 | `collections.yaml` | Hand-picked sets shown as cards on Discover ("Set up a new Mac") |
 | `picks.yaml` | Editor's picks, newest first |
-| `packages.yaml` | Optional tagline, developer and search keywords per package |
+| `packages.yaml` | Optional display name, tagline, developer and search keywords per package |
 | `overrides.yaml` | Corrections to the pipeline's "library" flag, and packages to hide |
 
 ## Package ids
@@ -37,8 +37,9 @@ A package can be in several categories. Its first category in file order is its 
 
 **picks.yaml**: newest first. `id`, `date` (`2026-10-28`), `category` (optional slug) and `blurb` (a sentence or two). Discover's hero shows the first pick; a category page shows the newest pick for that category, and the package must be listed in it. Say what the app does, plainly: no "best", rankings, prices or claims we can't back up.
 
-**packages.yaml**: keyed by id, each with any of `tagline`, `developer` and `keywords`.
+**packages.yaml**: keyed by id, each with any of `name`, `tagline`, `developer` and `keywords`.
 
+- `name`: a shorter display name than Homebrew's ("VLC" for "VLC media player"), used everywhere. 40 characters at most.
 - `tagline`: replaces Homebrew's description in lists. 60 characters at most, no full stop. Only add one where Homebrew's description is unclear or clumsy.
 - `developer`: shown in the app page's Information list.
 - `keywords`: lowercase search terms Homebrew's data doesn't link to the package, such as command names, former names and common abbreviations: `visual-studio-code: { keywords: [vscode] }`. Up to 10, each 30 characters at most. Homebrew's data already links formula aliases (`rg` for ripgrep, `nvim` for neovim) and old cask tokens, so don't repeat them.

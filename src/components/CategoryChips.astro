@@ -1,0 +1,74 @@
+---
+// Category links as white pills (Discover's intro, "Other categories" on category pages).
+import type { Category } from '../../scripts/content/schema.ts';
+
+interface Props {
+  categories: Pick<Category, 'slug' | 'name'>[];
+  /** Accessible name of the list. */
+  label?: string;
+  /** Soft drop shadow, as on Discover. */
+  raised?: boolean;
+  /** On phones, one row that scrolls sideways instead of wrapping into many rows. */
+  scroll?: boolean;
+}
+
+const { categories, label = 'Categories', raised = false, scroll = false } = Astro.props;
+---
+
+<ul class:list={['chips', { raised, scroll }]} aria-label={label}>
+  {categories.map((c) => (
+    <li>
+      <a href={`/category/${c.slug}`}>{c.name}</a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* 44px inside the border, as in the designs (46px outside). */
+  a {
+    box-sizing: content-box;
+    display: flex;
+    align-items: center;
+    height: var(--touch);
+    padding: 0 18px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  a:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .raised a {
+    box-shadow: 0 8px 20px -14px rgba(8, 25, 80, 0.6);
+  }
+  @media (max-width: 760px) {
+    /* Bleed to the screen edges so the row visibly continues off-screen. */
+    .scroll {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 2px var(--gutter) 12px;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+    .scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .scroll li {
+      flex: none;
+    }
+  }
+</style>

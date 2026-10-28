@@ -1,18 +1,68 @@
 ---
+// Store home. See docs/PRODUCT.md › Discover; design/screens/home.html.
+import AppIcon from '../components/AppIcon.astro';
+import Badge from '../components/Badge.astro';
+import CategoryChips from '../components/CategoryChips.astro';
+import CategoryRow from '../components/CategoryRow.astro';
+import CollectionCard from '../components/CollectionCard.astro';
+import GetButton from '../components/GetButton.astro';
+import PackageCard from '../components/PackageCard.astro';
+import RankedRow from '../components/RankedRow.astro';
+import SectionHeading from '../components/SectionHeading.astro';
 import Base from '../layouts/Base.astro';
+import {
+  collectionEntries,
+  getCatalog,
+  isCommandLine,
+  isMacApp,
+  latestPick,
+  trending,
+} from '../lib/catalog';
+import {
+  categoryLead,
+  COLLECTION_BACKGROUNDS,
+  newOnDiscover,
+  pickMeta,
+  popularCommunity,
+  trendingCaption,
+} from '../lib/discover';
+import { compactNumber, relativeDay, shortDate, trendLabel } from '../lib/format';
+
+const { meta, categories, collections } = getCatalog();
+const today = meta.generatedOn;
+
+const featured = latestPick();
+const promos = collections.slice(0, COLLECTION_BACKGROUNDS.length).map((collection, i) => ({
+  collection,
+  entries: collectionEntries(collection),
+  background: COLLECTION_BACKGROUNDS[i],
+}));
+
+const charts = [
+  { title: 'Mac apps', id: 'trending-casks', entries: trending(isMacApp, 5) },
+  {
+    title: 'Command-line tools',
+    id: 'trending-formulae',
+    entries: trending(isCommandLine, 5),
+  },
+].filter((c) => c.entries.length > 0);
+
+const fresh = newOnDiscover();
+const indie = popularCommunity(4);
+const d30End = shortDate(meta.analytics.d30.end);
 ---
 
 <Base
   title="Discover"
   description="Hand-picked and trending Mac apps and command-line tools you can install with Homebrew."
 >
-  <div class="page">
-    <div class="intro">
+  <div class="container intro">
+    <div class="intro-top">
       <div class="heading">
         <h1>Discover</h1>
         <p>Hand-picked and trending Mac apps, updated every day.</p>
       </div>
-      <form action="/search" role="search" class="search-pill">
+      <form action="/search" method="get" role="search" class="search-pill">
         <svg
           width="17"
           height="17"
@@ -33,30 +83,157 @@ import Base from '../layouts/Base.astro';
         <button type="submit">Search</button>
       </form>
     </div>
+    <CategoryChips categories={categories} raised scroll />
+  </div>
+
+  <div class="container sections">
+    {(featured || promos.length > 0) && (
+      <section class="featured" aria-labelledby="featured-title">
+        <h2 id="featured-title" class="visually-hidden">
+          Featured
+        </h2>
+        {featured && (
+          <article class="pick" id="editors-pick" aria-labelledby="pick-name">
+            {/* No screenshots until a developer claims the listing: the icon stands in. */}
+            <a class="stage lift" href={featured.entry.url} tabindex="-1" aria-hidden="true">
+              <AppIcon pkg={featured.entry} size={112} raised />
+            </a>
+            <div class="pick-body">
+              <span class="eyebrow">Editor's pick</span>
+              <a class="pick-id" href={featured.entry.url}>
+                <AppIcon pkg={featured.entry} size={60} class="pick-icon" />
+                <div class="pick-titles">
+                  <h3 id="pick-name">{featured.entry.name}</h3>
+                  <span class="pick-meta">
+                    {pickMeta(featured.entry)}
+                    {featured.entry.source === 'community' && (
+                      <Badge variant="community">Community</Badge>
+                    )}
+                  </span>
+                </div>
+              </a>
+              <p class="blurb">{featured.pick.blurb}</p>
+              <span class="pick-actions">
+                <GetButton entry={featured.entry} variant="primary" />
+                <a class="read-more" href={featured.entry.url}>
+                  Read more
+                </a>
+              </span>
+            </div>
+          </article>
+        )}
+        {promos.length > 0 && (
+          <div class="promos" id="collections">
+            {promos.map(({ collection, entries, background }) => (
+              <CollectionCard
+                collection={collection}
+                entries={entries}
+                background={background}
+                href={`/search?collection=${encodeURIComponent(collection.slug)}`}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+    )}
+
+    {charts.length > 0 && (
+      <section class="section" aria-labelledby="trending-title">
+        <SectionHeading
+          eyebrow="Charts"
+          title="Trending"
+          id="trending-title"
+          caption={trendingCaption(charts.flatMap((c) => c.entries))}
+          href="/charts"
+          linkLabel="See all charts"
+        />
+        <div class="charts">
+          {charts.map((chart) => (
+            <div class="chart">
+              <h3 id={chart.id}>{chart.title}</h3>
+              <ol aria-labelledby={chart.id}>
+                {chart.entries.map((entry, i) => (
+                  <RankedRow
+                    rank={i + 1}
+                    entry={entry}
+                    trend={entry.trend ? trendLabel(entry.trend.change) : undefined}
+                  />
+                ))}
+              </ol>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {fresh.entries.length > 0 && (
+      <section class="section" aria-labelledby="new-title">
+        <SectionHeading
+          eyebrow="Fresh"
+          title={fresh.days === 7 ? 'New this week' : 'New in the last two weeks'}
+          id="new-title"
+          href="/new"
+          linkLabel="See all new"
+        />
+        <ul class="carousel" aria-labelledby="new-title">
+          {fresh.entries.map((entry) => (
+            <PackageCard entry={entry}>Added {relativeDay(entry.firstSeen!, today)}</PackageCard>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {indie.length > 0 && (
+      <section class="section" aria-labelledby="indie-title">
+        <SectionHeading
+          eyebrow="Community"
+          title="Popular from independent developers"
+          id="indie-title"
+          caption={`Not in Homebrew's official catalog: installed from community taps, not reviewed by Homebrew. Installs in the 30 days to ${d30End}, from Homebrew's public analytics.`}
+        />
+        <ul class="indie">
+          {indie.map((entry) => (
+            <PackageCard entry={entry} iconSize={48}>
+              <span class="installs">
+                <strong>{compactNumber(entry.installs.d30)}</strong> installs
+              </span>
+            </PackageCard>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section class="section" id="categories" aria-labelledby="categories-title">
+      <SectionHeading eyebrow="Categories" title="Browse by what you need" id="categories-title" />
+      <ul class="category-grid">
+        {categories.map((category) => (
+          <CategoryRow category={category} entries={categoryLead(category)} />
+        ))}
+      </ul>
+    </section>
   </div>
 </Base>
 
 <style>
-  .page {
-    max-width: var(--content-max);
-    margin: 0 auto;
-    padding: 40px var(--gutter) 0;
-  }
-
+  /* --- Intro --- */
   .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 40px;
+  }
+  .intro-top {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
     justify-content: space-between;
     gap: 20px 40px;
   }
-
   .heading {
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
-
   h1 {
     margin: 0;
     font-family: var(--font-heading);
@@ -65,13 +242,11 @@ import Base from '../layouts/Base.astro';
     font-weight: 600;
     letter-spacing: -0.025em;
   }
-
-  p {
+  .heading p {
     margin: 0;
     color: var(--text-secondary);
     font-size: 17px;
   }
-
   .search-pill {
     flex: 1 1 300px;
     max-width: 460px;
@@ -85,13 +260,14 @@ import Base from '../layouts/Base.astro';
     border: 1px solid var(--border);
     box-shadow: var(--shadow-search);
   }
-
   .search-pill:focus-within {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
-
-  input {
+  .search-pill svg {
+    flex: none;
+  }
+  .search-pill input {
     flex: 1;
     min-width: 0;
     height: var(--touch);
@@ -102,8 +278,8 @@ import Base from '../layouts/Base.astro';
     color: var(--ink);
     outline: none;
   }
-
-  button {
+  .search-pill button {
+    flex: none;
     height: var(--touch);
     padding: 0 20px;
     border: 0;
@@ -113,5 +289,209 @@ import Base from '../layouts/Base.astro';
     font: inherit;
     font-weight: 600;
     cursor: pointer;
+  }
+
+  /* --- Sections --- */
+  .sections {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    /* home.html: 32px under the chips, then 8px above the first card. */
+    padding-top: 40px;
+  }
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  [id] {
+    scroll-margin-top: 24px;
+  }
+
+  /* --- Featured --- */
+  .featured {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .pick {
+    flex: 2 1 640px;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .stage {
+    flex: 1 1 320px;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background:
+      radial-gradient(
+        ellipse 60% 30% at 50% 108%,
+        rgba(255, 255, 255, 0.95),
+        rgba(255, 255, 255, 0) 70%
+      ),
+      linear-gradient(180deg, #2459d8, #a9cff6);
+  }
+  /* The stage is clipped by the card, so it lifts without a shadow. */
+  .stage.lift:hover {
+    box-shadow: none;
+  }
+  /* home.html sizes the body's content box: 300px + 2 × 32px padding. */
+  .pick-body {
+    flex: 1 1 364px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+    padding: 32px;
+  }
+  .eyebrow {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .pick-id {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .pick-id :global(.pick-icon) {
+    box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.5);
+  }
+  .pick-titles {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .pick-id h3 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+  .pick-id:hover h3 {
+    text-decoration: underline;
+  }
+  .pick-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .blurb {
+    margin: 0;
+    font-size: 17px;
+    color: var(--text-body);
+  }
+  .pick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .read-more {
+    display: flex;
+    align-items: center;
+    height: var(--touch);
+    padding: 0 20px;
+    border-radius: var(--radius-pill);
+    background: var(--chip);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .read-more:hover {
+    background: #e2e4ea;
+    color: var(--ink);
+  }
+  /* A column of two beside the pick (each half its height); side by side once the pick
+     takes the full width (tablets); stacked again on phones. */
+  .promos {
+    flex: 1 1 300px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .promos > :global(*) {
+    flex: 1 1 300px;
+  }
+
+  /* --- Trending --- */
+  .charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(480px, 100%), 1fr));
+    gap: 20px;
+  }
+  .chart {
+    min-width: 0;
+    padding: 8px 24px 16px;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .chart h3 {
+    margin: 0;
+    padding: 16px 0 8px;
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .chart ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* --- New --- */
+  .carousel {
+    display: flex;
+    gap: 16px;
+    margin: 0;
+    padding: 2px 2px 12px;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .carousel > :global(li) {
+    flex: none;
+    width: 250px;
+    scroll-snap-align: start;
+  }
+
+  /* --- Community --- */
+  .indie {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .installs {
+    color: var(--text-body);
+  }
+
+  /* --- Categories --- */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 </style>

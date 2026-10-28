@@ -1,4 +1,5 @@
 # Editorial fields per package, keyed by package id. See content/README.md.
+#   name: a shorter display name than Homebrew's ("VLC" for "VLC media player").
 #   tagline: one line (60 characters at most, no full stop) shown in lists instead of
 #            Homebrew's description. Only add one where Homebrew's description is unclear.
 #   developer: who makes it, for the app page's Information list.
@@ -50,6 +51,7 @@ blackhole-2ch:
   tagline: Virtual audio driver for routing sound between apps
   keywords: [blackhole]
 vlc:
+  name: VLC
   keywords: [videolan]
 obs:
   keywords: [obs-studio]
@@ -111,12 +113,14 @@ fastfetch:
 
 # Developer tools
 visual-studio-code:
+  name: Visual Studio Code
   keywords: [vscode]
 gh:
   keywords: [github-cli]
 awscli:
   keywords: [aws]
 hashicorp/tap/terraform:
+  tagline: Infrastructure as code, from HashiCorp
   keywords: [tf]
 docker-desktop:
   tagline: Run Docker containers on your Mac
@@ -145,8 +149,31 @@ imagemagick:
 figma:
   tagline: Collaborative interface design tool
 drawio:
+  name: draw.io
   tagline: Draw flowcharts, diagrams and wireframes
 
 # Security & privacy
 1password:
   tagline: Password manager with browser autofill
+
+# Shorter names where Homebrew's include the maker or a suffix
+appcleaner:
+  name: AppCleaner
+firefox:
+  name: Firefox
+thunderbird:
+  name: Thunderbird
+shortcat:
+  name: Shortcat
+qlmarkdown:
+  name: QLMarkdown
+istat-menus:
+  name: iStat Menus
+telegram:
+  name: Telegram
+wechat:
+  name: WeChat
+dbeaver-community:
+  name: DBeaver Community
+perplexity:
+  name: Perplexity

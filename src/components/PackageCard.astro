@@ -1,0 +1,112 @@
+---
+// Vertical package card: icon with its Official/Community badge, name, one line, then a caption
+// (the default slot: "Added today", "36.8k installs") and Get. Used in Discover's "New this
+// week" carousel and "Popular from independent developers" grid; put cards in a list.
+import type { Entry } from '../lib/catalog';
+import AppIcon from './AppIcon.astro';
+import GetButton from './GetButton.astro';
+import SourceBadge from './SourceBadge.astro';
+
+interface Props {
+  entry: Entry;
+  /** 56 for carousel cards, 48 for grid cards (home.html). */
+  iconSize?: 56 | 48;
+}
+
+const { entry, iconSize = 56 } = Astro.props;
+---
+
+<li class:list={['card', { compact: iconSize < 56 }]}>
+  <a class="main" href={entry.url}>
+    <AppIcon pkg={entry} size={iconSize} class="icon" />
+    <span class="text">
+      <span class="name">{entry.name}</span>
+      {entry.line && <span class="line">{entry.line}</span>}
+    </span>
+    <span class="badge">
+      <SourceBadge source={entry.source} />
+    </span>
+  </a>
+  <span class="foot">
+    <span class="caption">
+      <slot />
+    </span>
+    <GetButton entry={entry} />
+  </span>
+</li>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .compact {
+    gap: 12px;
+  }
+  /* Icon and badge on top, name and line under them; the badge comes last in the link's
+     text so the name is read first. */
+  .main {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'icon badge'
+      'text text';
+    gap: 14px 8px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .compact .main {
+    row-gap: 12px;
+  }
+  .main :global(.icon) {
+    grid-area: icon;
+  }
+  .badge {
+    grid-area: badge;
+    justify-self: end;
+    align-self: start;
+    display: flex;
+  }
+  .compact .badge {
+    align-self: center;
+  }
+  .text {
+    grid-area: text;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .name {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .main:hover .name {
+    text-decoration: underline;
+  }
+  .line {
+    font-size: 14px;
+    color: var(--text-meta);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+  }
+  .caption {
+    min-width: 0;
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+</style>

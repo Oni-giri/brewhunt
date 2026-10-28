@@ -1,0 +1,149 @@
+---
+// One row of a ranked list (Discover's trending cards, charts): rank, icon, name (+ Community
+// badge), one line, optional category and installs/trend columns, Get. Put rows in an <ol>.
+// The category column hides under 760px and the installs/trend column under 480px.
+import type { Entry } from '../lib/catalog';
+import AppIcon from './AppIcon.astro';
+import Badge from './Badge.astro';
+import GetButton from './GetButton.astro';
+
+interface Props {
+  rank: number;
+  entry: Entry;
+  /** Category name. */
+  category?: string;
+  /** Bold figure above the trend, e.g. "12.4k". */
+  installs?: string;
+  /** "↑ 43%" (see trendLabel in lib/format.ts). */
+  trend?: string;
+  /** Show the trend in green, as charts do for movers; Discover keeps it grey. */
+  trendUp?: boolean;
+}
+
+const { rank, entry, category, installs, trend, trendUp = false } = Astro.props;
+---
+
+<li class="row">
+  <span class="rank">{rank}</span>
+  <a class="main" href={entry.url}>
+    <AppIcon pkg={entry} size={48} />
+    <span class="text">
+      <span class="title">
+        <span class="name">{entry.name}</span>
+        {entry.source === 'community' && <Badge variant="community">Community</Badge>}
+      </span>
+      {entry.line && <span class="line">{entry.line}</span>}
+    </span>
+  </a>
+  {category && <span class="category">{category}</span>}
+  {(installs || trend) && (
+    <span class:list={['figures', { wide: installs }]}>
+      {installs && <span class="installs">{installs}</span>}
+      {trend && <span class:list={['trend', { up: trendUp }]}>{trend}</span>}
+    </span>
+  )}
+  <GetButton entry={entry} />
+</li>
+
+<style>
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-top: 1px solid var(--divider);
+  }
+  .rank {
+    flex: none;
+    /* Lists that reach two or three digits can widen it: --rank-width: 28px. */
+    width: var(--rank-width, 20px);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-meta);
+    text-align: var(--rank-align, left);
+    font-variant-numeric: tabular-nums;
+  }
+  .main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 6px;
+  }
+  /* Narrow rows hyphenate long names ("Disas-sembler") where the browser can, and only split
+     a word anywhere as a last resort. */
+  .name {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+  .main:hover .name {
+    text-decoration: underline;
+  }
+  .line {
+    font-size: 14px;
+    color: var(--text-meta);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .category {
+    flex: none;
+    width: 150px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .figures {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    white-space: nowrap;
+  }
+  /* With installs the column lines up across rows (charts). */
+  .figures.wide {
+    min-width: 76px;
+  }
+  .installs {
+    font-weight: 700;
+  }
+  .trend {
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+  .trend.up {
+    color: var(--trend-up);
+  }
+  @media (max-width: 760px) {
+    .category {
+      display: none;
+    }
+  }
+  @media (max-width: 480px) {
+    .figures {
+      display: none;
+    }
+  }
+  /* At 320px the name would get ~40px next to a 48px tile. The tile is a placeholder showing
+     the name's initials, so it goes first. */
+  @media (max-width: 360px) {
+    .main :global(.app-icon) {
+      display: none;
+    }
+  }
+</style>

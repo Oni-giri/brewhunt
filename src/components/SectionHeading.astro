@@ -1,0 +1,70 @@
+---
+// A section's heading: grey eyebrow, Geist h2, an optional caption under it and an optional
+// "See all …" link on the right (it wraps under the heading on narrow screens).
+interface Props {
+  eyebrow?: string;
+  title: string;
+  /** Id of the h2, for the section's aria-labelledby. */
+  id: string;
+  /** One line under the title saying what the list is or where its numbers come from. */
+  caption?: string;
+  href?: string;
+  linkLabel?: string;
+}
+
+const { eyebrow, title, id, caption, href, linkLabel } = Astro.props;
+---
+
+<div class="heading">
+  <div class="titles">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h2 id={id}>{title}</h2>
+    {caption && <p class="caption">{caption}</p>}
+  </div>
+  {href && linkLabel && (
+    <a class="more" href={href}>
+      {linkLabel}
+    </a>
+  )}
+</div>
+
+<style>
+  .heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .titles {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .eyebrow {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 32px;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .caption {
+    margin: 0;
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .more {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    font-size: 15px;
+    font-weight: 600;
+  }
+</style>

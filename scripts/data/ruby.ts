@@ -31,6 +31,13 @@ export interface RubyPackage {
   dependencies: string[];
   /** Casks: `auto_updates true`. */
   autoUpdates: boolean;
+  /** Casks: the artifact stanzas it uses (`app`, `binary`, `pkg`…), sorted. Formulae: []. */
+  artifacts: string[];
+  /**
+   * Casks: operating systems from `os macos: …, linux: …` or `depends_on :linux`/`:macos`;
+   * null when the file doesn't say. Formulae: null.
+   */
+  platforms: ('macos' | 'linux')[] | null;
 }
 
 export function parseFormula(source: string, fileToken: string): RubyPackage {
@@ -60,6 +67,8 @@ function parse(kind: RubyPackage['kind'], source: string, fileToken: string): Ru
     disabled: false,
     dependencies: [],
     autoUpdates: false,
+    artifacts: [],
+    platforms: null,
   };
   try {
     const { calls, caskToken } = readDefinition(kind, source);
@@ -88,6 +97,8 @@ function parse(kind: RubyPackage['kind'], source: string, fileToken: string): Ru
       if (name) pkg.name = cleanString(firstLiteral(name.args), MAX_NAME, 'truncate');
       const autoUpdates = first(calls, 'auto_updates');
       pkg.autoUpdates = autoUpdates?.args.length === 1 && isId(autoUpdates.args[0], 'true');
+      pkg.artifacts = CASK_ARTIFACTS.filter((name) => calls.has(name));
+      pkg.platforms = caskPlatforms(calls);
     }
 
     // Homebrew's rules: a future `deprecate!` date isn't in effect yet, and a future `disable!`
@@ -106,6 +117,50 @@ function parse(kind: RubyPackage['kind'], source: string, fileToken: string): Ru
     // Hostile input can still find a corner the lexer doesn't expect: keep what was read.
   }
   return pkg;
+}
+
+/** Cask stanzas that install something (Homebrew's artifact list). */
+const CASK_ARTIFACTS = [
+  'app',
+  'artifact',
+  'audio_unit_plugin',
+  'binary',
+  'colorpicker',
+  'dictionary',
+  'font',
+  'input_method',
+  'installer',
+  'internet_plugin',
+  'keyboard_layout',
+  'manpage',
+  'mdimporter',
+  'pkg',
+  'prefpane',
+  'qlplugin',
+  'screen_saver',
+  'service',
+  'stage_only',
+  'suite',
+  'vst3_plugin',
+  'vst_plugin',
+];
+
+function caskPlatforms(calls: Map<string, Call[]>): ('macos' | 'linux')[] | null {
+  const found = new Set<'macos' | 'linux'>();
+  // `os macos: "darwin", linux: "linux"` names the systems it has downloads for.
+  for (const call of calls.get('os') ?? []) {
+    for (const token of call.args) {
+      if (token.type === 'label' && (token.text === 'macos' || token.text === 'linux')) found.add(token.text);
+    }
+  }
+  for (const call of calls.get('depends_on') ?? []) {
+    const [arg] = call.args;
+    if (call.args.length === 1 && arg.type === 'sym' && (arg.text === 'macos' || arg.text === 'linux')) {
+      found.add(arg.text);
+    }
+  }
+  if (found.size === 0) return null;
+  return (['macos', 'linux'] as const).filter((os) => found.has(os));
 }
 
 // --- Lexer ---

@@ -1,0 +1,96 @@
+---
+// A category as one link: icon stack of its first packages, name, their names, chevron.
+// Put rows in a list (Discover's "Browse by what you need", the landing page).
+import type { Category } from '../../scripts/content/schema.ts';
+import type { Entry } from '../lib/catalog';
+import IconStack from './IconStack.astro';
+
+interface Props {
+  category: Category;
+  /** Packages that stand for the category, usually its first three (categoryLead). */
+  entries: Entry[];
+}
+
+const { category, entries } = Astro.props;
+---
+
+<li>
+  <a class="row lift" href={`/category/${category.slug}`}>
+    <IconStack pkgs={entries} size={40} overlap={12} ring="var(--surface)" class="icons" />
+    <span class="text">
+      <span class="name">{category.name}</span>
+      {entries.length > 0 && <span class="examples">{entries.map((e) => e.name).join(', ')}</span>}
+    </span>
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="var(--text-meta)"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M9 6l6 6-6 6"></path>
+    </svg>
+  </a>
+</li>
+
+<style>
+  li {
+    display: flex;
+  }
+  .row {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 20px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  /* Same width for two or three icons, so names line up down the grid. */
+  .row :global(.icons) {
+    width: 96px;
+  }
+  .text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .name {
+    font-family: var(--font-heading);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .examples {
+    font-size: 14px;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  svg {
+    flex: none;
+  }
+  /* Narrow phones: tighter padding and a denser stack leave the name ~125px. */
+  @media (max-width: 360px) {
+    .row {
+      gap: 12px;
+      padding: 16px;
+    }
+    .row :global(.icons) {
+      --overlap: -24px !important;
+      width: 72px;
+    }
+  }
+</style>

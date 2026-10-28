@@ -219,6 +219,8 @@ const keyword = line(30).refine((s) => s === s.toLowerCase(), 'Use lowercase.');
 
 export const packageEditorialSchema = z
   .strictObject({
+    /** Shorter display name than Homebrew's ("VLC" for "VLC media player"). */
+    name: line(40).optional(),
     /** Shown in lists instead of Homebrew's description. */
     tagline: line(60)
       .refine((s) => !s.endsWith('.'), 'No full stop at the end, like Homebrew descriptions.')
@@ -228,10 +230,15 @@ export const packageEditorialSchema = z
     keywords: z.array(keyword).min(1).max(10, 'List 10 keywords at most.').optional(),
   })
   .superRefine((p, ctx) => {
-    if (p.tagline === undefined && p.developer === undefined && p.keywords === undefined) {
+    if (
+      p.name === undefined &&
+      p.tagline === undefined &&
+      p.developer === undefined &&
+      p.keywords === undefined
+    ) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Add a tagline, a developer or keywords, or remove this entry.',
+        message: 'Add a name, a tagline, a developer or keywords, or remove this entry.',
       });
     }
     unique(p.keywords ?? [], ctx, (i) => ['keywords', i], 'keyword');

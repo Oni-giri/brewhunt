@@ -15,7 +15,9 @@ import Base from '../layouts/Base.astro';
   const match = location.pathname.match(/^\/app\/(.+?)(?:\.html)?\/?$/);
   if (match) {
     fetch('/aliases.json')
-      .then((res) => (res.ok ? (res.json() as Promise<Record<string, string>>) : {}))
+      .then((res): Promise<Record<string, string>> | Record<string, string> =>
+        res.ok ? res.json() : {},
+      )
       .then((aliases) => {
         const id = aliases[decodeURIComponent(match[1])];
         if (id) location.replace(`/app/${id}${location.search}${location.hash}`);

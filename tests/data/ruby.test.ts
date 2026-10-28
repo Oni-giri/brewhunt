@@ -447,6 +447,8 @@ describe('real files', () => {
       disabled: false,
       dependencies: [],
       autoUpdates: false,
+      artifacts: [],
+      platforms: null,
     });
   });
 
@@ -523,6 +525,8 @@ describe('real files', () => {
       disabled: false,
       dependencies: [],
       autoUpdates: false,
+      artifacts: ['app', 'binary'],
+      platforms: null,
     });
   });
 
@@ -568,5 +572,56 @@ describe('hostile input', () => {
     const start = performance.now();
     expect(parseFormula(src, 'foo').desc).toBe('x');
     expect(performance.now() - start).toBeLessThan(2000);
+  });
+});
+
+describe('cask artifacts and platforms', () => {
+  it('lists artifact stanzas and reads a Linux-only `os`', () => {
+    const cask = parseCask(
+      `cask "asusctl-linux" do
+  arch arm: "arm64", intel: "amd64"
+  os linux: "linux"
+  version "6.5.0,4"
+  url "https://example.com/asusctl-#{version}.tar.gz"
+  name "asusctl"
+  desc "ASUS laptop control CLI"
+  homepage "https://example.com"
+  binary "asusctl/usr/bin/asusctl"
+  binary "asusctl/usr/bin/asusd"
+end
+`,
+      'asusctl-linux',
+    );
+    expect(cask.artifacts).toEqual(['binary']);
+    expect(cask.platforms).toEqual(['linux']);
+  });
+
+  it('reads both systems, `depends_on :macos`, and apps', () => {
+    const both = parseCask(
+      `cask "x" do
+  os macos: "darwin", linux: "linux"
+  app "X.app"
+  binary "x"
+end
+`,
+      'x',
+    );
+    expect(both.platforms).toEqual(['macos', 'linux']);
+    expect(both.artifacts).toEqual(['app', 'binary']);
+    const mac = parseCask(`cask "y" do
+  depends_on :macos
+  pkg "Y.pkg"
+end
+`, 'y');
+    expect(mac.platforms).toEqual(['macos']);
+    expect(mac.artifacts).toEqual(['pkg']);
+    expect(parseCask(`cask "z" do
+  app "Z.app"
+end
+`, 'z').platforms).toBeNull();
+    expect(parseFormula(`class Z < Formula
+  desc "z"
+end
+`, 'z').artifacts).toEqual([]);
   });
 });
