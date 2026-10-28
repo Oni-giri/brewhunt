@@ -102,7 +102,7 @@ describe('parseContent', () => {
       'categories.yaml [1].description: Keep it to one sentence.',
       'packages.yaml rectangle.tagline: Keep it under 61 characters.',
       'packages.yaml fzf.tagline: No full stop at the end, like Homebrew descriptions.',
-      'packages.yaml ripgrep: Add a tagline, a developer or keywords, or remove this entry.',
+      'packages.yaml ripgrep: Add a name, a tagline, a developer or keywords, or remove this entry.',
       'packages.yaml visual-studio-code.keywords[1]: Use lowercase.',
       'packages.yaml visual-studio-code.keywords[2]: Duplicate keyword "vscode".',
     ]);
