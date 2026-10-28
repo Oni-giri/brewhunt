@@ -10,7 +10,9 @@ import {
   type Content,
   type EditorsPick,
 } from '../../scripts/content/schema.ts';
+import type { IconSet } from '../../scripts/data/icons.ts';
 import type { History, Meta, Package, Tap, WindowCounts } from '../../scripts/data/types.ts';
+import { iconBase, iconUrl } from './tiles.ts';
 
 export interface Entry extends Package {
   /** One line for lists: the editorial tagline, else Homebrew's description. */
@@ -35,6 +37,8 @@ export interface Entry extends Package {
   /** Installs on request for formulae, installs for casks: what rankings use. */
   popularity: WindowCounts;
   url: string;
+  /** The app's real icon (official casks CaskFlow has one for), else null for a tile. */
+  icon: string | null;
 }
 
 export interface Catalog {
@@ -48,6 +52,8 @@ export interface Catalog {
   collections: Collection[];
   picks: EditorsPick[];
   history: History;
+  /** Where the real icons are (tiles.ts iconBase), or null without icon data. */
+  iconBase: string | null;
 }
 
 const DATA_DIR = join(process.cwd(), 'data', 'site');
@@ -82,6 +88,20 @@ function displayName(p: Package): string {
   return p.name.toLowerCase().includes(suffix.toLowerCase()) ? p.name : `${p.name} (${suffix})`;
 }
 
+/**
+ * The real icon's URL, for official casks CaskFlow has one for (it covers homebrew/cask only: a
+ * community tap's `firefox` is someone else's app).
+ */
+export function iconFor(
+  base: string | null,
+  tokens: ReadonlySet<string>,
+  p: Pick<Package, 'kind' | 'source' | 'token'>,
+): string | null {
+  return base && p.kind === 'cask' && p.source === 'official' && tokens.has(p.token)
+    ? iconUrl(base, p.token)
+    : null;
+}
+
 function build(): Catalog {
   if (!existsSync(join(DATA_DIR, 'packages.json'))) {
     throw new Error(
@@ -94,6 +114,10 @@ function build(): Catalog {
   const libraryShow = new Set(overrides.library.show);
   const libraryHide = new Set(overrides.library.hide);
   const hidden = new Set(overrides.hidden);
+  // Optional: data from before icons existed builds with tiles only.
+  const icons = existsSync(join(DATA_DIR, 'icons.json')) ? readJson<IconSet>('icons.json') : null;
+  const iconTokens = new Set(icons?.tokens);
+  const iconsAt = icons ? iconBase(icons.commit) : null;
 
   const categoriesOf = new Map<string, string[]>();
   const subOf = new Map<string, string>();
@@ -129,6 +153,7 @@ function build(): Catalog {
         page && !p.deprecated && !p.versioned && !isLibrary && !hidden.has(p.id) && !linuxOnly(p),
       popularity: p.installsOnRequest ?? p.installs,
       url: appUrl(p.id),
+      icon: iconFor(iconsAt, iconTokens, p),
     };
   });
 
@@ -144,6 +169,7 @@ function build(): Catalog {
     collections: content.collections,
     picks: content.picks,
     history: readJson<History>('history.json'),
+    iconBase: iconsAt,
   };
 }
 

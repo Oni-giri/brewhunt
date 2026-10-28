@@ -66,7 +66,11 @@ const year = new Date().getFullYear();
     <div class="legal">
       <span class="disclaimer">
         © {year} Brewhunt. Not affiliated with the Homebrew project or Apple. App names and icons
-        belong to their developers.
+        belong to their developers. Mac app icons via{' '}
+        <a href="https://github.com/alielsokary/CaskFlow" rel="noopener">
+          CaskFlow
+        </a>
+        .
       </span>
       <span class="legal-links">
         <a href="/privacy" class="flink">
@@ -164,6 +168,16 @@ const year = new Date().getFullYear();
 
   .disclaimer {
     max-width: 720px;
+  }
+
+  .disclaimer a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .disclaimer a:hover {
+    color: #fff;
   }
 
   .legal-links {

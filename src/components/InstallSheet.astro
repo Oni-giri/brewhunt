@@ -54,6 +54,8 @@
 <span class="visually-hidden" role="status" id="copy-status"></span>
 
 <script>
+  import { iconImage } from '../lib/icon-image';
+
   const sheet = document.getElementById('install-sheet') as HTMLDialogElement | null;
 
   function fill(link: HTMLElement) {
@@ -64,6 +66,8 @@
     icon.classList.toggle('mono', d.mono !== undefined);
     icon.style.setProperty('--font', d.mono !== undefined ? '20px' : '24px');
     icon.textContent = d.initials ?? '';
+    icon.classList.toggle('has-icon', !!d.icon);
+    if (d.icon) icon.append(iconImage(d.icon, 60));
     sheet.querySelector('[data-sheet-name]')!.textContent = d.name ?? '';
     sheet.querySelector('[data-sheet-line]')!.textContent = d.line ?? '';
     sheet.querySelector('[data-sheet-command]')!.textContent = d.command ?? '';

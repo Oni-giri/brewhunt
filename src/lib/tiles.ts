@@ -1,6 +1,7 @@
 // Placeholder app icons: a gradient tile with initials, as in the designs. Mac apps get one of
 // eight gradients picked from their id (stable across builds); command-line tools (formulae and
-// command-line casks) get the dark terminal tile with two monospace letters.
+// command-line casks) get the dark terminal tile with two monospace letters. Official Mac apps
+// with a CaskFlow icon (scripts/data/icons.ts) show it instead, over the tile as a fallback.
 
 export const APP_TILES = [
   'blue',
@@ -37,7 +38,21 @@ export interface Tileable {
   token: string;
   /** Command-line casks get the terminal tile too. */
   commandLine?: boolean;
+  /** The real icon's URL, when there is one (iconUrl). */
+  icon?: string | null;
 }
+
+/** Where CaskFlow's icons are served, pinned to a commit so the files never change under a URL. */
+export const iconBase = (commit: string) =>
+  `https://cdn.jsdelivr.net/gh/alielsokary/CaskFlow@${commit}/`;
+
+/**
+ * `onerror` for an icon image: drop it and show the tile. An attribute rather than a listener,
+ * so it also catches images that fail before any script has run.
+ */
+export const ICON_FALLBACK = "this.parentNode.classList.remove('has-icon');this.remove()";
+
+export const iconUrl = (base: string, token: string) => `${base}${encodeURIComponent(token)}.png`;
 
 export function tileFor(p: Tileable): TileLook {
   if (p.kind === 'formula' || p.commandLine) {

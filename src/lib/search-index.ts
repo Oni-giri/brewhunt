@@ -30,6 +30,7 @@ export type IndexEntry = Pick<
   | 'updatedAt'
   | 'updatedKind'
   | 'installCommand'
+  | 'icon'
 >;
 
 export interface IndexInput {
@@ -38,6 +39,7 @@ export interface IndexInput {
   collections: { slug: string; title: string; packages: string[] }[];
   generatedOn: string;
   trendingMin: number;
+  iconBase: string | null;
 }
 
 export const LINE_MAX = 100;
@@ -63,6 +65,7 @@ export function buildSearchIndex(input: IndexInput): SearchIndex {
     generatedOn: input.generatedOn,
     today: dayNumber(input.generatedOn),
     trendingMin: input.trendingMin,
+    iconBase: input.iconBase,
     categories: input.categories.map((c) => ({
       slug: c.slug,
       name: c.name,
@@ -106,7 +109,8 @@ export function buildSearchIndex(input: IndexInput): SearchIndex {
         (e.versioned ? FLAG.versioned : 0) |
         (linuxOnly(e) ? FLAG.linuxOnly : 0) |
         (e.listed ? FLAG.listed : 0) |
-        (e.kind === 'cask' && e.commandLine ? FLAG.cliCask : 0),
+        (e.kind === 'cask' && e.commandLine ? FLAG.cliCask : 0) |
+        (e.icon ? FLAG.icon : 0),
     );
     index.pop.push(e.popularity.d30);
     // A "file" date is the last edit to the definition, not a release: don't call it an update.

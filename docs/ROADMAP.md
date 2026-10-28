@@ -39,7 +39,8 @@
 - More editorial: collections ("Set up a new Mac", "Menu bar essentials"), staff picks with short write-ups.
 - "Alternatives to …" pages (an SEO goldmine: "rectangle alternatives mac").
 - Compare two apps side by side.
-- Real app icons pulled from cask metadata or app bundles where licensing allows.
+- [x] Real app icons for official Mac apps, from CaskFlow (about 3,900, loaded from jsDelivr).
+- Serve icons ourselves (R2, downscaled to 128px WebP) instead of jsDelivr's 20–70KB PNGs; icons for formulae and community apps.
 
 ### v2 · Brewfile builder
 - Pick apps while browsing, then export a ready-to-run `Brewfile` (or a one-line `brew install` for all of them).

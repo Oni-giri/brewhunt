@@ -172,7 +172,7 @@ const { rows, label } = Astro.props;
     color: var(--code-dark-text);
   }
   /* The terminal tile is near-black: lighten it so it shows on a dark chip. */
-  .dark .chip :global(.app-icon[data-tile='terminal']) {
+  .dark .chip :global(.app-icon[data-tile='terminal']:not(.has-icon)) {
     background: linear-gradient(160deg, #3a3d48, #22242c);
   }
 

@@ -425,6 +425,10 @@ const jsonLd = JSON.stringify({
       inset 0 0.1em 0 rgba(255, 255, 255, 0.55),
       0 0.4em 0.8em rgba(8, 25, 80, 0.35);
   }
+  /* A real icon is its own shape: shadow the drawing, not the square around it. */
+  .tile :global(.app-icon.has-icon) {
+    filter: drop-shadow(0 0.3em 0.5em rgba(8, 25, 80, 0.35));
+  }
   .lead {
     margin: 0;
     max-width: 600px;

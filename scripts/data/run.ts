@@ -3,11 +3,13 @@
 // Reads the previous state from <data>/state, writes <data>/state and <data>/site.
 // Set GITHUB_TOKEN for tap descriptions (the anonymous API limit is 60 requests an hour).
 
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { buildCatalog } from './build.ts';
 import { cloneRepo, readHistory, type RepoHistory } from './git.ts';
 import { checkHomebrew, fetchHomebrew } from './homebrew.ts';
+import { fetchIcons, updateIcons, type IconSet } from './icons.ts';
 import { addDays } from './metrics.ts';
 import {
   readPackages,
@@ -125,12 +127,34 @@ async function main() {
   await writeJson(join(dataDir, 'site', 'meta.json'), output.meta);
   await writeJson(join(dataDir, 'site', 'history.json'), output.history);
 
+  const icons = await updateIcons(dataDir, () => cachedIcons(join(workDir, 'api'), args['cache-api']));
+  log(`App icons: ${icons.icons?.tokens.length ?? 0} at CaskFlow ${icons.icons?.commit.slice(0, 7) ?? '(none)'}`);
+
   const { counts, warnings } = output.meta;
+  if (icons.warning) warnings.push(icons.warning);
   log(
     `Wrote ${output.packages.length} packages (${counts.formulae} formulae, ${counts.casks} casks, ` +
       `${counts.community} community) and ${counts.taps} taps for analytics ending ${output.snapshotDate}`,
   );
   for (const warning of warnings) console.warn(`warning: ${warning}`);
+}
+
+/** CaskFlow's icon list, cached with the API responses under --cache-api for repeatable runs. */
+async function cachedIcons(cacheDir: string, cache: boolean): Promise<IconSet> {
+  const file = join(cacheDir, 'caskflow-icons.json');
+  if (cache) {
+    try {
+      return JSON.parse(await readFile(file, 'utf8')) as IconSet;
+    } catch {
+      // Not cached yet.
+    }
+  }
+  const icons = await fetchIcons(process.env.GITHUB_TOKEN);
+  if (cache) {
+    await mkdir(cacheDir, { recursive: true });
+    await writeFile(file, JSON.stringify(icons));
+  }
+  return icons;
 }
 
 main().catch((error: unknown) => {

@@ -14,6 +14,7 @@ All data is public. Docs: https://formulae.brew.sh/docs/api/ and https://docs.br
 | Dates (added, updated) | git history of `Homebrew/homebrew-core`, `Homebrew/homebrew-cask` and each community tap |
 | Community package metadata | the tap's GitHub repo (`owner/homebrew-tap`), read as text |
 | Tap description, stars | GitHub REST API `repos/{owner}/{repo}` |
+| Mac app icons | [CaskFlow](https://github.com/alielsokary/CaskFlow)'s `icons` branch: `icons.json` lists the cask tokens with a 256px PNG |
 
 Notes:
 - Analytics count **install events** from users who haven't opted out, on macOS and Linux. Show them as relative popularity, always labelled with the period ("Installs · 30 days"), and never as "Mac installs". `meta.json` has each window's exact dates.
@@ -59,6 +60,7 @@ Homebrew only publishes rolling windows, so the installs-over-time chart comes f
 | `taps.json` | The top community taps: GitHub details, 30-day installs, listed packages. |
 | `history.json` | Snapshot dates and, per package, the 30-day counts on each date. |
 | `meta.json` | Analytics windows, tracking windows, counts, warnings from the run. |
+| `icons.json` | The CaskFlow commit and the cask tokens it has an icon for (`scripts/data/icons.ts`). Pages load the images from jsDelivr pinned to that commit; only official casks use them. If CaskFlow can't be reached or its list shrinks by half, the run keeps yesterday's file. |
 
 Curation (`content/`: categories, picks, collections, overrides) is joined at build time, so editing it only needs a push.
 
@@ -66,4 +68,4 @@ Snapshots live on the `data` branch for now (about 150KB a day). Moving them to 
 
 ## Not available from Homebrew
 
-App icons, screenshots and rich descriptions. v1 uses the generated initial-letter tiles from the design. Later: developer-claimed listings can upload these.
+App icons, screenshots and rich descriptions. Official Mac apps get icons from CaskFlow (above); formulae, community packages and the casks CaskFlow lacks use the generated initial-letter tiles from the design. Later: developer-claimed listings can upload these.

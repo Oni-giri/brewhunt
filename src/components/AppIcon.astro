@@ -1,7 +1,8 @@
 ---
-// Initial-letter tile standing in for an app icon. Decorative: the name is always next to it.
-// Styles are global (global.css) so the install sheet can draw the same tile from script.
-import { tileFor, type TileName, type Tileable } from '../lib/tiles';
+// An app's icon: the real one when CaskFlow has it (Entry.icon), else the initial-letter tile.
+// The tile stays underneath and comes back if the image fails to load. Decorative: the name is
+// always next to it. Styles are global (global.css) so scripts can draw the same icon.
+import { ICON_FALLBACK, tileFor, type TileName, type Tileable } from '../lib/tiles';
 
 interface Props {
   pkg: Tileable;
@@ -9,7 +10,7 @@ interface Props {
   size?: number;
   /** Colour of a 2px ring, for overlapping stacks. */
   ring?: string;
-  /** The big page-header icon with highlight and drop shadow. */
+  /** The big page-header icon with highlight and drop shadow; its image loads first. */
   raised?: boolean;
   class?: string;
 }
@@ -21,10 +22,22 @@ const fontSize = Math.round(size * (mono ? 0.34 : 0.39));
 ---
 
 <span
-  class:list={['app-icon', { mono, raised }, className]}
+  class:list={['app-icon', { mono, raised, 'has-icon': pkg.icon }, className]}
   data-tile={tile}
   style={`--size:${size}px;--radius:${radius}px;--font:${fontSize}px;${ring ? `--ring:${ring};` : ''}`}
   aria-hidden="true"
 >
   {initials}
+  {pkg.icon && (
+    <img
+      src={pkg.icon}
+      alt=""
+      width={size}
+      height={size}
+      loading={raised ? 'eager' : 'lazy'}
+      fetchpriority={raised ? 'high' : undefined}
+      decoding="async"
+      onerror={ICON_FALLBACK}
+    />
+  )}
 </span>

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   forgeOwner,
+  iconFor,
   isCommandLine,
   isMacApp,
   kindLabel,
@@ -56,5 +57,25 @@ describe('package type', () => {
     ]);
     expect([app, cliCask, formula].map(isMacApp)).toEqual([true, false, false]);
     expect([app, cliCask, formula].map(isCommandLine)).toEqual([false, true, true]);
+  });
+});
+
+describe('iconFor', () => {
+  const base = 'https://cdn.jsdelivr.net/gh/alielsokary/CaskFlow@abc/';
+  const tokens = new Set(['firefox', 'wget']);
+  it('gives official casks with an icon their URL, and everything else a tile', () => {
+    expect(iconFor(base, tokens, { kind: 'cask', source: 'official', token: 'firefox' })).toBe(
+      `${base}firefox.png`,
+    );
+    expect(
+      iconFor(base, tokens, { kind: 'cask', source: 'community', token: 'firefox' }),
+    ).toBeNull();
+    expect(
+      iconFor(base, tokens, { kind: 'formula', source: 'official', token: 'wget' }),
+    ).toBeNull();
+    expect(iconFor(base, tokens, { kind: 'cask', source: 'official', token: 'zed' })).toBeNull();
+    expect(
+      iconFor(null, tokens, { kind: 'cask', source: 'official', token: 'firefox' }),
+    ).toBeNull();
   });
 });

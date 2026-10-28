@@ -244,6 +244,7 @@ const sorts = [
     type SearchIndex,
     type SearchState,
   } from '../lib/search';
+  import { iconImage } from '../lib/icon-image';
   import { tileFor } from '../lib/tiles';
 
   const root = document.querySelector<HTMLElement>('[data-search-page]')!;
@@ -353,6 +354,12 @@ const sorts = [
     icon.dataset.tile = tile;
     icon.textContent = initials;
     icon.classList.toggle('mono', mono);
+    icon.classList.toggle('has-icon', !!item.icon);
+    if (item.icon) {
+      const img = iconImage(item.icon, 56);
+      img.loading = 'lazy';
+      icon.append(img);
+    }
     // Sized by this page's CSS: the design's search rows use 56px tiles, smaller on small phones.
     icon.removeAttribute('style');
 
@@ -383,6 +390,8 @@ const sorts = [
       tile,
       initials,
     });
+    if (item.icon) get.dataset.icon = item.icon;
+    else delete get.dataset.icon;
     if (item.source === 'community') get.dataset.community = '';
     else delete get.dataset.community;
     if (mono) get.dataset.mono = '';

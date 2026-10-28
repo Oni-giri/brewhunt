@@ -12,6 +12,9 @@ import {
   type Sort,
 } from '../../src/lib/search.ts';
 
+const ICON_BASE =
+  'https://cdn.jsdelivr.net/gh/alielsokary/CaskFlow@0123456789abcdef0123456789abcdef01234567/';
+
 // A small catalog with the shapes that matter: install counts are rounded from real data.
 function entry(id: string, fields: Partial<IndexEntry> = {}): IndexEntry {
   const token = id.slice(id.lastIndexOf('/') + 1);
@@ -43,6 +46,7 @@ function entry(id: string, fields: Partial<IndexEntry> = {}): IndexEntry {
     updatedAt: null,
     updatedKind: null,
     installCommand: `brew install ${kind === 'cask' ? '--cask ' : ''}${id}`,
+    icon: null,
     ...fields,
   };
 }
@@ -70,6 +74,7 @@ const entries: IndexEntry[] = [
   cask('rectangle', 'Rectangle', 'Move and resize windows using keyboard shortcuts', 9_782, {
     updatedAt: '2026-10-20',
     updatedKind: 'version',
+    icon: `${ICON_BASE}rectangle.png`,
   }),
   cask('nikitabobko/tap/aerospace', 'AeroSpace', 'i3-like tiling window manager', 5_161, {
     trend: { change: 0.42, basis: 'previous-60-days-average' },
@@ -155,6 +160,7 @@ const index = buildSearchIndex({
   collections,
   generatedOn: '2026-10-28',
   trendingMin: 500,
+  iconBase: ICON_BASE,
 });
 const data = prepare(JSON.parse(JSON.stringify(index)));
 
@@ -194,6 +200,7 @@ describe('buildSearchIndex', () => {
       FLAG.cask | FLAG.community | FLAG.listed,
     );
     expect(index.flags[row('libpng')]).toBe(FLAG.library);
+    expect(index.flags[row('rectangle')]).toBe(FLAG.cask | FLAG.listed | FLAG.icon);
     expect(index.flags[row('linux-only-app')]).toBe(FLAG.cask | FLAG.linuxOnly);
     // Only a version date counts as an update.
     expect(index.updated[row('firefox')]).toBe(index.today - 1);
@@ -226,6 +233,13 @@ describe('buildSearchIndex', () => {
     for (const item of data.items) {
       expect(item.installCommand).toBe(entries.find((e) => e.id === item.id)!.installCommand);
     }
+  });
+
+  it('round-trips icons, from the flag and one shared base', () => {
+    for (const item of data.items) {
+      expect(item.icon).toBe(entries.find((e) => e.id === item.id)!.icon);
+    }
+    expect(JSON.stringify(index)).not.toContain('rectangle.png');
   });
 });
 

@@ -26,6 +26,7 @@ const { tile, initials, mono } = tileFor(entry);
   data-tile={tile}
   data-initials={initials}
   data-mono={mono ? '' : undefined}
+  data-icon={entry.icon ?? undefined}
   aria-label={variant === 'chip' ? `Get ${entry.name}` : undefined}
   aria-haspopup="dialog"
 >

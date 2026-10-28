@@ -2,6 +2,8 @@
 // docs/DECISIONS.md for why it isn't Pagefind). Pure functions shared by the search page's script
 // and the tests: no DOM, no Node APIs. The page talks to it through `search()`.
 
+import { iconUrl } from './tiles.ts';
+
 // --- The index file ---
 
 /** Bits of `SearchIndex.flags`. */
@@ -16,6 +18,8 @@ export const FLAG = {
   listed: 64,
   /** A command-line cask (catalog.ts Entry.commandLine). */
   cliCask: 128,
+  /** Has a real icon, at SearchIndex.iconBase. */
+  icon: 256,
 } as const;
 
 /**
@@ -30,6 +34,8 @@ export interface SearchIndex {
   today: number;
   /** Below this many 30-day installs a trend is a handful of people (catalog.ts). */
   trendingMin: number;
+  /** Where FLAG.icon packages' icons are (tiles.ts iconBase), or null when there are none. */
+  iconBase: string | null;
   /** In display order. `members` are row numbers, in the editors' order. */
   categories: { slug: string; name: string; members: number[] }[];
   collections: { slug: string; title: string; members: number[] }[];
@@ -105,6 +111,8 @@ export interface Item {
   listed: boolean;
   /** Installs only command-line programs: labelled and filtered with the tools. */
   cliCask: boolean;
+  /** The real icon's URL, or null for a tile. */
+  icon: string | null;
   installs30: number;
   trend: number | null;
   added: number | null;
@@ -172,6 +180,7 @@ export function prepare(index: SearchIndex): SearchData {
       linuxOnly: !!(flags & FLAG.linuxOnly),
       listed: !!(flags & FLAG.listed),
       cliCask: !!(flags & FLAG.cliCask),
+      icon: flags & FLAG.icon && index.iconBase ? iconUrl(index.iconBase, token) : null,
       installs30: index.pop[row],
       trend: index.trend[row] ?? null,
       added: index.added[row] ?? null,

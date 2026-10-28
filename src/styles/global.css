@@ -121,6 +121,23 @@ pre {
 .app-icon[data-tile='terminal'] {
   background: var(--tile-terminal);
 }
+/* A real icon draws its own shape and shadow (macOS icons are padded squircles): no tile,
+   initials or ring behind it until the image fails (ICON_FALLBACK). Important because
+   components give their tiles highlights and shadows, which would frame an empty square. */
+.app-icon {
+  position: relative;
+}
+.app-icon.has-icon {
+  background: none !important;
+  color: transparent !important;
+  box-shadow: none !important;
+}
+.app-icon > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
 
 .visually-hidden {
   position: absolute;

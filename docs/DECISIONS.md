@@ -35,3 +35,15 @@ CI fails the build if `dist/` goes over 19,000 files. If it gets close, prune in
 ## Cask type: Mac app or command-line tool (28 Oct 2026)
 
 A cask that installs only command-line programs (`binary`, no app, pkg or plugin) counts as a command-line tool: codex, claude-code, gcloud-cli. A `.pkg` installer can hold either, so pkg casks count as apps unless `content/packages.yaml` says `type: cli` (set for the .NET SDK, the AWS session plugin and the ARM toolchains).
+
+## Real app icons from CaskFlow (28 Oct 2026)
+
+**Docs said:** no real app icons until a developer claims a listing; the designs only show gradient tiles.
+
+**Owner's call:** use real icons, as Applite does. Showing an app's icon next to its name to identify it is treated as fair use.
+
+**Decision:** official casks use [CaskFlow](https://github.com/alielsokary/CaskFlow)'s icons (MIT licensed project; the icons themselves belong to each app's developer). CaskFlow extracts them from the app bundles and publishes 256px PNGs by token; it covers about 89% of official casks. The data job records which tokens have one and the commit (`data/site/icons.json`); pages load them from jsDelivr pinned to that commit, lazily, with the gradient tile underneath that comes back if an image fails. Formulae, command-line casks CaskFlow lacks, and community taps keep the tiles. The footer credits CaskFlow.
+
+**Costs:** visitors' browsers contact jsDelivr (worth a line in the privacy page), and a list of 100 apps can load a few MB of PNGs. Self-hosting downscaled icons on R2 is on the roadmap. A developer who wants their icon removed: add the token to a skip list (not built yet).
+
+**To reverse:** make `iconFor` in `src/lib/catalog.ts` return null, and every icon goes back to its tile.

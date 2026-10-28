@@ -4,13 +4,14 @@ import { getCatalog, TRENDING_MIN_INSTALLS } from '../lib/catalog';
 import { buildSearchIndex } from '../lib/search-index';
 
 export function GET() {
-  const { entries, categories, collections, meta } = getCatalog();
+  const { entries, categories, collections, meta, iconBase } = getCatalog();
   const index = buildSearchIndex({
     entries,
     categories,
     collections,
     generatedOn: meta.generatedOn,
     trendingMin: TRENDING_MIN_INSTALLS,
+    iconBase,
   });
   return new Response(JSON.stringify(index), {
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
