@@ -2,10 +2,17 @@
 import Wordmark from './Wordmark.astro';
 import { isCurrent, mainNav } from './nav';
 
+interface Props {
+  /** `landing`: frosted pill floating over the landing page's sky, with "Browse apps". */
+  variant?: 'default' | 'landing';
+}
+
+const { variant = 'default' } = Astro.props;
+const landing = variant === 'landing';
 const { pathname } = Astro.url;
 ---
 
-<div class="header-wrap">
+<div class:list={['header-wrap', { landing }]}>
   <header class="header" data-header>
     <Wordmark />
     <nav class="nav-links" aria-label="Main">
@@ -38,6 +45,11 @@ const { pathname } = Astro.url;
           <path d="M20 20l-4-4"></path>
         </svg>
       </button>
+      {landing && (
+        <a class="browse" href="/discover">
+          Browse apps
+        </a>
+      )}
       <button
         type="button"
         class="icon-btn menu-btn"
@@ -230,6 +242,51 @@ const { pathname } = Astro.url;
     display: none;
     background: var(--ink);
     color: var(--surface);
+  }
+
+  /* Landing page: the pill floats over the sky hero (which leaves room for it at the top),
+     frosted and borderless as in landing.html. */
+  .landing {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .landing .header {
+    max-width: var(--landing-header-max);
+    border: 0;
+    background: rgba(255, 255, 255, 0.78);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px -16px rgba(8, 25, 80, 0.45);
+  }
+
+  .browse {
+    display: flex;
+    align-items: center;
+    height: var(--touch);
+    padding: 0 20px;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--surface);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .browse:hover {
+    background: #000;
+    color: var(--surface);
+  }
+
+  /* landing.html hides it under 760px (it goes to Discover, which the menu has); it also needs
+     the room until the nav links fit beside it. */
+  @media (max-width: 900px) {
+    .browse {
+      display: none;
+    }
   }
 
   .menu,

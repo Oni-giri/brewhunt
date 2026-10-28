@@ -1,0 +1,866 @@
+---
+// Landing page. See docs/PRODUCT.md › Landing; design/screens/landing.html.
+import AppIcon from '../components/AppIcon.astro';
+import AppWall, { type WallRow } from '../components/AppWall.astro';
+import CategoryRow from '../components/CategoryRow.astro';
+import PackageCard from '../components/PackageCard.astro';
+import PickCard from '../components/PickCard.astro';
+import RankedRow from '../components/RankedRow.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ToolCard from '../components/ToolCard.astro';
+import Base from '../layouts/Base.astro';
+import { categoryEntries, getCatalog, isCommandLine, isMacApp, top } from '../lib/catalog';
+import { categoryLead, newOnDiscover } from '../lib/discover';
+import { compactNumber, relativeDay } from '../lib/format';
+import { colourfulTop, topToolsIn, wallApps, wallTools } from '../lib/landing';
+
+const { meta, categories, picks, byId } = getCatalog();
+const today = meta.generatedOn;
+
+const heroApps = colourfulTop(3);
+const popularSearches = ['window manager', 'clipboard', 'menu bar', 'video player', 'terminal'];
+
+// 12 chips a row: one copy is 12 × 286px, wider than any screen, so the loop never shows a gap.
+const apps = wallApps(24);
+const wallRows: WallRow[] = [
+  { entries: apps.slice(0, 12), duration: 95 },
+  { entries: apps.slice(12, 24), duration: 110, reverse: true },
+  { entries: wallTools(12), duration: 90, dark: true },
+].filter((row) => row.entries.length > 0);
+
+const charts = [
+  { title: 'Mac apps', id: 'top-apps', entries: top(isMacApp, 5) },
+  { title: 'Command-line tools', id: 'top-tools', entries: top(isCommandLine, 5) },
+].filter((c) => c.entries.length > 0);
+
+const fresh = newOnDiscover();
+
+// The three newest picks (picks.yaml is newest first).
+const featured = picks
+  .flatMap((pick) => {
+    const entry = byId.get(pick.id);
+    return entry?.hasPage ? [{ pick, entry }] : [];
+  })
+  .slice(0, 3);
+
+const TOOLS_CATEGORY = 'terminal-tools';
+const tools = topToolsIn(TOOLS_CATEGORY, 6);
+
+const INSTALL_HOMEBREW =
+  '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"';
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Brewhunt',
+  url: new URL('/', Astro.site).href,
+}).replaceAll('<', '\\u003c');
+---
+
+<Base
+  title="Brewhunt: the app store for Homebrew"
+  exactTitle
+  description="Discover Mac apps and command-line tools you can install with Homebrew: ranked by real installs, refreshed every day, each with its one-line install command."
+  header="landing"
+>
+  <script type="application/ld+json" slot="head" set:html={jsonLd} />
+  <link
+    slot="head"
+    rel="alternate"
+    type="application/rss+xml"
+    title="New on Homebrew · Brewhunt"
+    href="/new/rss.xml"
+  />
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-inner">
+      <span class="badge">
+        <span class="badge-tiles" aria-hidden="true">
+          <span data-tile="orange"></span>
+          <span data-tile="green"></span>
+          <span data-tile="purple"></span>
+        </span>
+        The app store for everything you can install with Homebrew
+      </span>
+      <h1 id="hero-title">
+        Discover great Mac apps.
+        <br />
+        Thousands{' '}
+        <span class="tiles" aria-hidden="true">
+          {heroApps.map((entry) => (
+            <span class="tile">
+              <AppIcon pkg={entry} />
+            </span>
+          ))}
+        </span>{' '}
+        of them.
+      </h1>
+      <p class="lead">
+        Curated by people, ranked by real installs, refreshed every day — from big names to
+        brilliant tools you've never heard of.
+      </p>
+      <form class="search" action="/search" method="get" role="search">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="var(--text-meta)"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-4-4"></path>
+        </svg>
+        <label for="landing-q" class="visually-hidden">
+          Search apps
+        </label>
+        <input
+          id="landing-q"
+          name="q"
+          type="search"
+          placeholder="Search apps, tools and categories"
+        />
+        <button type="submit">Search</button>
+      </form>
+      <ul class="chips" aria-label="Popular searches">
+        {popularSearches.map((q) => (
+          <li>
+            <a href={`/search?${new URLSearchParams({ q })}`}>{q}</a>
+          </li>
+        ))}
+      </ul>
+      <a class="setup-link" href="#setup">
+        New to Homebrew? Set it up in a minute&nbsp;→
+      </a>
+    </div>
+
+    {wallRows.length > 0 && (
+      <div class="wall-wrap">
+        <AppWall rows={wallRows} label="Popular apps and tools" />
+      </div>
+    )}
+  </section>
+
+  <div class="container sections">
+    {charts.length > 0 && (
+      <section class="section" aria-labelledby="charts-title">
+        <SectionHeading
+          eyebrow="Charts"
+          title="Top charts"
+          id="charts-title"
+          caption="Ranked by installs, from Homebrew's public, opt-out analytics. Updated daily."
+        />
+        <div class="charts">
+          {charts.map((chart) => (
+            <div class="chart">
+              <div class="chart-head">
+                <h3 id={chart.id}>{chart.title}</h3>
+                <span class="period">Installs · 30 days</span>
+                <a href="/charts" aria-label={`See all ${chart.title} in the charts`}>
+                  See all
+                </a>
+              </div>
+              <ol aria-labelledby={chart.id}>
+                {chart.entries.map((entry, i) => (
+                  <RankedRow
+                    rank={i + 1}
+                    entry={entry}
+                    installs={compactNumber(entry.popularity.d30)}
+                  />
+                ))}
+              </ol>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {fresh.entries.length > 0 && (
+      <section class="section" aria-labelledby="new-title">
+        <SectionHeading
+          eyebrow="Fresh"
+          title={fresh.days === 7 ? 'New this week' : 'New in the last two weeks'}
+          id="new-title"
+          caption="Just added to Homebrew, or spotted in independent developers' taps."
+          href="/new"
+          linkLabel="See all new"
+        />
+        <ul class="carousel" aria-labelledby="new-title">
+          {fresh.entries.map((entry) => (
+            <PackageCard entry={entry}>Added {relativeDay(entry.firstSeen!, today)}</PackageCard>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {featured.length > 0 && (
+      <section class="section" aria-labelledby="picks-title">
+        <SectionHeading
+          eyebrow="Editor's picks"
+          title="Picked by people, not just by numbers."
+          id="picks-title"
+        />
+        <ul class="picks">
+          {featured.map(({ pick, entry }) => (
+            <PickCard pick={pick} entry={entry} />
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section class="section" aria-labelledby="categories-title">
+      <SectionHeading eyebrow="Categories" title="Browse by what you need" id="categories-title" />
+      <ul class="category-grid">
+        {categories.map((category) => (
+          <CategoryRow
+            category={category}
+            entries={categoryLead(category)}
+            count={categoryEntries(category).length}
+          />
+        ))}
+      </ul>
+    </section>
+
+    <section class="panel cli" aria-labelledby="cli-title">
+      <div class="panel-text">
+        <span class="eyebrow">Not just apps</span>
+        <h2 id="cli-title">Command-line tools, too.</h2>
+        <p>
+          For developers and the terminal-curious: the most installed tools in our Terminal tools
+          category over the last 30 days.
+        </p>
+        <a class="arrow-link" href="/search?type=cli">
+          Browse command-line tools&nbsp;→
+        </a>
+      </div>
+      {tools.length > 0 && (
+        <ul class="tools" aria-label="Popular terminal tools">
+          {tools.map((entry) => (
+            <ToolCard entry={entry} />
+          ))}
+        </ul>
+      )}
+    </section>
+
+    <section class="panel setup" id="setup" aria-labelledby="setup-title">
+      <div class="setup-text">
+        <span class="eyebrow">Getting started</span>
+        <h2 id="setup-title">Installing takes one line.</h2>
+        <p>
+          Every app comes with its Homebrew command: hit Get, paste it in Terminal, done. New to
+          Homebrew? Paste this once first. It's the official installer, from{' '}
+          <a href="https://brew.sh" rel="noopener">
+            brew.sh
+          </a>
+          .
+        </p>
+      </div>
+      <div class="setup-command">
+        {/* Line breaks after slashes rather than mid-word when it wraps. */}
+        <code set:html={INSTALL_HOMEBREW.replaceAll('/', '/<wbr>')} />
+        <button
+          type="button"
+          class="copy"
+          data-copy={INSTALL_HOMEBREW}
+          aria-label="Copy the Homebrew install command"
+        >
+          Copy
+        </button>
+      </div>
+    </section>
+
+    <section class="panel developers" id="developers" aria-labelledby="developers-title">
+      <div class="panel-text">
+        <span class="eyebrow">For developers</span>
+        <h2 id="developers-title">
+          Built a Mac app? Get it in front of the people who'll love it.
+        </h2>
+        <p>
+          Listings come straight from Homebrew: if your app is in its catalog, it's here, with the
+          description and homepage from your cask or formula. Keep those up to date; Brewhunt
+          rebuilds every day. Claiming a listing, to add screenshots and your own words, is planned
+          but not open yet.
+        </p>
+      </div>
+      <div class="developers-cta">
+        <a class="button" href="https://docs.brew.sh/Adding-Software-to-Homebrew" rel="noopener">
+          Add your app to Homebrew
+        </a>
+        <span>Homebrew's own guide, on docs.brew.sh</span>
+      </div>
+    </section>
+
+    <section class="panel follow" aria-labelledby="follow-title">
+      <div class="follow-text">
+        <h2 id="follow-title">Follow what's new</h2>
+        <p>
+          Apps and command-line tools added to Homebrew in the last two weeks, in your feed reader
+          or on the New page.
+        </p>
+      </div>
+      <div class="follow-links">
+        <a class="button" href="/new/rss.xml">
+          RSS feed
+        </a>
+        <a class="button secondary" href="/new">
+          See what's new
+        </a>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  /* --- Hero --- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    /* The header floats over the top (Header.astro, landing variant: 20px + a 63px pill);
+       landing.html starts the content 56px under it. */
+    padding: 139px 0 36px;
+    color: #fff;
+    background:
+      radial-gradient(
+        ellipse 60% 16% at 12% 100%,
+        rgba(255, 255, 255, 0.95),
+        rgba(255, 255, 255, 0) 70%
+      ),
+      radial-gradient(
+        ellipse 55% 14% at 88% 100%,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0) 70%
+      ),
+      var(--sky);
+  }
+  /* The accent focus ring disappears on the blue sky. */
+  .hero-inner :focus-visible {
+    outline-color: #fff;
+  }
+  .hero-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+  }
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px 6px 8px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .badge-tiles {
+    display: flex;
+    flex: none;
+  }
+  .badge-tiles span {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+  .badge-tiles span + span {
+    margin-left: -4px;
+  }
+  .badge-tiles [data-tile='orange'] {
+    background: var(--tile-orange);
+  }
+  .badge-tiles [data-tile='green'] {
+    background: var(--tile-green);
+  }
+  .badge-tiles [data-tile='purple'] {
+    background: var(--tile-purple);
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: clamp(44px, 6.2vw, 80px);
+    line-height: 1.06;
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  /* Three app tiles inside the headline, sized in em so they scale with it. */
+  .tiles {
+    display: inline-flex;
+    vertical-align: -0.06em;
+  }
+  .tile {
+    position: relative;
+    width: 0.74em;
+    height: 0.74em;
+    transform: rotate(-10deg);
+  }
+  .tile + .tile {
+    margin-left: -0.22em;
+  }
+  .tile:nth-child(2) {
+    transform: rotate(7deg) translateY(-0.06em);
+  }
+  .tile:nth-child(3) {
+    transform: rotate(-4deg);
+  }
+  /* Out of flow, so the initials don't give the row a text baseline: the tiles sit on the
+     line like landing.html's empty ones. */
+  .tile :global(.app-icon) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 23%;
+    font-family: var(--font-body);
+    font-size: 0.29em;
+    letter-spacing: 0;
+    box-shadow:
+      inset 0 0.1em 0 rgba(255, 255, 255, 0.55),
+      0 0.4em 0.8em rgba(8, 25, 80, 0.35);
+  }
+  .lead {
+    margin: 0;
+    max-width: 600px;
+    font-size: 20px;
+    text-wrap: pretty;
+  }
+  .search {
+    width: 100%;
+    max-width: 620px;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 8px 8px 22px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    box-shadow: var(--shadow-float);
+  }
+  .search:focus-within {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+  .search svg {
+    flex: none;
+  }
+  .search input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 18px;
+    color: var(--ink);
+    outline: none;
+  }
+  .search button {
+    flex: none;
+    height: 48px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--surface);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .search button:hover {
+    background: #000;
+  }
+  /* On the white pill, the white hero ring wouldn't show. */
+  .search button:focus-visible {
+    outline-color: var(--accent);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .chips a {
+    display: flex;
+    align-items: center;
+    height: var(--touch);
+    padding: 0 18px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 15px;
+    box-shadow: 0 8px 20px -14px rgba(8, 25, 80, 0.6);
+  }
+  .chips a:hover {
+    background: var(--chip);
+    color: var(--ink);
+  }
+  .setup-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    text-underline-offset: 4px;
+  }
+  .setup-link:hover {
+    color: #fff;
+    text-decoration-thickness: 2px;
+  }
+  .wall-wrap {
+    margin-top: 48px;
+  }
+
+  /* --- Sections --- */
+  .sections {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    padding-top: 32px;
+  }
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  [id] {
+    scroll-margin-top: 24px;
+  }
+  /* landing.html sets every section title at 44px (store pages use 32px). */
+  .section :global(.heading h2),
+  .panel-text h2 {
+    font-size: 44px;
+  }
+  .eyebrow {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  /* --- Top charts --- */
+  .charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(480px, 100%), 1fr));
+    gap: 20px;
+  }
+  .chart {
+    min-width: 0;
+    padding: 12px 28px 20px;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .chart-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 16px 0 8px;
+  }
+  .chart-head h3 {
+    margin: 0 auto 0 0;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .period {
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+  .chart-head a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    margin: -10px 0;
+    font-size: 15px;
+  }
+  .chart ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* --- New --- */
+  .carousel {
+    display: flex;
+    gap: 16px;
+    margin: 0;
+    padding: 2px 2px 12px;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .carousel > :global(li) {
+    flex: none;
+    width: 250px;
+    scroll-snap-align: start;
+  }
+
+  /* --- Editor's picks --- */
+  .picks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* --- Categories --- */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* --- Panels --- */
+  .panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    border-radius: var(--radius-panel);
+  }
+  .panel h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .panel p {
+    margin: 0;
+  }
+  .panel-text {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    padding: 0 26px;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--surface);
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .button:hover {
+    background: #000;
+    color: var(--surface);
+  }
+  .button.secondary {
+    background: var(--chip);
+    color: var(--ink);
+  }
+  .button.secondary:hover {
+    background: #e2e4ea;
+    color: var(--ink);
+  }
+
+  /* Command-line tools: navy, with a blue glow top right. */
+  .cli {
+    gap: 40px;
+    padding: 40px;
+    background:
+      radial-gradient(
+        ellipse 60% 60% at 90% 0%,
+        rgba(47, 107, 255, 0.35),
+        rgba(47, 107, 255, 0) 70%
+      ),
+      var(--navy);
+    color: var(--code-dark-text);
+  }
+  .cli .panel-text {
+    flex: 1 1 360px;
+  }
+  .cli .eyebrow {
+    color: var(--navy-meta);
+  }
+  .cli p {
+    font-size: 18px;
+    color: var(--navy-text);
+  }
+  .arrow-link {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    color: #fff;
+    font-weight: 600;
+  }
+  .arrow-link:hover {
+    color: #fff;
+    text-decoration-thickness: 2px;
+  }
+  .tools {
+    flex: 1 1 460px;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Setup: white, the install command on the right. */
+  .setup {
+    justify-content: space-between;
+    gap: 20px 40px;
+    padding: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .setup-text {
+    flex: 1 1 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .setup h2 {
+    font-size: 26px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+  .setup p {
+    color: var(--text-secondary);
+  }
+  .setup-command {
+    flex: 1 1 420px;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  /* The whole command stays readable (it's pasted into a terminal): it wraps rather than
+     being cut off. */
+  .setup-command code {
+    flex: 1 1 280px;
+    min-width: 0;
+    padding: 13px 16px;
+    border-radius: var(--radius-code);
+    background: var(--navy);
+    color: var(--code-dark-text);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+  .copy {
+    flex: none;
+    height: var(--touch);
+    padding: 0 20px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--surface);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .copy:hover {
+    background: #000;
+  }
+
+  /* Developers: light sky card. */
+  .developers {
+    gap: 32px 56px;
+    padding: 40px;
+    background:
+      radial-gradient(
+        ellipse 50% 40% at 15% 110%,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0) 70%
+      ),
+      var(--claim);
+  }
+  .developers .panel-text {
+    flex: 1 1 420px;
+  }
+  .developers .eyebrow {
+    color: #3a4152;
+  }
+  .developers p {
+    max-width: 760px;
+    font-size: 18px;
+    color: #2b3140;
+  }
+  .developers-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #2b3140;
+  }
+
+  /* Follow: where landing.html had the newsletter. */
+  .follow {
+    justify-content: space-between;
+    gap: 20px 40px;
+    padding: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .follow-text {
+    flex: 1 1 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .follow h2 {
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+  .follow p {
+    color: var(--text-secondary);
+  }
+  .follow-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  @media (max-width: 480px) {
+    .period {
+      display: none;
+    }
+    /* Rows wrap long names on phones: give them the room (landing.html keeps 28px). */
+    .chart {
+      padding: 8px 20px 16px;
+    }
+  }
+  /* Narrow phones: less panel padding so 44px titles keep room for their longest word. */
+  @media (max-width: 360px) {
+    .cli,
+    .developers {
+      padding: 28px 20px;
+    }
+    .setup,
+    .follow {
+      padding: 24px 20px;
+    }
+    .chart {
+      padding: 8px 16px 12px;
+    }
+  }
+</style>

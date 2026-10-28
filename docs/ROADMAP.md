@@ -26,9 +26,9 @@
 - [x] Tap pages `/tap/[owner]/[repo]`.
 
 ## M4 · Landing + launch
-- [ ] Landing page `/` (sky hero, app wall marquee, sections).
+- [x] Landing page `/` (sky hero, app wall marquee, sections). No waitlist or newsletter forms yet: nothing to send them to.
 - [ ] Sitemap, robots, OG images, analytics (privacy-friendly), 404. (Sitemap, robots and 404 with alias redirects are done; OG images and analytics aren't.)
-- [ ] Accessibility pass (keyboard, focus, contrast, 390px layouts), performance pass.
+- [ ] Accessibility pass (keyboard, focus, contrast, 390px layouts), performance pass. (axe-core finds no WCAG 2.2 A/AA issues on any page type at 1280 and 390; still worth a manual screen-reader pass.)
 - [ ] Deploy to the production domain.
 
 ## Beyond v1: the long-term roadmap

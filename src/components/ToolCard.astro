@@ -1,0 +1,84 @@
+---
+// A small card for a command-line tool on a navy panel (the landing page's command-line
+// section): monospace name and one line, linking to its page, plus Get. Put cards in a list.
+import type { Entry } from '../lib/catalog';
+import Badge from './Badge.astro';
+import GetButton from './GetButton.astro';
+
+interface Props {
+  entry: Entry;
+}
+
+const { entry } = Astro.props;
+---
+
+<li class="tool">
+  <a class="main" href={entry.url}>
+    <span class="title">
+      <span class="name">{entry.name}</span>
+      {entry.source === 'community' && <Badge variant="community">Community</Badge>}
+    </span>
+    {entry.line && <span class="line">{entry.line}</span>}
+  </a>
+  <GetButton entry={entry} />
+</li>
+
+<style>
+  .tool {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 64px;
+    padding: 12px 12px 12px 16px;
+    border-radius: var(--radius-code);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+  .main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-decoration: none;
+  }
+  .title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px 6px;
+  }
+  .name {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: #9cc7ff;
+    overflow-wrap: anywhere;
+  }
+  .main:hover .name {
+    text-decoration: underline;
+  }
+  .title :global(.community) {
+    color: var(--navy-text);
+    border-color: var(--navy-text);
+  }
+  .line {
+    font-size: 14px;
+    color: var(--navy-text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* Get as a translucent pill on the navy panel (still a 44px target). */
+  .tool :global(.get) {
+    padding: 0 14px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 13px;
+  }
+  .tool :global(.get:hover) {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+</style>

@@ -12,12 +12,15 @@ interface Props {
   noindex?: boolean;
   /** Use `title` as the whole <title>, without " · Brewhunt". */
   exactTitle?: boolean;
+  /** `landing`: the frosted header over the sky hero (src/pages/index.astro). */
+  header?: 'default' | 'landing';
 }
 
 const {
   title,
   noindex = false,
   exactTitle = false,
+  header = 'default',
   description = 'The app store for everything you can install with Homebrew: discover Mac apps and command-line tools, see what’s new and trending, and grab the one-line install command.',
 } = Astro.props;
 
@@ -55,7 +58,7 @@ const fullTitle = exactTitle || title === 'Brewhunt' ? title : `${title} · Brew
     <a class="skip-link" href="#main">
       Skip to content
     </a>
-    <Header />
+    <Header variant={header} />
     <main id="main">
       <slot />
     </main>

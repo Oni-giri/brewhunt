@@ -8,7 +8,6 @@ export function GET({ site }: APIContext) {
   const lastmod = meta.generatedOn;
   const paths = [
     '/',
-    '/',
     '/discover',
     ...PERIODS.map((p) => p.href),
     '/new',
