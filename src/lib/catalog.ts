@@ -244,21 +244,33 @@ export function pickFor(id: string): EditorsPick | null {
 
 // --- Labels ---
 
-// Cask artifacts that only put command-line programs (and their docs) in place.
-const CLI_ARTIFACTS = new Set([
-  'binary',
-  'manpage',
-  'artifact',
-  'stage_only',
-  'bash_completion',
-  'zsh_completion',
-  'fish_completion',
-  'generate_completions_from_executable',
+// Cask artifacts that put something app-like on the Mac (as opposed to `binary`, man pages,
+// shell completions or an install script).
+const APP_ARTIFACTS = new Set([
+  'app',
+  'pkg',
+  'suite',
+  'prefpane',
+  'qlplugin',
+  'mdimporter',
+  'screen_saver',
+  'service',
+  'colorpicker',
+  'dictionary',
+  'input_method',
+  'internet_plugin',
+  'keyboard_layout',
+  'audio_unit_plugin',
+  'vst_plugin',
+  'vst3_plugin',
+  'font',
 ]);
 
-/** A cask that installs only command-line programs, no app (`dtctl`, `gcloud-cli`). */
-export const isCliCask = (p: Package) =>
-  p.kind === 'cask' && p.artifacts.length > 0 && p.artifacts.every((a) => CLI_ARTIFACTS.has(a));
+/** A cask that installs command-line programs and nothing app-like (`dtctl`, `gcloud-cli`). */
+export const isCliCask = (p: Pick<Package, 'kind' | 'artifacts'>) =>
+  p.kind === 'cask' &&
+  p.artifacts.includes('binary') &&
+  !p.artifacts.some((a) => APP_ARTIFACTS.has(a));
 
 /** "Mac app", "Command-line tool", "Linux app". */
 export function kindLabel(p: Package): string {

@@ -1,0 +1,407 @@
+---
+// A curated category (content/categories.yaml). See docs/PRODUCT.md › Category.
+import type { Category } from '../../../scripts/content/schema.ts';
+import AppCard from '../../components/AppCard.astro';
+import AppIcon from '../../components/AppIcon.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import CategoryChips from '../../components/CategoryChips.astro';
+import GetButton from '../../components/GetButton.astro';
+import IconStack from '../../components/IconStack.astro';
+import Base from '../../layouts/Base.astro';
+import { categoryEntries, getCatalog, kindLabel, latestPick } from '../../lib/catalog';
+import { compactNumber, fullNumber, shortDate } from '../../lib/format';
+
+export function getStaticPaths() {
+  return getCatalog().categories.map((category) => ({
+    params: { slug: category.slug },
+    props: { category },
+  }));
+}
+
+interface Props {
+  category: Category;
+}
+
+const { category } = Astro.props;
+const { categories, meta } = getCatalog();
+const entries = categoryEntries(category).sort(
+  (a, b) => b.popularity.d30 - a.popularity.d30 || a.name.localeCompare(b.name),
+);
+const subOf = new Map(category.packages.map((p) => [p.id, p.sub ?? '']));
+const subs = category.subcategories.filter((s) => entries.some((e) => subOf.get(e.id) === s.slug));
+const pick = latestPick(category.slug);
+const count = `${fullNumber(entries.length)} ${entries.length === 1 ? 'app or tool' : 'apps and tools'}`;
+const others = categories.filter((c) => c.slug !== category.slug);
+---
+
+<Base
+  title={`${category.name}: apps and tools`}
+  description={`${category.description} ${count} you can install with Homebrew.`}
+>
+  <div class="container page">
+    <Breadcrumb
+      items={[
+        { label: 'Discover', href: '/discover' },
+        { label: 'Categories', href: '/discover#categories' },
+        { label: category.name },
+      ]}
+    />
+
+    <header class="intro">
+      <IconStack
+        pkgs={categoryEntries(category).slice(0, 3)}
+        size={56}
+        overlap={20}
+        ring="var(--bg)"
+        class="stack"
+      />
+      <div class="titles">
+        <h1>{category.name}</h1>
+        <p>
+          {category.description} {count}.
+        </p>
+      </div>
+    </header>
+
+    <div class="controls" data-controls hidden>
+      {subs.length > 0 && (
+        <div role="group" aria-label="Narrow down" class="subs">
+          <button type="button" aria-pressed="true" data-sub="">
+            All
+          </button>
+          {subs.map((s) => (
+            <button type="button" aria-pressed="false" data-sub={s.slug}>
+              {s.name}
+            </button>
+          ))}
+        </div>
+      )}
+      <label class="sort">
+        Sort by
+        <select data-sort>
+          <option value="installs" selected>
+            Most installed
+          </option>
+          <option value="trending">Trending</option>
+          <option value="name">Name</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="container page body">
+    {pick && (
+      <section class="pick" aria-labelledby="pick-name">
+        <a class="stage" href={pick.entry.url} tabindex="-1" aria-hidden="true">
+          <AppIcon pkg={pick.entry} size={96} raised />
+        </a>
+        <div class="pick-body">
+          <span class="eyebrow">Editor's pick</span>
+          <a class="pick-id" href={pick.entry.url}>
+            <AppIcon pkg={pick.entry} size={56} />
+            <h2 id="pick-name">{pick.entry.name}</h2>
+          </a>
+          <p class="blurb">{pick.pick.blurb}</p>
+          <span class="pick-actions">
+            <GetButton entry={pick.entry} variant="primary" />
+            <a class="read-more" href={pick.entry.url}>
+              Read more<span class="visually-hidden"> about {pick.entry.name}</span>
+            </a>
+          </span>
+        </div>
+      </section>
+    )}
+
+    <section class="list" aria-labelledby="list-title">
+      <div class="list-head">
+        <h2 id="list-title" data-list-title>
+          Most installed
+        </h2>
+        <span class="list-count" data-list-count aria-live="polite">
+          {count}
+        </span>
+      </div>
+      <ul class="cards" data-list>
+        {entries.map((e, i) => (
+          <AppCard
+            entry={e}
+            meta={`${kindLabel(e)} · ${compactNumber(e.installs.d30)} installs`}
+            attrs={{
+              'data-sub': subOf.get(e.id) ?? '',
+              'data-rank': String(i),
+              'data-trend': String(e.trend?.change ?? -Infinity),
+              'data-name': e.name.toLowerCase(),
+            }}
+          />
+        ))}
+      </ul>
+      <p class="source">
+        Installs in the 30 days to {shortDate(meta.analytics.d30.end)}, from Homebrew's public,
+        opt-out analytics. Trending compares each package's share of installs with the period
+        before.
+      </p>
+    </section>
+
+    <section class="others" aria-labelledby="others-title">
+      <h2 id="others-title">Other categories</h2>
+      <CategoryChips categories={others} label="Other categories" />
+    </section>
+  </div>
+</Base>
+
+<script>
+  const controls = document.querySelector<HTMLElement>('[data-controls]');
+  const list = document.querySelector<HTMLElement>('[data-list]');
+  if (controls && list) {
+    controls.hidden = false;
+    const items = [...list.children] as HTMLElement[];
+    const title = document.querySelector('[data-list-title]')!;
+    const count = document.querySelector('[data-list-count]')!;
+    const select = controls.querySelector<HTMLSelectElement>('[data-sort]')!;
+    const buttons = [...controls.querySelectorAll<HTMLButtonElement>('[data-sub]')];
+    let sub = '';
+    const TITLES: Record<string, string> = {
+      installs: 'Most installed',
+      trending: 'Trending',
+      name: 'By name',
+    };
+    const compare: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
+      installs: (a, b) => Number(a.dataset.rank) - Number(b.dataset.rank),
+      trending: (a, b) =>
+        Number(b.dataset.trend) - Number(a.dataset.trend) ||
+        Number(a.dataset.rank) - Number(b.dataset.rank),
+      name: (a, b) => a.dataset.name!.localeCompare(b.dataset.name!),
+    };
+    const render = () => {
+      const shown = items
+        .filter((li) => !sub || li.dataset.sub === sub)
+        .sort(compare[select.value]);
+      list.replaceChildren(...shown);
+      title.textContent = TITLES[select.value];
+      count.textContent = `${shown.length} ${shown.length === 1 ? 'app or tool' : 'apps and tools'}`;
+    };
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        sub = button.dataset.sub ?? '';
+        for (const b of buttons) b.setAttribute('aria-pressed', String(b === button));
+        render();
+      });
+    }
+    select.addEventListener('change', render);
+  }
+</script>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 36px;
+  }
+  .body {
+    gap: 40px;
+    padding-top: 28px;
+    padding-bottom: 64px;
+  }
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px 24px;
+  }
+  .titles {
+    flex: 1 1 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 36px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .titles p {
+    margin: 0;
+    font-size: 17px;
+    color: var(--text-secondary);
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .controls[hidden] {
+    display: none;
+  }
+  .subs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .subs button {
+    height: var(--touch);
+    padding: 0 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .subs [aria-pressed='true'] {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: #fff;
+  }
+  .sort {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+  }
+  .sort select {
+    height: var(--touch);
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+  }
+
+  /* Editor's pick */
+  .pick {
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .stage {
+    flex: 1 1 300px;
+    text-decoration: none;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(
+        ellipse 60% 30% at 50% 108%,
+        rgba(255, 255, 255, 0.95),
+        rgba(255, 255, 255, 0) 70%
+      ),
+      linear-gradient(180deg, #2459d8, #a9cff6);
+  }
+  .pick-body {
+    flex: 2 1 380px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    padding: 28px 32px;
+  }
+  .eyebrow {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .pick-id {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .pick-id h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .pick-id:hover h2 {
+    text-decoration: underline;
+  }
+  .blurb {
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-body);
+  }
+  .pick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .read-more {
+    display: flex;
+    align-items: center;
+    height: var(--touch);
+    padding: 0 20px;
+    border-radius: var(--radius-pill);
+    background: var(--chip);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* List */
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .list-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+  }
+  .list h2,
+  .others h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 32px;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .list-count {
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .source {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+  .others {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  @media (max-width: 480px) {
+    .pick-body {
+      padding: 24px;
+    }
+    .stage {
+      min-height: 160px;
+    }
+  }
+</style>

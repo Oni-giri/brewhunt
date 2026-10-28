@@ -9,12 +9,14 @@ import GetButton from './GetButton.astro';
 interface Props {
   entry: Entry;
   meta?: string;
+  /** Extra attributes for the <li>, e.g. data-* used by a page's filter script. */
+  attrs?: Record<string, string>;
 }
 
-const { entry, meta } = Astro.props;
+const { entry, meta, attrs = {} } = Astro.props;
 ---
 
-<li class="card">
+<li class="card" {...attrs}>
   <a class="main" href={entry.url}>
     <AppIcon pkg={entry} size={52} />
     <span class="text">

@@ -1,0 +1,445 @@
+---
+// Top charts: /charts (30 days), /charts/90-days and /charts/1-year, each with Mac apps,
+// command-line tools and community packages. Static pages, so every period is linkable.
+import AppIcon from '../../components/AppIcon.astro';
+import RankedRow from '../../components/RankedRow.astro';
+import Base from '../../layouts/Base.astro';
+import {
+  getCatalog,
+  isCommandLine,
+  isMacApp,
+  trending,
+  TRENDING_MIN_INSTALLS,
+  type Entry,
+} from '../../lib/catalog';
+import { PERIODS, type Period } from '../../lib/charts';
+import { compactNumber, fullNumber, shortDate, trendLabel } from '../../lib/format';
+
+export function getStaticPaths() {
+  return PERIODS.map((period) => ({ params: { period: period.slug }, props: { period } }));
+}
+
+interface Props {
+  period: Period;
+}
+
+const { period } = Astro.props;
+const { entries, meta, categoryBySlug } = getCatalog();
+const LIMIT = 100;
+const VISIBLE = 25;
+
+const ranked = (filter: (e: Entry) => boolean) =>
+  entries
+    .filter((e) => e.listed && filter(e) && e.popularity[period.key] > 0)
+    .sort((a, b) => b.popularity[period.key] - a.popularity[period.key] || a.id.localeCompare(b.id))
+    .slice(0, LIMIT);
+
+const charts = [
+  {
+    id: 'mac-apps',
+    title: 'Mac apps',
+    entries: ranked((e) => e.source === 'official' && isMacApp(e)),
+  },
+  {
+    id: 'command-line',
+    title: 'Command-line tools',
+    entries: ranked((e) => e.source === 'official' && isCommandLine(e)),
+  },
+  { id: 'community', title: 'Community taps', entries: ranked((e) => e.source === 'community') },
+];
+const climbing = trending(() => true, 5);
+const range = meta.analytics[period.key];
+const showTrend = period.key === 'd30';
+const categoryName = (e: Entry) =>
+  e.categories[0] ? categoryBySlug.get(e.categories[0])?.name : undefined;
+const title = period.key === 'd30' ? 'Top charts' : `Top charts · ${period.label}`;
+---
+
+<Base
+  title={title}
+  description={`The most-installed Mac apps and command-line tools on Homebrew over the last ${period.label}, from its public install analytics.`}
+>
+  <noscript>
+    <style>
+      [role='tabpanel'][hidden] {
+        display: block !important;
+      }
+      [role='tablist'],
+      [data-more] {
+        display: none !important;
+      }
+      ol[data-collapsed] > li {
+        display: flex !important;
+      }
+    </style>
+  </noscript>
+
+  <div class="container page">
+    <div class="intro">
+      <div class="titles">
+        <h1>Top charts</h1>
+        <p>
+          The most-installed apps and tools on Homebrew, refreshed daily from its public install
+          analytics.
+        </p>
+      </div>
+      <nav aria-label="Period" class="periods">
+        {PERIODS.map((p) => (
+          <a href={p.href} aria-current={p === period ? 'page' : undefined}>
+            {p.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+    <div role="tablist" aria-label="Chart" class="tabs" data-tabs>
+      {charts.map((chart, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${chart.id}`}
+          aria-controls={`panel-${chart.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+        >
+          {chart.title}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="container page body">
+    <div class="columns">
+      <div class="main-col">
+        {charts.map((chart, i) => (
+          <section
+            class="panel"
+            id={`panel-${chart.id}`}
+            role="tabpanel"
+            aria-labelledby={`tab-${chart.id}`}
+            hidden={i !== 0}
+          >
+            <div class="panel-head">
+              <h2>{chart.title}</h2>
+              <span>Installs · {period.label}</span>
+            </div>
+            <ol class="rows" data-collapsed>
+              {chart.entries.map((e, rank) => (
+                <RankedRow
+                  rank={rank + 1}
+                  entry={e}
+                  category={categoryName(e)}
+                  installs={compactNumber(e.popularity[period.key])}
+                  trend={showTrend && e.trend ? trendLabel(e.trend.change) : undefined}
+                  trendUp={!!e.trend && e.trend.change > 0}
+                />
+              ))}
+            </ol>
+            {chart.entries.length > VISIBLE && (
+              <button type="button" class="more" data-more>
+                Show top {Math.min(LIMIT, chart.entries.length)}
+              </button>
+            )}
+          </section>
+        ))}
+        <p class="source">
+          Installs from {shortDate(range.start)} to {shortDate(range.end)}, from Homebrew's public,
+          opt-out analytics. Command-line tools count installs people asked for, not ones pulled in
+          as a dependency of something else. Libraries, old versions and deprecated packages are
+          left out.
+          {showTrend && ' Trends compare each package’s share of installs with the 60 days before.'}
+        </p>
+      </div>
+
+      <aside class="side-col">
+        {climbing.length > 0 && (
+          <section class="side climbing" aria-labelledby="climbing-title">
+            <h2 id="climbing-title">Climbing fast</h2>
+            <span class="side-note">
+              Biggest rise in share of installs over the last 30 days, among packages with{' '}
+              {fullNumber(TRENDING_MIN_INSTALLS)}+ installs.
+            </span>
+            <ul>
+              {climbing.map((e) => (
+                <li>
+                  <a href={e.url}>
+                    <AppIcon pkg={e} size={36} />
+                    <span class="climb-name">{e.name}</span>
+                    <span class="climb-trend">{trendLabel(e.trend!.change)}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+        <section class="side" id="how-rankings-work" aria-labelledby="how-title">
+          <h2 id="how-title">How rankings work</h2>
+          <p>
+            Ranked by install events from Homebrew's opt-out analytics. They count installs
+            (including upgrades and reinstalls), not active users, so read them as relative
+            popularity.
+          </p>
+          <p>
+            Homebrew publishes rolling 30-day, 90-day and 1-year totals; Brewhunt refreshes them
+            every day. Command-line tools are ranked by installs on request, so a library pulled in
+            by thousands of other packages doesn't top the chart.
+          </p>
+          <a href="https://docs.brew.sh/Analytics" rel="noopener">
+            More about Homebrew's analytics
+          </a>
+        </section>
+      </aside>
+    </div>
+  </div>
+</Base>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[data-tabs] [role="tab"]')];
+  const select = (tab: HTMLButtonElement) => {
+    for (const t of tabs) {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')!)!.hidden = !on;
+    }
+  };
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => select(tab));
+    tab.addEventListener('keydown', (event) => {
+      const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[
+        event.key
+      ];
+      if (next === undefined) return;
+      event.preventDefault();
+      const target = tabs[(next + tabs.length) % tabs.length];
+      select(target);
+      target.focus();
+    });
+  });
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-more]')) {
+    button.addEventListener('click', () => {
+      const list = button.previousElementSibling as HTMLElement;
+      list.removeAttribute('data-collapsed');
+      button.remove();
+      // Keep keyboard users where they were: on the first newly shown row.
+      list.querySelector<HTMLElement>('li:nth-child(26) a')?.focus();
+    });
+  }
+</script>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 36px;
+  }
+  .body {
+    padding-top: 28px;
+    padding-bottom: 64px;
+  }
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px 24px;
+  }
+  .titles {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 36px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .titles p {
+    margin: 0;
+    font-size: 17px;
+    color: var(--text-secondary);
+  }
+  .periods,
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--track);
+  }
+  .tabs {
+    align-self: flex-start;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .periods a,
+  .tabs button {
+    display: flex;
+    align-items: center;
+    height: var(--touch);
+    padding: 0 18px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-body);
+    font: inherit;
+    font-size: 15px;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .periods [aria-current='page'],
+  .tabs [aria-selected='true'] {
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: var(--shadow-tab);
+  }
+  .columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .main-col {
+    flex: 999 1 560px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .side-col {
+    flex: 1 1 300px;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  @media (max-width: 760px) {
+    .side-col {
+      max-width: none;
+    }
+  }
+  .panel {
+    padding: 8px 24px 16px;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 12px;
+    padding: 16px 0 8px;
+  }
+  .panel-head h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .panel-head span {
+    font-size: 14px;
+    color: var(--text-meta);
+  }
+  .rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .rows[data-collapsed] > :global(li:nth-child(n + 26)) {
+    display: none;
+  }
+  .more {
+    width: 100%;
+    height: 48px;
+    margin-top: 8px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--chip);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .source {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 24px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    scroll-margin-top: 24px;
+  }
+  .side h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .side p,
+  .side-note {
+    margin: 0;
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .side-note {
+    font-size: 14px;
+  }
+  .side > a {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .climbing ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .climbing li {
+    border-top: 1px solid var(--divider);
+  }
+  .climbing a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .climb-name {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  .climbing a:hover .climb-name {
+    text-decoration: underline;
+  }
+  .climb-trend {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--trend-up);
+    white-space: nowrap;
+  }
+  @media (max-width: 480px) {
+    .panel {
+      padding: 4px 16px 12px;
+    }
+  }
+</style>

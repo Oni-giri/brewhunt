@@ -1,0 +1,1064 @@
+---
+// Search and browse: /search?q=…&type=…&source=…&updated=…&cat=…&collection=…&sort=…
+// See docs/PRODUCT.md › Search. The page is static: its script reads the URL, fetches the index
+// (src/pages/search-index.json.ts) after first paint, and renders the results with
+// src/lib/search.ts. Every control has a URL parameter, so results can be shared.
+import AppCard from '../components/AppCard.astro';
+import Badge from '../components/Badge.astro';
+import Base from '../layouts/Base.astro';
+import { getCatalog } from '../lib/catalog';
+import { PAGE_SIZE } from '../lib/search';
+
+const { meta, categories, entries } = getCatalog();
+// Dated so each day's rebuild skips any cached copy of yesterday's file.
+const indexUrl = `/search-index.json?v=${meta.generatedOn}`;
+// The script clones this row for every result: the copy keeps AppCard's scoped styles and
+// GetButton's data-* attributes, which the install sheet reads. Any package with a line will do
+// (the script fills in every part); badges come from their own templates.
+const sample = entries.find((e) => e.hasPage && e.line)!;
+
+const radios = [
+  {
+    name: 'type',
+    legend: 'Type',
+    options: [
+      ['all', 'Everything'],
+      ['mac', 'Mac apps'],
+      ['cli', 'Command-line tools'],
+    ],
+  },
+  {
+    name: 'source',
+    legend: 'Source',
+    options: [
+      ['all', 'All sources'],
+      ['official', 'Official catalog'],
+      ['community', 'Community taps'],
+    ],
+  },
+  {
+    name: 'updated',
+    legend: 'Updated',
+    options: [
+      ['any', 'Any time'],
+      ['month', 'Past month'],
+      ['year', 'Past year'],
+    ],
+  },
+];
+
+const sorts = [
+  ['relevance', 'Relevance'],
+  ['installs', 'Most installed'],
+  ['trending', 'Trending'],
+  ['newest', 'Newest'],
+  ['updated', 'Recently updated'],
+];
+---
+
+<Base
+  title="Search"
+  noindex
+  description="Search every Mac app and command-line tool you can install with Homebrew."
+>
+  <div class="page" data-search-page data-index={indexUrl} data-page-size={PAGE_SIZE}>
+    <div class="intro">
+      <div class="heading">
+        <h1 data-title>Search</h1>
+        <p class="summary" data-summary></p>
+      </div>
+      <form action="/search" method="get" role="search" class="search-pill" data-form>
+        <svg
+          width="17"
+          height="17"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="var(--text-meta)"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-4-4"></path>
+        </svg>
+        <label for="search-q" class="visually-hidden">
+          Search apps
+        </label>
+        <input
+          id="search-q"
+          name="q"
+          type="search"
+          placeholder="Search apps and tools"
+          autocomplete="off"
+          spellcheck="false"
+          data-input
+        />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
+    <noscript>
+      <style is:inline>
+        [data-layout] {
+          display: none !important;
+        }
+      </style>
+      <p class="noscript">
+        Search runs in your browser and needs JavaScript. You can still{' '}
+        <a href="/discover">browse apps on Discover</a>.
+      </p>
+    </noscript>
+
+    <div class="layout" data-layout>
+      <div class="toolbar">
+        <span class="toolbar-start">
+          <button
+            type="button"
+            class="filters-btn"
+            aria-controls="filters"
+            aria-expanded="false"
+            data-filters-toggle
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <path d="M4 6h16M7 12h10M10 18h4"></path>
+            </svg>
+            <span data-filters-label>Filters</span>
+          </button>
+          <span class="showing" data-showing></span>
+        </span>
+        <label class="sort">
+          Sort by
+          <select data-sort>
+            {sorts.map(([value, label]) => (
+              <option value={value}>{label}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <aside id="filters" class="filters" aria-label="Filters" data-filters>
+        {radios.map((group) => (
+          <fieldset>
+            <legend>{group.legend}</legend>
+            {group.options.map(([value, label], i) => (
+              <label class="option">
+                <input type="radio" name={group.name} value={value} checked={i === 0} />
+                <span class="option-label">{label}</span>
+              </label>
+            ))}
+          </fieldset>
+        ))}
+        <fieldset class="categories">
+          <legend>Category</legend>
+          {categories.map((c) => (
+            <label class="option">
+              <input type="checkbox" name="cat" value={c.slug} data-name={c.name} />
+              <span class="option-label">{c.name}</span>
+              <span class="count" data-count={c.slug} />
+            </label>
+          ))}
+        </fieldset>
+        <button type="button" class="filters-done" data-filters-done>
+          Show results
+        </button>
+      </aside>
+
+      <div class="chips" data-chips hidden>
+        <div class="chip-list" role="list" aria-label="Active filters" data-chip-list></div>
+        <button type="button" class="text-btn" data-clear-all>
+          Clear all
+        </button>
+      </div>
+
+      <section class="results" aria-label="Results" aria-busy="true" data-results>
+        <ul class="grid" data-list>
+          {Array.from({ length: 6 }, () => (
+            <li class="skeleton" aria-hidden="true">
+              <span class="sk-icon" />
+              <span class="sk-text">
+                <span class="sk-line" />
+                <span class="sk-line short" />
+              </span>
+            </li>
+          ))}
+        </ul>
+        <div class="message" data-empty hidden>
+          <p data-empty-text></p>
+          <button type="button" class="text-btn" data-clear-filters>
+            Clear filters
+          </button>
+          <a href="/discover" class="text-btn" data-empty-browse>
+            Browse Discover
+          </a>
+        </div>
+        <div class="message" data-error hidden>
+          <p>Search couldn’t load. Check your connection and try again.</p>
+          <button type="button" class="text-btn" data-retry>
+            Try again
+          </button>
+        </div>
+        <button type="button" class="more" data-more hidden>
+          Show more results
+        </button>
+        <p class="source-note" data-source-note hidden>
+          Installs are for the last 30 days, from Homebrew’s public, opt-out analytics: read them as
+          relative popularity.
+        </p>
+      </section>
+      <span class="visually-hidden" role="status" data-status></span>
+    </div>
+
+    <template data-row-template>
+      <AppCard entry={sample} meta="-" />
+    </template>
+    <template data-community-template>
+      <Badge variant="community">Community</Badge>
+    </template>
+    <template data-deprecated-template>
+      <Badge variant="warning">Deprecated</Badge>
+    </template>
+  </div>
+</Base>
+
+<script>
+  import { compactNumber, fullNumber } from '../lib/format';
+  import {
+    DEFAULT_STATE,
+    kindLabel,
+    prepare,
+    readState,
+    search,
+    writeState,
+    type Item,
+    type Results,
+    type SearchData,
+    type SearchIndex,
+    type SearchState,
+  } from '../lib/search';
+  import { tileFor } from '../lib/tiles';
+
+  const root = document.querySelector<HTMLElement>('[data-search-page]')!;
+  const $ = <T extends Element = HTMLElement>(selector: string) => root.querySelector<T>(selector)!;
+
+  const PAGE_SIZE = Number(root.dataset.pageSize);
+  const title = $('[data-title]');
+  const summary = $('[data-summary]');
+  const form = $<HTMLFormElement>('[data-form]');
+  const input = $<HTMLInputElement>('[data-input]');
+  const filtersToggle = $<HTMLButtonElement>('[data-filters-toggle]');
+  const filtersLabel = $('[data-filters-label]');
+  const filters = $('[data-filters]');
+  const filtersDone = $<HTMLButtonElement>('[data-filters-done]');
+  const showing = $('[data-showing]');
+  const sortSelect = $<HTMLSelectElement>('[data-sort]');
+  const chips = $('[data-chips]');
+  const chipList = $('[data-chip-list]');
+  const resultsBox = $('[data-results]');
+  const list = $<HTMLUListElement>('[data-list]');
+  const empty = $('[data-empty]');
+  const emptyText = $('[data-empty-text]');
+  const clearFilters = $<HTMLButtonElement>('[data-clear-filters]');
+  const emptyBrowse = $<HTMLAnchorElement>('[data-empty-browse]');
+  const errorBox = $('[data-error]');
+  const more = $<HTMLButtonElement>('[data-more]');
+  const sourceNote = $('[data-source-note]');
+  const status = $('[data-status]');
+  const rowTemplate = $<HTMLTemplateElement>('[data-row-template]');
+  const badges = {
+    community: $<HTMLTemplateElement>('[data-community-template]').content.firstElementChild!,
+    deprecated: $<HTMLTemplateElement>('[data-deprecated-template]').content.firstElementChild!,
+  };
+
+  const categoryBoxes = [...root.querySelectorAll<HTMLInputElement>('input[name="cat"]')];
+  const categoryName = new Map(categoryBoxes.map((box) => [box.value, box.dataset.name ?? '']));
+
+  let state: SearchState = readState(new URLSearchParams(location.search));
+  // Only categories the page knows; a stale link's unknown slug would match nothing.
+  state.categories = state.categories.filter((slug) => categoryName.has(slug));
+  let data: SearchData | null = null;
+  let results: Results | null = null;
+  let shown = 0;
+
+  // --- Labels ---
+
+  const LABELS = {
+    type: { mac: 'Mac apps', cli: 'Command-line tools' },
+    source: { official: 'Official catalog', community: 'Community taps' },
+    updated: { month: 'Updated past month', year: 'Updated past year' },
+  } as Record<string, Record<string, string>>;
+
+  const NOUNS = {
+    all: ['app or tool', 'apps and tools'],
+    mac: ['Mac app', 'Mac apps'],
+    cli: ['command-line tool', 'command-line tools'],
+  };
+
+  const collectionOf = (slug: string | null) =>
+    slug ? data?.collections.find((c) => c.slug === slug) : undefined;
+
+  interface Chip {
+    label: string;
+    remove: () => void;
+  }
+
+  function activeFilters(): Chip[] {
+    const active: Chip[] = [];
+    for (const key of ['type', 'source', 'updated'] as const) {
+      if (state[key] !== DEFAULT_STATE[key])
+        active.push({
+          label: LABELS[key][state[key]],
+          remove: () => (state = { ...state, [key]: DEFAULT_STATE[key] }),
+        });
+    }
+    for (const slug of state.categories)
+      active.push({
+        label: categoryName.get(slug) ?? slug,
+        remove: () => (state.categories = state.categories.filter((s) => s !== slug)),
+      });
+    const collection = collectionOf(state.collection);
+    if (collection)
+      active.push({
+        label: `Collection: ${collection.title}`,
+        remove: () => (state.collection = null),
+      });
+    return active;
+  }
+
+  function sortPhrase(): string {
+    if (state.sort !== 'relevance')
+      return `sorted by ${sortSelect.selectedOptions[0].text.toLowerCase()}`;
+    if (state.q) return 'sorted by relevance';
+    return collectionOf(state.collection) ? 'in the editors’ order' : 'sorted by most installed';
+  }
+
+  // --- Rows ---
+
+  function row(item: Item): HTMLLIElement {
+    const li = rowTemplate.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
+    const url = `/app/${item.id}`;
+    const { tile, initials, mono } = tileFor(item);
+
+    const main = li.querySelector<HTMLAnchorElement>('a:not([data-get])')!;
+    main.href = url;
+    const icon = li.querySelector<HTMLElement>('.app-icon')!;
+    icon.dataset.tile = tile;
+    icon.textContent = initials;
+    icon.classList.toggle('mono', mono);
+    // Sized by this page's CSS: the design's search rows use 56px tiles, smaller on small phones.
+    icon.removeAttribute('style');
+
+    const name = li.querySelector<HTMLElement>('.name')!;
+    name.textContent = item.name;
+    // As in AppCard, a Community badge; and Deprecated, since search reaches those too.
+    while (name.nextElementSibling) name.nextElementSibling.remove();
+    if (item.source === 'community') name.after(badges.community.cloneNode(true));
+    if (item.deprecated) name.parentElement!.append(badges.deprecated.cloneNode(true));
+
+    const line = li.querySelector<HTMLElement>('.line')!;
+    if (item.line) line.textContent = item.line;
+    else line.remove();
+    li.querySelector<HTMLElement>('.meta')!.textContent =
+      item.installs30 > 0
+        ? `${kindLabel(item)} · ${compactNumber(item.installs30)} installs`
+        : kindLabel(item);
+
+    // GetButton's attributes, for InstallSheet.astro (it listens on the document).
+    const get = li.querySelector<HTMLAnchorElement>('a[data-get]')!;
+    get.href = `${url}#install`;
+    get.setAttribute('aria-label', `Get ${item.name}`);
+    Object.assign(get.dataset, {
+      url,
+      name: item.name,
+      line: item.line,
+      command: item.installCommand,
+      tile,
+      initials,
+    });
+    if (item.source === 'community') get.dataset.community = '';
+    else delete get.dataset.community;
+    if (mono) get.dataset.mono = '';
+    else delete get.dataset.mono;
+    return li;
+  }
+
+  // --- Rendering ---
+
+  /** Inputs, headings and chips: everything that only needs the state. */
+  function renderControls() {
+    if (document.activeElement !== input) input.value = state.q;
+    for (const name of ['type', 'source', 'updated'] as const) {
+      const radio = root.querySelector<HTMLInputElement>(
+        `input[name="${name}"][value="${state[name]}"]`,
+      );
+      if (radio) radio.checked = true;
+    }
+    for (const box of categoryBoxes) box.checked = state.categories.includes(box.value);
+    sortSelect.value = state.sort;
+
+    const collection = collectionOf(state.collection);
+    const heading = state.q
+      ? `Results for “${state.q}”`
+      : collection && !state.categories.length
+        ? collection.title
+        : 'Search';
+    title.textContent = heading;
+    document.title = `${heading} · Brewhunt`;
+
+    const active = activeFilters();
+    filtersLabel.textContent = active.length ? `Filters (${active.length})` : 'Filters';
+    chipList.replaceChildren(
+      ...active.map((chip, i) => {
+        const item = document.createElement('span');
+        item.setAttribute('role', 'listitem');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'chip';
+        button.setAttribute('aria-label', `Remove filter: ${chip.label}`);
+        button.innerHTML =
+          '<span class="chip-pill"><span></span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></span>';
+        button.querySelector('span span')!.textContent = chip.label;
+        button.addEventListener('click', () => {
+          chip.remove();
+          update();
+          // Keep focus in the row: the chip that took this one's place, or the one before.
+          const buttons = chipList.querySelectorAll<HTMLButtonElement>('button');
+          (buttons[Math.min(i, buttons.length - 1)] ?? input).focus();
+        });
+        item.append(button);
+        return item;
+      }),
+    );
+    chips.hidden = active.length === 0;
+  }
+
+  function renderResults(announce: boolean) {
+    if (!data || !results) return;
+    const total = results.items.length;
+    const [one, many] = NOUNS[state.type];
+    const count = `${fullNumber(total)} ${total === 1 ? one : many}`;
+    summary.textContent =
+      total === 0
+        ? count
+        : results.mode === 'any'
+          ? `${count} matching some of your words · ${sortPhrase()}`
+          : `${count} · ${sortPhrase()}`;
+
+    results.categoryCounts.forEach((n, c) => {
+      const span = root.querySelector(`[data-count="${data!.categories[c].slug}"]`);
+      if (span) span.textContent = fullNumber(n);
+    });
+
+    shown = Math.min(PAGE_SIZE, total);
+    list.replaceChildren(...results.items.slice(0, shown).map(row));
+    list.hidden = total === 0;
+    resultsBox.removeAttribute('aria-busy');
+    renderPaging();
+
+    empty.hidden = total > 0;
+    if (total === 0) {
+      const filtered = activeFilters().length > 0;
+      emptyText.textContent = filtered
+        ? 'No matches with these filters.'
+        : state.q
+          ? `Nothing matches “${state.q}”. Try another name, or fewer words.`
+          : 'Nothing to show yet.';
+      clearFilters.hidden = !filtered;
+      emptyBrowse.hidden = filtered;
+    }
+    sourceNote.hidden = total === 0;
+    filtersDone.textContent = total ? `Show ${fullNumber(total)} results` : 'Show results';
+    if (announce) status.textContent = total ? `${count} found.` : emptyText.textContent;
+  }
+
+  function renderPaging() {
+    const total = results?.items.length ?? 0;
+    showing.textContent = total ? `Showing ${fullNumber(shown)} of ${fullNumber(total)}` : '';
+    more.hidden = shown >= total;
+  }
+
+  function writeUrl() {
+    const params = writeState(state).toString();
+    history.replaceState(history.state, '', `${location.pathname}${params ? `?${params}` : ''}`);
+  }
+
+  /** After any change: search again, redraw, and put the state in the URL. */
+  function update(announce = true) {
+    if (data) results = search(data, state.q, state, state.sort);
+    renderControls();
+    renderResults(announce);
+    writeUrl();
+  }
+
+  function clearAll() {
+    state = { ...DEFAULT_STATE, q: state.q, sort: state.sort };
+    update();
+  }
+
+  // --- Events ---
+
+  let typing: ReturnType<typeof setTimeout> | undefined;
+  input.addEventListener('input', () => {
+    clearTimeout(typing);
+    typing = setTimeout(() => {
+      state.q = input.value.trim();
+      update();
+    }, 150);
+  });
+
+  form.addEventListener('submit', (event) => {
+    // Already searching as you type: Enter just makes it immediate.
+    event.preventDefault();
+    clearTimeout(typing);
+    state.q = input.value.trim();
+    update();
+  });
+
+  filters.addEventListener('change', (event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.name === 'cat') {
+      state.categories = categoryBoxes.filter((box) => box.checked).map((box) => box.value);
+    } else if (target.name === 'type' || target.name === 'source' || target.name === 'updated') {
+      state = { ...state, [target.name]: target.value } as SearchState;
+    }
+    update();
+  });
+
+  sortSelect.addEventListener('change', () => {
+    state.sort = sortSelect.value as SearchState['sort'];
+    update();
+  });
+
+  more.addEventListener('click', () => {
+    if (!results) return;
+    const start = shown;
+    shown = Math.min(shown + PAGE_SIZE, results.items.length);
+    list.append(...results.items.slice(start, shown).map(row));
+    renderPaging();
+    status.textContent = `Showing ${fullNumber(shown)} of ${fullNumber(results.items.length)}.`;
+    // Carry on from the first new result rather than the button that just moved down.
+    list.children[start]?.querySelector<HTMLElement>('a')?.focus();
+  });
+
+  for (const button of [clearFilters, $('[data-clear-all]')])
+    button.addEventListener('click', () => {
+      clearAll();
+      input.focus();
+    });
+
+  // Filters fold into a toggle under 760px (the panel is always shown above that).
+  function setFiltersOpen(open: boolean, focus: boolean) {
+    filters.classList.toggle('open', open);
+    filtersToggle.setAttribute('aria-expanded', String(open));
+    if (!focus) return;
+    if (open) filters.querySelector<HTMLInputElement>('input:checked, input')?.focus();
+    else filtersToggle.focus();
+  }
+  filtersToggle.addEventListener('click', () =>
+    setFiltersOpen(!filters.classList.contains('open'), true),
+  );
+  filtersDone.addEventListener('click', () => setFiltersOpen(false, true));
+  filters.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && filters.classList.contains('open')) {
+      event.preventDefault();
+      setFiltersOpen(false, true);
+    }
+  });
+
+  // --- Loading ---
+
+  async function load() {
+    errorBox.hidden = true;
+    resultsBox.setAttribute('aria-busy', 'true');
+    try {
+      const response = await fetch(root.dataset.index!);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      data = prepare((await response.json()) as SearchIndex);
+    } catch {
+      list.hidden = true;
+      errorBox.hidden = false;
+      resultsBox.removeAttribute('aria-busy');
+      return;
+    }
+    // A collection that no longer exists would match nothing: drop it.
+    if (state.collection && !collectionOf(state.collection)) state.collection = null;
+    // Announce only if someone has already started interacting.
+    update(document.activeElement !== document.body);
+  }
+
+  $<HTMLButtonElement>('[data-retry]').addEventListener('click', () => {
+    list.hidden = false;
+    load();
+  });
+
+  renderControls();
+  // The index is the biggest download on the site: start it once the page has painted.
+  requestAnimationFrame(() => requestAnimationFrame(() => load()));
+</script>
+
+<style>
+  .page {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 48px var(--gutter) 0;
+  }
+
+  /* --- Title and search pill --- */
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px 40px;
+    margin-bottom: 64px;
+  }
+  .heading {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 48px;
+    line-height: 1.05;
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    overflow-wrap: anywhere;
+  }
+  .summary {
+    margin: 0;
+    min-height: 1.5em;
+    color: var(--text-secondary);
+    font-size: 17px;
+  }
+  .search-pill {
+    flex: 1 1 300px;
+    max-width: 460px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 6px 20px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-search);
+  }
+  .search-pill:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .search-pill svg {
+    flex: none;
+  }
+  .search-pill input {
+    flex: 1;
+    min-width: 0;
+    height: var(--touch);
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 17px;
+    color: var(--ink);
+    outline: none;
+  }
+  .search-pill button {
+    flex: none;
+    height: var(--touch);
+    padding: 0 20px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--surface);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .noscript {
+    margin: 0;
+    padding: 32px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-secondary);
+  }
+
+  /* --- Layout: filters on the left, toolbar, chips and results on the right --- */
+  .layout {
+    display: grid;
+    grid-template-columns: 282px minmax(0, 1fr);
+    grid-template-areas:
+      'filters toolbar'
+      'filters chips'
+      'filters results';
+    grid-template-rows: auto auto 1fr;
+    /* Rows are spaced with margins: an empty chips row mustn't add a second gap. */
+    gap: 0 24px;
+    align-items: start;
+  }
+  .toolbar {
+    grid-area: toolbar;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .filters {
+    grid-area: filters;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 20px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .chips,
+  .chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 8px;
+  }
+  .chips {
+    grid-area: chips;
+    margin-bottom: 16px;
+  }
+  .chips[hidden] {
+    display: none;
+  }
+  .results {
+    grid-area: results;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* --- Toolbar --- */
+  .toolbar-start {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .showing {
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .filters-btn {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    height: var(--touch);
+    padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .sort {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+  }
+  .sort select {
+    height: var(--touch);
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    font: inherit;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  /* --- Filters --- */
+  fieldset {
+    margin: 0;
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 1px solid var(--divider);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  fieldset.categories {
+    padding-bottom: 4px;
+    border-bottom: 0;
+  }
+  legend {
+    padding: 0 0 6px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: var(--touch);
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .option input {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .option-label {
+    flex: 1;
+    min-width: 0;
+  }
+  .count {
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+  .filters-done {
+    display: none;
+    height: 48px;
+    margin-top: 12px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--surface);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* --- Chips (built by the script, hence :global) --- */
+  .chips :global(.chip) {
+    display: flex;
+    align-items: center;
+    height: var(--touch);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+  }
+  .chips :global(.chip-pill) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 10px 0 14px;
+    border-radius: var(--radius-pill);
+    background: var(--filter-chip-bg);
+    color: var(--filter-chip-text);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .chips :global(.chip:hover .chip-pill) {
+    background: #dbe7ff;
+  }
+  /* "Clear all", "Clear filters", "Browse Discover": link-coloured text with a 44px hit area. */
+  .text-btn {
+    display: inline-flex;
+    align-items: center;
+    height: var(--touch);
+    padding: 0 8px;
+    border: 0;
+    background: transparent;
+    color: var(--link);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .text-btn:hover {
+    color: var(--link-hover);
+  }
+  .text-btn[hidden] {
+    display: none;
+  }
+
+  /* --- Results --- */
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr));
+    gap: 12px;
+  }
+  .grid[hidden] {
+    display: none;
+  }
+  /* Result rows are AppCards cloned by the script (see the template), hence :global. */
+  .grid :global(.card) {
+    min-width: 0;
+  }
+  .grid :global(.line),
+  .grid :global(.meta) {
+    overflow-wrap: anywhere;
+  }
+  .grid :global(.app-icon) {
+    --size: 56px;
+    --radius: 13px;
+    --font: 22px;
+  }
+  .grid :global(.app-icon.mono) {
+    --font: 19px;
+  }
+  .skeleton {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 90px;
+    padding: 16px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .sk-icon {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 13px;
+    background: var(--chip);
+  }
+  .sk-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .sk-line {
+    width: 60%;
+    height: 12px;
+    border-radius: 6px;
+    background: var(--chip);
+  }
+  .sk-line.short {
+    width: 85%;
+  }
+  .message {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0 4px;
+    padding: 32px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-secondary);
+  }
+  .message[hidden] {
+    display: none;
+  }
+  .message p {
+    margin: 0;
+  }
+  .message .text-btn {
+    font-size: 16px;
+  }
+  .more {
+    align-self: center;
+    height: 48px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--chip);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .more:hover {
+    background: #e2e4ea;
+  }
+  .more[hidden] {
+    display: none;
+  }
+  .source-note {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-meta);
+    text-align: center;
+  }
+  .source-note[hidden] {
+    display: none;
+  }
+
+  /* Small phones: give the name and description room next to the icon and Get. */
+  @media (max-width: 380px) {
+    .grid :global(.card),
+    .grid :global(.card .main),
+    .skeleton {
+      gap: 10px;
+    }
+    .grid :global(.card),
+    .skeleton {
+      padding: 12px;
+    }
+    .grid :global(.app-icon) {
+      --size: 44px;
+      --radius: 10px;
+      --font: 17px;
+    }
+    .sk-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+    }
+    .grid :global(.app-icon.mono) {
+      --font: 15px;
+    }
+    .grid :global(.get) {
+      padding: 0 14px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    /* Toolbar, then the folded filters, chips and results: the DOM order. */
+    .layout {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+    }
+    .toolbar,
+    .chips {
+      margin-bottom: 0;
+    }
+    .filters {
+      display: none;
+    }
+    .filters.open {
+      display: flex;
+    }
+    .filters-btn,
+    .filters-done {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>

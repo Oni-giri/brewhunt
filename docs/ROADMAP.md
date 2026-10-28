@@ -14,20 +14,20 @@
 - [x] Scheduled GitHub Action that refreshes data and triggers a rebuild.
 
 ## M2 · Core pages
-- [ ] App page `/app/[token]`, statically generated for every package, with SEO metadata + structured data.
-- [ ] Install sheet (Get) component with copy-to-clipboard.
-- [ ] Discover home `/discover`.
-- [ ] Search `/search` with Pagefind (filters for type, source, category), sort, mobile filter toggle.
+- [x] App page `/app/[token]`, statically generated for every package, with SEO metadata + structured data.
+- [x] Install sheet (Get) component with copy-to-clipboard.
+- [x] Discover home `/discover`.
+- [x] Search `/search` on a prebuilt JSON index (filters for type, source, updated, category, collection), sort, mobile filter toggle. Not Pagefind: see `docs/DECISIONS.md`.
 
 ## M3 · Lists
-- [ ] Top charts `/charts`.
-- [ ] New this week `/new` (+ RSS feed).
-- [ ] Category pages `/category/[slug]`.
-- [ ] Tap pages `/tap/[owner]/[repo]`.
+- [x] Top charts `/charts`.
+- [x] New this week `/new` (+ RSS feed).
+- [x] Category pages `/category/[slug]`.
+- [x] Tap pages `/tap/[owner]/[repo]`.
 
 ## M4 · Landing + launch
 - [ ] Landing page `/` (sky hero, app wall marquee, sections).
-- [ ] Sitemap, robots, OG images, analytics (privacy-friendly), 404.
+- [ ] Sitemap, robots, OG images, analytics (privacy-friendly), 404. (Sitemap, robots and 404 with alias redirects are done; OG images and analytics aren't.)
 - [ ] Accessibility pass (keyboard, focus, contrast, 390px layouts), performance pass.
 - [ ] Deploy to the production domain.
 

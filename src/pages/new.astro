@@ -1,0 +1,463 @@
+---
+// New this week: packages added to Homebrew (and the top community taps), grouped by day,
+// with filters. The week before is one click away. See docs/PRODUCT.md › New.
+import AppIcon from '../components/AppIcon.astro';
+import GetButton from '../components/GetButton.astro';
+import SourceBadge from '../components/SourceBadge.astro';
+import Base from '../layouts/Base.astro';
+import {
+  getCatalog,
+  isCommandLine,
+  isMacApp,
+  kindLabel,
+  recentlyAdded,
+  type Entry,
+} from '../lib/catalog';
+import { compactNumber, daysAgo, relativeDay, shortDate } from '../lib/format';
+
+const { meta } = getCatalog();
+const today = meta.generatedOn;
+const entries = recentlyAdded(() => true, 14);
+
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const weekday = (date: string) => WEEKDAYS[new Date(`${date}T00:00:00Z`).getUTCDay()];
+
+/** Days, newest first, each with its packages; `lastWeek` days are folded away at first. */
+const days = [...new Set(entries.map((e) => e.firstSeen!))].map((date) => {
+  const age = daysAgo(date, today);
+  const label = age <= 1 ? relativeDay(date, today) : weekday(date);
+  return {
+    date,
+    heading: label.charAt(0).toUpperCase() + label.slice(1),
+    detail: age <= 1 ? `${weekday(date)} ${shortDate(date, false)}` : shortDate(date, false),
+    lastWeek: age >= 7,
+    entries: entries.filter((e) => e.firstSeen === date),
+  };
+});
+const thisWeek = days.filter((d) => !d.lastWeek);
+const lastWeek = days.filter((d) => d.lastWeek);
+
+const kindKey = (e: Entry) => (isMacApp(e) ? 'mac' : isCommandLine(e) ? 'cli' : 'other');
+const metaLine = (e: Entry) =>
+  `${kindLabel(e)} · ${e.installs.d30 > 0 ? `${compactNumber(e.installs.d30)} installs so far` : 'Just landed'}`;
+---
+
+<Base
+  title="New this week"
+  description="Apps and command-line tools just added to Homebrew's catalog and to independent developers' taps, updated daily."
+>
+  <link
+    slot="head"
+    rel="alternate"
+    type="application/rss+xml"
+    title="New on Homebrew · Brewhunt"
+    href="/new/rss.xml"
+  />
+  <noscript>
+    <style>
+      [data-week][hidden] {
+        display: flex !important;
+      }
+      [data-last-week] {
+        display: none !important;
+      }
+    </style>
+  </noscript>
+
+  <div class="container page">
+    <div class="intro">
+      <div class="titles">
+        <h1>New this week</h1>
+        <p>
+          Everything just added to Homebrew's catalog, plus new packages in independent developers'
+          taps. {`Updated ${shortDate(today)}.`}
+        </p>
+      </div>
+      <a class="rss" href="/new/rss.xml">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M5 11a8 8 0 0 1 8 8"></path>
+          <path d="M5 5a14 14 0 0 1 14 14"></path>
+          <circle cx="6" cy="18" r="1"></circle>
+        </svg>
+        RSS feed
+      </a>
+    </div>
+    <div class="controls" data-controls hidden>
+      <div role="tablist" aria-label="Show" class="tabs">
+        {[
+          ['all', 'Everything'],
+          ['mac', 'Mac apps'],
+          ['cli', 'Command-line tools'],
+          ['community', 'Community'],
+        ].map(([key, label], i) => (
+          <button
+            type="button"
+            role="tab"
+            data-filter={key}
+            aria-controls="new-list"
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      <label class="toggle">
+        <input type="checkbox" data-installing />
+        Only ones people are already installing
+      </label>
+    </div>
+  </div>
+
+  <div class="container page body" id="new-list" role="tabpanel" aria-label="New packages">
+    {days.length === 0 && (
+      <p class="empty">
+        Nothing new in the last two weeks. Check back tomorrow: the list updates every day.
+      </p>
+    )}
+    {[thisWeek, lastWeek].map((group, g) =>
+      group.length === 0 ? null : (
+        <div
+          class="week"
+          data-week={g === 0 ? 'this' : 'last'}
+          hidden={g === 1 && thisWeek.length > 0}
+        >
+          {group.map((day) => (
+            <section class="day" aria-labelledby={`day-${day.date}`}>
+              <h2 id={`day-${day.date}`}>
+                {day.heading} <span>{day.detail}</span>
+              </h2>
+              <ul class="rows">
+                {day.entries.map((e) => (
+                  <li
+                    class="row"
+                    data-kind={kindKey(e)}
+                    data-source={e.source}
+                    data-installing={e.installs.d30 > 0 ? '' : undefined}
+                  >
+                    <a class="main" href={e.url}>
+                      <AppIcon pkg={e} size={56} />
+                      <span class="text">
+                        <span class="title">
+                          <span class="name">{e.name}</span>
+                          <SourceBadge source={e.source} />
+                        </span>
+                        {e.line && <span class="line">{e.line}</span>}
+                        <span class="meta">{metaLine(e)}</span>
+                      </span>
+                    </a>
+                    <GetButton entry={e} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      ),
+    )}
+    <p class="empty" data-none hidden>
+      Nothing matches. Try another filter.
+    </p>
+    {thisWeek.length > 0 && lastWeek.length > 0 && (
+      <button type="button" class="more" data-last-week>
+        Show last week
+      </button>
+    )}
+    <p class="source">
+      "Added" is the day a package's file landed in its tap. Installs are from Homebrew's public,
+      opt-out analytics for the 30 days to {shortDate(meta.analytics.d30.end)}.
+    </p>
+  </div>
+</Base>
+
+<script>
+  const controls = document.querySelector<HTMLElement>('[data-controls]');
+  if (controls) {
+    controls.hidden = false;
+    const tabs = [...controls.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const installing = controls.querySelector<HTMLInputElement>('[data-installing]')!;
+    const rows = [...document.querySelectorAll<HTMLElement>('#new-list .row')];
+    const none = document.querySelector<HTMLElement>('[data-none]')!;
+    let filter = 'all';
+    const apply = () => {
+      for (const row of rows) {
+        const kind =
+          filter === 'all' ||
+          (filter === 'community'
+            ? row.dataset.source === 'community'
+            : row.dataset.kind === filter);
+        row.hidden = !kind || (installing.checked && row.dataset.installing === undefined);
+      }
+      // Hide days with nothing left, and say so when nothing is left at all.
+      for (const day of document.querySelectorAll<HTMLElement>('#new-list .day')) {
+        day.hidden = ![...day.querySelectorAll<HTMLElement>('.row')].some((r) => !r.hidden);
+      }
+      const visibleWeeks = [...document.querySelectorAll<HTMLElement>('[data-week]')].filter(
+        (w) => !w.hidden,
+      );
+      none.hidden = visibleWeeks.some((w) =>
+        [...w.querySelectorAll<HTMLElement>('.day')].some((d) => !d.hidden),
+      );
+    };
+    const select = (tab: HTMLButtonElement) => {
+      filter = tab.dataset.filter ?? 'all';
+      for (const t of tabs) {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+      }
+      apply();
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(tab));
+      tab.addEventListener('keydown', (event) => {
+        const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[
+          event.key
+        ];
+        if (next === undefined) return;
+        event.preventDefault();
+        const target = tabs[(next + tabs.length) % tabs.length];
+        select(target);
+        target.focus();
+      });
+    });
+    installing.addEventListener('change', apply);
+    document
+      .querySelector<HTMLButtonElement>('[data-last-week]')
+      ?.addEventListener('click', (event) => {
+        const week = document.querySelector<HTMLElement>('[data-week="last"]')!;
+        week.hidden = false;
+        (event.currentTarget as HTMLElement).remove();
+        apply();
+        week.querySelector<HTMLElement>('h2')?.setAttribute('tabindex', '-1');
+        week.querySelector<HTMLElement>('h2')?.focus();
+      });
+  }
+</script>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 36px;
+  }
+  .body {
+    gap: 32px;
+    padding-top: 28px;
+    padding-bottom: 64px;
+  }
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px 24px;
+  }
+  .titles {
+    flex: 1 1 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 36px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .titles p {
+    margin: 0;
+    font-size: 17px;
+    color: var(--text-secondary);
+  }
+  .rss {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--touch);
+    padding: 0 18px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+  }
+  .controls[hidden] {
+    display: none;
+  }
+  .tabs {
+    display: flex;
+    max-width: 100%;
+    overflow-x: auto;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--track);
+  }
+  .tabs button {
+    height: var(--touch);
+    padding: 0 18px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-body);
+    font: inherit;
+    font-size: 15px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .tabs [aria-selected='true'] {
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: var(--shadow-tab);
+  }
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: var(--touch);
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .toggle input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent);
+  }
+  .day {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .day[hidden],
+  .row[hidden],
+  .week[hidden] {
+    display: none;
+  }
+  .week {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .day h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .day h2 span {
+    margin-left: 6px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--text-meta);
+  }
+  .rows {
+    margin: 0;
+    padding: 8px 24px;
+    list-style: none;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 0;
+  }
+  .row + .row {
+    border-top: 1px solid var(--divider);
+  }
+  .main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+  }
+  .name {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .main:hover .name {
+    text-decoration: underline;
+  }
+  .line {
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+  .more {
+    align-self: center;
+    height: 48px;
+    padding: 0 28px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--chip);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .empty {
+    margin: 0;
+    font-size: 17px;
+    color: var(--text-secondary);
+  }
+  .empty[hidden] {
+    display: none;
+  }
+  .source {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+  @media (max-width: 480px) {
+    .rows {
+      padding: 4px 16px;
+    }
+  }
+</style>
