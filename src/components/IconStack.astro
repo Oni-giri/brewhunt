@@ -1,10 +1,11 @@
 ---
 // Overlapping icon tiles standing for a group of packages (collection cards, category rows).
 // Decorative: the group's name and its example names are always next to it.
+import type { Tileable } from '../lib/tiles';
 import AppIcon from './AppIcon.astro';
 
 interface Props {
-  pkgs: { id: string; kind: 'formula' | 'cask'; name: string; token: string }[];
+  pkgs: Tileable[];
   /** Edge of each tile in px. */
   size: number;
   /** How far each tile slides under the previous one, in px. */

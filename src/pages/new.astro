@@ -39,7 +39,7 @@ const lastWeek = days.filter((d) => d.lastWeek);
 
 const kindKey = (e: Entry) => (isMacApp(e) ? 'mac' : isCommandLine(e) ? 'cli' : 'other');
 const metaLine = (e: Entry) =>
-  `${kindLabel(e)} · ${e.installs.d30 > 0 ? `${compactNumber(e.installs.d30)} installs so far` : 'Just landed'}`;
+  `${kindLabel(e)} · ${e.popularity.d30 > 0 ? `${compactNumber(e.popularity.d30)} installs so far` : 'Just landed'}`;
 ---
 
 <Base
@@ -142,7 +142,7 @@ const metaLine = (e: Entry) =>
                     class="row"
                     data-kind={kindKey(e)}
                     data-source={e.source}
-                    data-installing={e.installs.d30 > 0 ? '' : undefined}
+                    data-installing={e.popularity.d30 > 0 ? '' : undefined}
                   >
                     <a class="main" href={e.url}>
                       <AppIcon pkg={e} size={56} />
@@ -174,7 +174,8 @@ const metaLine = (e: Entry) =>
     )}
     <p class="source">
       "Added" is the day a package's file landed in its tap. Installs are from Homebrew's public,
-      opt-out analytics for the 30 days to {shortDate(meta.analytics.d30.end)}.
+      opt-out analytics for the 30 days to {shortDate(meta.analytics.d30.end)}. Command-line tools
+      count installs people asked for, not ones pulled in as a dependency.
     </p>
   </div>
 </Base>

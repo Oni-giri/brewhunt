@@ -8,7 +8,13 @@ import CategoryChips from '../../components/CategoryChips.astro';
 import GetButton from '../../components/GetButton.astro';
 import IconStack from '../../components/IconStack.astro';
 import Base from '../../layouts/Base.astro';
-import { categoryEntries, getCatalog, kindLabel, latestPick } from '../../lib/catalog';
+import {
+  categoryEntries,
+  getCatalog,
+  kindLabel,
+  latestPick,
+  TRENDING_MIN_INSTALLS,
+} from '../../lib/catalog';
 import { compactNumber, fullNumber, shortDate } from '../../lib/format';
 
 export function getStaticPaths() {
@@ -125,11 +131,14 @@ const others = categories.filter((c) => c.slug !== category.slug);
         {entries.map((e, i) => (
           <AppCard
             entry={e}
-            meta={`${kindLabel(e)} · ${compactNumber(e.installs.d30)} installs`}
+            meta={`${kindLabel(e)} · ${compactNumber(e.popularity.d30)} installs`}
             attrs={{
               'data-sub': subOf.get(e.id) ?? '',
               'data-rank': String(i),
-              'data-trend': String(e.trend?.change ?? -Infinity),
+              // Same noise floor as the trending lists: a big rise from a handful of installs isn't a trend.
+              'data-trend': String(
+                e.trend && e.popularity.d30 >= TRENDING_MIN_INSTALLS ? e.trend.change : -Infinity,
+              ),
               'data-name': e.name.toLowerCase(),
             }}
           />
@@ -137,8 +146,9 @@ const others = categories.filter((c) => c.slug !== category.slug);
       </ul>
       <p class="source">
         Installs in the 30 days to {shortDate(meta.analytics.d30.end)}, from Homebrew's public,
-        opt-out analytics. Trending compares each package's share of installs with the period
-        before.
+        opt-out analytics. Command-line tools count installs people asked for, not ones pulled in as
+        a dependency. Trending compares each package's share of installs with the period before,
+        among packages with {fullNumber(TRENDING_MIN_INSTALLS)}+ installs.
       </p>
     </section>
 

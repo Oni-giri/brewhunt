@@ -345,7 +345,7 @@ const sorts = [
   function row(item: Item): HTMLLIElement {
     const li = rowTemplate.content.firstElementChild!.cloneNode(true) as HTMLLIElement;
     const url = `/app/${item.id}`;
-    const { tile, initials, mono } = tileFor(item);
+    const { tile, initials, mono } = tileFor({ ...item, commandLine: item.cliCask });
 
     const main = li.querySelector<HTMLAnchorElement>('a:not([data-get])')!;
     main.href = url;

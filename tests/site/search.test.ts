@@ -34,7 +34,7 @@ function entry(id: string, fields: Partial<IndexEntry> = {}): IndexEntry {
     deprecated,
     versioned,
     platforms: null,
-    artifacts: [],
+    commandLine: kind === 'formula',
     listed: !versioned && !isLibrary && !deprecated,
     hasPage: true,
     popularity: { d30: 0, d90: 0, d365: 0 },
@@ -118,7 +118,7 @@ const entries: IndexEntry[] = [
     platforms: ['linux'],
     listed: false,
   }),
-  cask('dtctl', 'dtctl', 'Dynatrace from your terminal', 100, { artifacts: ['binary'] }),
+  cask('dtctl', 'dtctl', 'Dynatrace from your terminal', 100, { commandLine: true }),
   cask('café', 'Café Ünïcode', 'Accented name', 10),
   cask('fontless', 'Disabled thing', 'No page', 99_999, { hasPage: false }),
 ];

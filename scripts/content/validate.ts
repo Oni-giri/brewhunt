@@ -156,6 +156,13 @@ export function validateContent(
     for (const [id, editorial] of Object.entries(content.packages)) {
       const pkg = byId.get(id);
       if (!pkg) continue;
+      if (editorial.type && pkg.kind === 'formula') {
+        errors.push({
+          file: 'packages.yaml',
+          path: [id, 'type'],
+          message: `"${id}" is a formula: formulae are always command-line tools, so \`type\` only applies to casks.`,
+        });
+      }
       const linked = new Set([pkg.token, ...(pkg.aliases ?? []), ...(pkg.oldNames ?? [])]);
       editorial.keywords?.forEach((keyword, i) => {
         if (!linked.has(keyword)) return;

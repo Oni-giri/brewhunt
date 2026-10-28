@@ -60,7 +60,7 @@ const amongKind = kindRank(entry);
 const rankNote = inCategory
   ? `#${inCategory.rank} in ${inCategory.category.name}`
   : amongKind
-    ? `#${fullNumber(amongKind)} among ${entry.kind === 'cask' ? 'Mac apps' : 'command-line tools'}`
+    ? `#${fullNumber(amongKind.rank)} among ${amongKind.group}`
     : null;
 
 const stats: { label: string; value: string; notes: string[] }[] = [

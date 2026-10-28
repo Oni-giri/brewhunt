@@ -221,6 +221,11 @@ export const packageEditorialSchema = z
   .strictObject({
     /** Shorter display name than Homebrew's ("VLC" for "VLC media player"). */
     name: line(40).optional(),
+    /**
+     * Casks only: whether it's a Mac app or a command-line tool, when the cask's contents don't
+     * make it clear (a .pkg installer can hold either).
+     */
+    type: z.enum(['app', 'cli'], 'Use app or cli.').optional(),
     /** Shown in lists instead of Homebrew's description. */
     tagline: line(60)
       .refine((s) => !s.endsWith('.'), 'No full stop at the end, like Homebrew descriptions.')
@@ -232,13 +237,14 @@ export const packageEditorialSchema = z
   .superRefine((p, ctx) => {
     if (
       p.name === undefined &&
+      p.type === undefined &&
       p.tagline === undefined &&
       p.developer === undefined &&
       p.keywords === undefined
     ) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Add a name, a tagline, a developer or keywords, or remove this entry.',
+        message: 'Add a name, a type, a tagline, a developer or keywords, or remove this entry.',
       });
     }
     unique(p.keywords ?? [], ctx, (i) => ['keywords', i], 'keyword');

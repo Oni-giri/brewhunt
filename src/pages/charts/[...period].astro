@@ -13,6 +13,7 @@ import {
   type Entry,
 } from '../../lib/catalog';
 import { PERIODS, type Period } from '../../lib/charts';
+import { trendBasisPhrase } from '../../lib/discover';
 import { compactNumber, fullNumber, shortDate, trendLabel } from '../../lib/format';
 
 export function getStaticPaths() {
@@ -50,6 +51,9 @@ const charts = [
 const climbing = trending(() => true, 5);
 const range = meta.analytics[period.key];
 const showTrend = period.key === 'd30';
+// Every trend in a build shares one basis (it switches once 30 days of snapshots exist).
+const basis = entries.find((e) => e.trend)?.trend?.basis;
+const trendNote = basis ? trendBasisPhrase(basis) : null;
 const categoryName = (e: Entry) =>
   e.categories[0] ? categoryBySlug.get(e.categories[0])?.name : undefined;
 const title = period.key === 'd30' ? 'Top charts' : `Top charts · ${period.label}`;
@@ -146,7 +150,9 @@ const title = period.key === 'd30' ? 'Top charts' : `Top charts · ${period.labe
           opt-out analytics. Command-line tools count installs people asked for, not ones pulled in
           as a dependency of something else. Libraries, old versions and deprecated packages are
           left out.
-          {showTrend && ' Trends compare each package’s share of installs with the 60 days before.'}
+          {showTrend &&
+            trendNote &&
+            ` Trends compare each package’s share of installs with ${trendNote}.`}
         </p>
       </div>
 

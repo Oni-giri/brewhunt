@@ -1,6 +1,6 @@
 // Placeholder app icons: a gradient tile with initials, as in the designs. Mac apps get one of
-// eight gradients picked from their id (stable across builds); command-line tools get the dark
-// terminal tile with two monospace letters.
+// eight gradients picked from their id (stable across builds); command-line tools (formulae and
+// command-line casks) get the dark terminal tile with two monospace letters.
 
 export const APP_TILES = [
   'blue',
@@ -30,13 +30,17 @@ function hash(text: string): number {
   return h >>> 0;
 }
 
-export function tileFor(p: {
+export interface Tileable {
   id: string;
   kind: 'formula' | 'cask';
   name: string;
   token: string;
-}): TileLook {
-  if (p.kind === 'formula') {
+  /** Command-line casks get the terminal tile too. */
+  commandLine?: boolean;
+}
+
+export function tileFor(p: Tileable): TileLook {
+  if (p.kind === 'formula' || p.commandLine) {
     const letters = p.token.replace(/[^a-z0-9]/gi, '').toLowerCase();
     return { tile: 'terminal', initials: letters.slice(0, 2) || '?', mono: true };
   }

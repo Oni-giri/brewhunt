@@ -21,3 +21,17 @@ Same file limit. Every page is a file, and the catalogue grows by roughly 1,000 
 - **Listed but kept out of discovery, charts and New:** libraries, versioned formulae, Linux-only casks, deprecated packages.
 
 CI fails the build if `dist/` goes over 19,000 files. If it gets close, prune in this order: fonts (already out), community tail, low-install libraries.
+
+## Source badges in list rows (28 Oct 2026)
+
+**Docs said:** "Official vs Community is always visible: a solid Official badge … a dashed Community badge" (CLAUDE.md).
+
+**Design shows:** list rows (search results, category lists, charts, similar apps) carry only the Community badge; Official rows have none. Cards (New this week) and page headers show both.
+
+**Decision:** followed the design: rows mark community packages, and an unmarked row is official. Every app page states the source in full, and the install sheet warns for community packages.
+
+**To reverse:** render `SourceBadge` unconditionally in `AppCard.astro` and `RankedRow.astro` (and the search row template).
+
+## Cask type: Mac app or command-line tool (28 Oct 2026)
+
+A cask that installs only command-line programs (`binary`, no app, pkg or plugin) counts as a command-line tool: codex, claude-code, gcloud-cli. A `.pkg` installer can hold either, so pkg casks count as apps unless `content/packages.yaml` says `type: cli` (set for the .NET SDK, the AWS session plugin and the ARM toolchains).

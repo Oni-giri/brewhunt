@@ -189,13 +189,13 @@ const d30End = shortDate(meta.analytics.d30.end);
           eyebrow="Community"
           title="Popular from independent developers"
           id="indie-title"
-          caption={`Not in Homebrew's official catalog: installed from community taps, not reviewed by Homebrew. Installs in the 30 days to ${d30End}, from Homebrew's public analytics.`}
+          caption={`Not in Homebrew's official catalog: installed from community taps, not reviewed by Homebrew. Installs in the 30 days to ${d30End}, from Homebrew's public analytics; for command-line tools, the installs people asked for.`}
         />
         <ul class="indie">
           {indie.map((entry) => (
             <PackageCard entry={entry} iconSize={48}>
               <span class="installs">
-                <strong>{compactNumber(entry.installs.d30)}</strong> installs
+                <strong>{compactNumber(entry.popularity.d30)}</strong> installs
               </span>
             </PackageCard>
           ))}

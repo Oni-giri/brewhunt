@@ -1,13 +1,16 @@
 // One sitemap for every page (about 14k URLs; the limit per file is 50,000).
 import type { APIContext } from 'astro';
 import { getCatalog, tapUrl } from '../lib/catalog';
+import { PERIODS } from '../lib/charts';
 
 export function GET({ site }: APIContext) {
   const { entries, taps, categories, meta } = getCatalog();
   const lastmod = meta.generatedOn;
   const paths = [
+    '/',
+    '/',
     '/discover',
-    '/charts',
+    ...PERIODS.map((p) => p.href),
     '/new',
     ...categories.map((c) => `/category/${c.slug}`),
     ...taps.map((t) => tapUrl(t.id)).filter((url): url is string => url !== null),

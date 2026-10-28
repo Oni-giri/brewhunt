@@ -14,7 +14,7 @@ export const FLAG = {
   linuxOnly: 32,
   /** In discovery, charts and New (Entry.listed). */
   listed: 64,
-  /** A cask that installs only command-line programs (catalog.ts isCliCask). */
+  /** A command-line cask (catalog.ts Entry.commandLine). */
   cliCask: 128,
 } as const;
 

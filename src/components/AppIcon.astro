@@ -1,10 +1,10 @@
 ---
 // Initial-letter tile standing in for an app icon. Decorative: the name is always next to it.
 // Styles are global (global.css) so the install sheet can draw the same tile from script.
-import { tileFor, type TileName } from '../lib/tiles';
+import { tileFor, type TileName, type Tileable } from '../lib/tiles';
 
 interface Props {
-  pkg: { id: string; kind: 'formula' | 'cask'; name: string; token: string };
+  pkg: Tileable;
   /** Edge length in px (the designs use 40, 44, 48, 52, 56, 60 and 112). */
   size?: number;
   /** Colour of a 2px ring, for overlapping stacks. */

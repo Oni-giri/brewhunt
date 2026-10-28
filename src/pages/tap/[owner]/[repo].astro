@@ -156,7 +156,9 @@ const tapCommand = `brew tap ${tap.id}`;
       </div>
       <p class="stats-source">
         Installs of every package in the tap in the 30 days to {shortDate(meta.analytics.d30.end)},
-        from Homebrew's public, opt-out analytics. Stars and activity from GitHub.
+        from Homebrew's public, opt-out analytics; for each package, command-line tools count
+        installs people asked for, not ones pulled in as a dependency. Stars and activity from
+        GitHub.
       </p>
     </section>
 
@@ -180,7 +182,7 @@ const tapCommand = `brew tap ${tap.id}`;
                 </span>
               </span>
             </a>
-            <span class="installs">{compactNumber(entry.installs.d30)} installs · 30d</span>
+            <span class="installs">{compactNumber(entry.popularity.d30)} installs · 30d</span>
             <GetButton entry={entry} />
           </li>
         ))}

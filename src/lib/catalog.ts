@@ -23,6 +23,11 @@ export interface Entry extends Package {
   subcategory: string | null;
   /** The library flag after content/overrides.yaml. */
   isLibrary: boolean;
+  /**
+   * A command-line tool rather than an app: every formula, and casks that install only
+   * command-line programs or that content/packages.yaml says are `type: cli`.
+   */
+  commandLine: boolean;
   /** Has its own page at /app/<id>. */
   hasPage: boolean;
   /** Appears in discovery, charts and New (see docs/DECISIONS.md). */
@@ -54,7 +59,8 @@ function readJson<T>(file: string): T {
 /** Packages that get a page: installable and not a font (see docs/DECISIONS.md). */
 export const hasPage = (p: Package) => !p.disabled && !p.font;
 
-const linuxOnly = (p: Package) => p.platforms?.length === 1 && p.platforms[0] === 'linux';
+const linuxOnly = (p: Pick<Package, 'platforms'>) =>
+  p.platforms?.length === 1 && p.platforms[0] === 'linux';
 
 export const appUrl = (id: string) => `/app/${id}`;
 
@@ -108,6 +114,9 @@ function build(): Catalog {
     const page = hasPage(p);
     return {
       ...p,
+      commandLine:
+        p.kind === 'formula' ||
+        (editorial.type ? editorial.type === 'cli' : installsOnlyPrograms(p)),
       name: editorial.name ?? displayName(p),
       line: editorial.tagline ?? p.desc,
       developer: editorial.developer ?? null,
@@ -245,7 +254,8 @@ export function pickFor(id: string): EditorsPick | null {
 // --- Labels ---
 
 // Cask artifacts that put something app-like on the Mac (as opposed to `binary`, man pages,
-// shell completions or an install script).
+// shell completions or an install script). A .pkg installer can hold either an app or tools,
+// so it counts as an app unless content/packages.yaml says `type: cli`.
 const APP_ARTIFACTS = new Set([
   'app',
   'pkg',
@@ -267,21 +277,23 @@ const APP_ARTIFACTS = new Set([
 ]);
 
 /** A cask that installs command-line programs and nothing app-like (`dtctl`, `gcloud-cli`). */
-export const isCliCask = (p: Pick<Package, 'kind' | 'artifacts'>) =>
+const installsOnlyPrograms = (p: Package) =>
   p.kind === 'cask' &&
   p.artifacts.includes('binary') &&
   !p.artifacts.some((a) => APP_ARTIFACTS.has(a));
 
+type Typed = Pick<Entry, 'kind' | 'commandLine' | 'platforms'>;
+
 /** "Mac app", "Command-line tool", "Linux app". */
-export function kindLabel(p: Package): string {
-  if (p.kind === 'formula' || isCliCask(p)) return 'Command-line tool';
+export function kindLabel(p: Typed): string {
+  if (p.commandLine) return 'Command-line tool';
   return linuxOnly(p) ? 'Linux app' : 'Mac app';
 }
 
 /** Mac apps for lists: casks that install an app (or don't say), not command-line casks. */
-export const isMacApp = (p: Package) => p.kind === 'cask' && !isCliCask(p);
+export const isMacApp = (p: Typed) => p.kind === 'cask' && !p.commandLine;
 /** Command-line tools for lists: formulae and command-line casks. */
-export const isCommandLine = (p: Package) => p.kind === 'formula' || isCliCask(p);
+export const isCommandLine = (p: Typed) => p.commandLine;
 
 /** Readable licence: "MIT", "Public domain", or null when there's none or it's unwieldy. */
 export function licenseLabel(p: Package): string | null {
@@ -305,22 +317,44 @@ export function forgeOwner(url: string | null): string | null {
 
 /** The source repository when the homepage is one. */
 export function sourceRepo(url: string | null): string | null {
-  const m = url?.match(
-    /^(https?:\/\/(?:www\.)?(?:github\.com|gitlab\.com|codeberg\.org)\/[^/?#]+\/[^/?#]+)/i,
-  );
-  return m ? m[1].replace(/\.git$/, '') : null;
+  if (!url) return null;
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return null;
+  }
+  const host = parsed.hostname.replace(/^www\./, '').toLowerCase();
+  const parts = parsed.pathname.split('/').filter(Boolean);
+  let path: string[];
+  if (host === 'github.com' || host === 'codeberg.org') {
+    path = parts.slice(0, 2);
+  } else if (host === 'gitlab.com') {
+    // GitLab nests groups (gitlab.com/sane-project/frontend/xsane); `/-/` starts the page part.
+    const end = parts.indexOf('-');
+    path = end === -1 ? parts : parts.slice(0, end);
+  } else {
+    return null;
+  }
+  if (path.length < 2) return null;
+  return `https://${host}/${path.join('/')}`.replace(/\.git$/, '');
 }
 
 const kindRanks = new Map<string, number>();
-/** Position by 30-day popularity among listed packages of the same kind (1-based). */
-export function kindRank(entry: Entry): number | null {
+/**
+ * Position by 30-day popularity among listed packages of the same type (1-based), and that
+ * group's name: "Mac apps" or "command-line tools".
+ */
+export function kindRank(entry: Entry): { rank: number; group: string } | null {
   if (!entry.listed) return null;
   if (kindRanks.size === 0) {
-    for (const kind of ['formula', 'cask'] as const) {
-      top((e) => e.kind === kind, Infinity).forEach((e, i) => kindRanks.set(e.id, i + 1));
+    for (const filter of [isMacApp, isCommandLine]) {
+      top(filter, Infinity).forEach((e, i) => kindRanks.set(e.id, i + 1));
     }
   }
-  return kindRanks.get(entry.id) ?? null;
+  const rank = kindRanks.get(entry.id);
+  if (!rank) return null;
+  return { rank, group: entry.commandLine ? 'command-line tools' : 'Mac apps' };
 }
 
 /** Cask versions carry build numbers after a comma ("0.5.16,261015"); show the release part. */

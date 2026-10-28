@@ -226,10 +226,20 @@ const selected = ranges.findLast((r) => r.days <= 90) ?? ranges[0];
       plot.addEventListener('blur', hide);
       plot.addEventListener('focus', () => show(index));
       plot.addEventListener('keydown', (event) => {
-        const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
-        if (step === undefined) return;
+        const last = values.length - 1;
+        const target = {
+          ArrowRight: index + 1,
+          ArrowUp: index + 1,
+          ArrowLeft: index - 1,
+          ArrowDown: index - 1,
+          PageUp: index + 7,
+          PageDown: index - 7,
+          Home: 0,
+          End: last,
+        }[event.key];
+        if (target === undefined) return;
         event.preventDefault();
-        show(index + step);
+        show(target);
       });
     }
   }

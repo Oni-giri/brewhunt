@@ -2,7 +2,7 @@
 // only, through src/pages/search-index.json.ts. Every package with a page is in it, listed or not:
 // "brew install openssl" is a real query, and the scoring ranks such packages lower.
 
-import { isCliCask, type Entry } from './catalog.ts';
+import type { Entry } from './catalog.ts';
 import { dayNumber, FLAG, type SearchIndex } from './search.ts';
 
 export type IndexEntry = Pick<
@@ -21,7 +21,7 @@ export type IndexEntry = Pick<
   | 'deprecated'
   | 'versioned'
   | 'platforms'
-  | 'artifacts'
+  | 'commandLine'
   | 'listed'
   | 'hasPage'
   | 'popularity'
@@ -106,7 +106,7 @@ export function buildSearchIndex(input: IndexInput): SearchIndex {
         (e.versioned ? FLAG.versioned : 0) |
         (linuxOnly(e) ? FLAG.linuxOnly : 0) |
         (e.listed ? FLAG.listed : 0) |
-        (isCliCask(e) ? FLAG.cliCask : 0),
+        (e.kind === 'cask' && e.commandLine ? FLAG.cliCask : 0),
     );
     index.pop.push(e.popularity.d30);
     // A "file" date is the last edit to the definition, not a release: don't call it an update.
