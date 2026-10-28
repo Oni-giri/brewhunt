@@ -4,7 +4,7 @@
 
 The app store for everything you can install with Homebrew: discover Mac apps and command-line tools, see what's new and trending, and grab the one-line install command.
 
-**Status:** M0 (site shell) and M1 (data pipeline) are done; M2 (core pages) is next. See the roadmap.
+**Status:** M0 to M3 are done (shell, data pipeline, app pages, Discover, search, charts, new, categories, taps) and the M4 landing page is built. Left before launch: Cloudflare deploy secrets, analytics, a manual accessibility pass. See the roadmap.
 
 - Product spec: [`docs/PRODUCT.md`](docs/PRODUCT.md)
 - Design system: [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md)
