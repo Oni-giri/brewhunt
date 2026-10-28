@@ -53,7 +53,9 @@ blackhole-2ch:
   keywords: [blackhole]
 vlc:
   name: VLC
-  keywords: [videolan]
+  keywords: [videolan, video player]
+iina:
+  keywords: [video player]
 obs:
   keywords: [obs-studio]
 ffmpeg:
@@ -67,17 +69,19 @@ obsidian:
 maccy:
   tagline: Clipboard history, searchable from the keyboard
   developer: Alexey Rodionov
+  keywords: [clipboard, clipboard manager]
 hammerspoon:
   tagline: Automate macOS with Lua scripts
 
 # Terminal tools
 iterm2:
-  keywords: [iterm]
+  keywords: [iterm, terminal]
 eza:
   keywords: [exa]
 ghostty:
   tagline: Native, GPU-accelerated terminal emulator
   developer: Mitchell Hashimoto
+  keywords: [terminal]
 ripgrep:
   tagline: Search file contents recursively, respecting .gitignore
   developer: Andrew Gallant
@@ -100,6 +104,7 @@ yazi:
   tagline: Terminal file manager written in Rust
 warp:
   tagline: Terminal with block-based output and built-in AI
+  keywords: [terminal]
 zellij:
   tagline: Terminal workspace and multiplexer
 starship:
