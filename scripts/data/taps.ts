@@ -42,6 +42,11 @@ export function rankTaps(feeds: AnalyticsFile[]): TapRef[] {
     });
 }
 
+// Limits for one tap, so a huge or hostile repository can't stall the daily run. The
+// largest real taps have under 1,000 package files.
+const MAX_TAP_FILES = 5000;
+const TAP_PARSE_BUDGET_MS = 90_000;
+
 export interface GithubRepo {
   description: string | null;
   stars: number;
@@ -102,8 +107,12 @@ export async function scanTap(
       checkout: ['/*.rb', '/Formula/', '/HomebrewFormula/', '/Casks/'],
       timeoutMs: 180_000,
     });
+    const files = await listTapFiles(dir);
+    if (files.length > MAX_TAP_FILES) throw new Error(`${files.length} package files, over ${MAX_TAP_FILES}`);
+    const deadline = Date.now() + TAP_PARSE_BUDGET_MS;
     const packages: TapScan['packages'] = [];
-    for (const file of await listTapFiles(dir)) {
+    for (const file of files) {
+      if (Date.now() > deadline) throw new Error(`reading took over ${TAP_PARSE_BUDGET_MS / 1000}s`);
       const source = await readTapFile(dir, file);
       if (source === null) continue;
       const parsed = file.kind === 'cask' ? parseCask(source, file.token) : parseFormula(source, file.token);

@@ -210,6 +210,9 @@ function lex(source: string): Token[] {
   const tokens: Token[] = [];
   const heredocs: Heredoc[] = [];
   let space = false;
+  // Where an unclosed regexp scan gave up. A later `/` before that point can't close either,
+  // so skip the rescan: otherwise a file of escaped slashes (`(\/\/\/…`) takes quadratic time.
+  let regexDeadUntil = { line: -1, multiline: -1 };
   let i = 0;
 
   const push = (type: TokenType, text: string, parts?: StringPart[]): void => {
@@ -282,12 +285,18 @@ function lex(source: string): Token[] {
     if (c === '/' && literalFollows) {
       // Where only an expression can start (`regex(/…/x)`), a regexp may span lines; after
       // `foo /` it could still be a division, so it must close on the same line.
-      const end = regexEnd(src, i + 1, !valueBefore);
-      if (end !== -1) {
-        push('lit', '');
-        i = end;
-        while (/[a-z]/.test(src[i] ?? '')) i++;
-        continue;
+      const multiline = !valueBefore;
+      if (i >= (multiline ? regexDeadUntil.multiline : regexDeadUntil.line)) {
+        const { end, stop } = regexEnd(src, i + 1, multiline);
+        if (end !== -1) {
+          push('lit', '');
+          i = end;
+          while (/[a-z]/.test(src[i] ?? '')) i++;
+          continue;
+        }
+        regexDeadUntil = multiline
+          ? { line: stop, multiline: stop }
+          : { ...regexDeadUntil, line: stop };
       }
     }
     if (c === '<' && src[i + 1] === '<') {
@@ -479,15 +488,16 @@ function codeEnd(src: string, start: number, nesting: number): number {
 }
 
 /** End of a `/regexp/` starting at `start`, or -1 when there is none (it was a division). */
-function regexEnd(src: string, start: number, multiline: boolean): number {
+/** End of a regexp literal (after the closing `/`), or -1 and where the scan stopped. */
+function regexEnd(src: string, start: number, multiline: boolean): { end: number; stop: number } {
   for (let i = start; i < src.length; i++) {
     const c = src[i];
-    if (c === '\n' && !multiline) return -1;
+    if (c === '\n' && !multiline) return { end: -1, stop: i };
     if (c === '\\') i++;
-    else if (c === '/') return i + 1;
+    else if (c === '/') return { end: i + 1, stop: i + 1 };
     else if (c === '#' && src[i + 1] === '{') i = codeEnd(src, i + 2, 1) - 1;
   }
-  return -1;
+  return { end: -1, stop: src.length };
 }
 
 function joinText(parts: StringPart[] | undefined): string | null {

@@ -560,3 +560,13 @@ describe('real files', () => {
     });
   });
 });
+
+describe('hostile input', () => {
+  it('stays linear on a file of escaped slashes that never close a regexp', () => {
+    // Each `/` could start a regexp; rescanning to the end of the file from each one was quadratic.
+    const src = `class Foo < Formula\n  desc "x"\n  (${'\\/'.repeat(128_000)}\nend\n`;
+    const start = performance.now();
+    expect(parseFormula(src, 'foo').desc).toBe('x');
+    expect(performance.now() - start).toBeLessThan(2000);
+  });
+});
