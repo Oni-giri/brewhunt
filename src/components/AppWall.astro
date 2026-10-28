@@ -235,6 +235,13 @@ const { rows, label } = Astro.props;
     .track.reverse {
       animation: none;
     }
+    /* Still rows: let people scroll them by hand, and show each app once. */
+    .row {
+      overflow-x: auto;
+    }
+    .track > li[aria-hidden='true'] {
+      display: none;
+    }
     /* Nothing moves, so there's nothing to pause. */
     .controls {
       display: none;

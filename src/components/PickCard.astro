@@ -6,7 +6,7 @@ import type { EditorsPick } from '../../scripts/content/schema.ts';
 import type { Entry } from '../lib/catalog';
 import { pickMeta } from '../lib/discover';
 import AppIcon from './AppIcon.astro';
-import Badge from './Badge.astro';
+import SourceBadge from './SourceBadge.astro';
 import GetButton from './GetButton.astro';
 
 interface Props {
@@ -29,7 +29,7 @@ const { pick, entry } = Astro.props;
         <h3>{entry.name}</h3>
         <span class="meta">
           {pickMeta(entry)}
-          {entry.source === 'community' && <Badge variant="community">Community</Badge>}
+          <SourceBadge source={entry.source} />
         </span>
       </span>
     </a>

@@ -18,7 +18,8 @@ const { meta, categories, picks, byId } = getCatalog();
 const today = meta.generatedOn;
 
 const heroApps = colourfulTop(3);
-const popularSearches = ['window manager', 'clipboard', 'menu bar', 'video player', 'terminal'];
+// Editorial suggestions, not measured popularity: there are no search analytics.
+const suggestedSearches = ['window manager', 'clipboard', 'menu bar', 'video player', 'terminal'];
 
 // 12 chips a row: one copy is 12 × 286px, wider than any screen, so the loop never shows a gap.
 const apps = wallApps(24);
@@ -124,8 +125,8 @@ const jsonLd = JSON.stringify({
         />
         <button type="submit">Search</button>
       </form>
-      <ul class="chips" aria-label="Popular searches">
-        {popularSearches.map((q) => (
+      <ul class="chips" aria-label="Suggested searches">
+        {suggestedSearches.map((q) => (
           <li>
             <a href={`/search?${new URLSearchParams({ q })}`}>{q}</a>
           </li>
@@ -278,10 +279,10 @@ const jsonLd = JSON.stringify({
           Built a Mac app? Get it in front of the people who'll love it.
         </h2>
         <p>
-          Listings come straight from Homebrew: if your app is in its catalog, it's here, with the
-          description and homepage from your cask or formula. Keep those up to date; Brewhunt
-          rebuilds every day. Claiming a listing, to add screenshots and your own words, is planned
-          but not open yet.
+          Listings come straight from Homebrew: if your app is in its official catalog, it's here,
+          with the description and homepage from your cask or formula. Keep those up to date;
+          Brewhunt rebuilds every day. Claiming a listing, to add screenshots and your own words, is
+          planned but not open yet.
         </p>
       </div>
       <div class="developers-cta">
