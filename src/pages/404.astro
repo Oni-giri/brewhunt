@@ -10,6 +10,20 @@ import Base from '../layouts/Base.astro';
   </div>
 </Base>
 
+<script>
+  // A renamed package or a formula alias (/app/python) moves on to its current page.
+  const match = location.pathname.match(/^\/app\/(.+?)(?:\.html)?\/?$/);
+  if (match) {
+    fetch('/aliases.json')
+      .then((res) => (res.ok ? (res.json() as Promise<Record<string, string>>) : {}))
+      .then((aliases) => {
+        const id = aliases[decodeURIComponent(match[1])];
+        if (id) location.replace(`/app/${id}${location.search}${location.hash}`);
+      })
+      .catch(() => {});
+  }
+</script>
+
 <style>
   .page {
     max-width: var(--content-max);

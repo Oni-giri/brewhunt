@@ -1,0 +1,378 @@
+---
+// Installs over time, from our own daily snapshots: each point is the 30-day install count on
+// that day (Homebrew only publishes rolling windows). Range tabs appear once there's enough
+// history for them; the page leaves the chart out until there's a week of it.
+import { compactNumber, fullNumber, shortDate } from '../lib/format';
+
+interface Props {
+  dates: string[];
+  values: (number | null)[];
+  name: string;
+}
+
+const { dates, values, name } = Astro.props;
+
+const W = 600;
+const H = 200;
+const RANGES = [
+  { key: '30', label: '30 days', days: 30 },
+  { key: '90', label: '90 days', days: 90 },
+  { key: '365', label: '1 year', days: 365 },
+];
+
+/** Round up to 1, 2 or 5 × 10^n so the axis labels are tidy. */
+function niceMax(n: number): number {
+  if (n <= 0) return 10;
+  const base = 10 ** Math.floor(Math.log10(n));
+  return ([1, 2, 5, 10].find((m) => m * base >= n) ?? 10) * base;
+}
+
+const ranges = RANGES.filter((r, i) => i === 0 || dates.length > RANGES[i - 1].days).map((r) => {
+  const start = Math.max(0, dates.length - r.days);
+  const d = dates.slice(start);
+  const v = values.slice(start);
+  const max = niceMax(Math.max(...v.map((x) => x ?? 0)));
+  const x = (i: number) => (d.length === 1 ? W / 2 : (i / (d.length - 1)) * W);
+  const y = (value: number) => H - (value / max) * H;
+  // Missing days break the line rather than dropping to zero.
+  const segments: string[] = [];
+  let current: string[] = [];
+  v.forEach((value, i) => {
+    if (value === null) {
+      if (current.length) segments.push(current.join(' '));
+      current = [];
+    } else current.push(`${x(i).toFixed(1)},${y(value).toFixed(1)}`);
+  });
+  if (current.length) segments.push(current.join(' '));
+  const known = v.filter((n): n is number => n !== null);
+  const summary = known.length
+    ? `30-day installs of ${name} over the last ${d.length} days, from ${fullNumber(known[0])} to ${fullNumber(known.at(-1)!)}.`
+    : `No install data for ${name} in this period.`;
+  return {
+    ...r,
+    // A range longer than the history so far is labelled with what it really covers.
+    label: dates.length < r.days ? `${d.length} days` : r.label,
+    dates: d,
+    values: v,
+    max,
+    segments,
+    summary,
+    ticks: [1, 0.75, 0.5, 0.25, 0].map((f) => compactNumber(max * f)),
+    labels: [
+      shortDate(d[0], false),
+      shortDate(d[Math.floor((d.length - 1) / 2)], false),
+      shortDate(d.at(-1)!, false),
+    ],
+  };
+});
+const selected = ranges.findLast((r) => r.days <= 90) ?? ranges[0];
+---
+
+<section class="chart" data-chart>
+  <div class="head">
+    <h2>Installs over time</h2>
+    {ranges.length > 1 && (
+      <div role="tablist" aria-label="Range" class="tabs">
+        {ranges.map((r) => (
+          <button
+            type="button"
+            role="tab"
+            id={`range-tab-${r.key}`}
+            aria-controls={`range-${r.key}`}
+            aria-selected={r === selected ? 'true' : 'false'}
+            tabindex={r === selected ? 0 : -1}
+          >
+            {r.label}
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+  {ranges.map((r) => (
+    <div
+      class="panel"
+      id={`range-${r.key}`}
+      role={ranges.length > 1 ? 'tabpanel' : undefined}
+      aria-labelledby={ranges.length > 1 ? `range-tab-${r.key}` : undefined}
+      hidden={r !== selected}
+    >
+      <div class="plot">
+        <div class="y-axis" aria-hidden="true">
+          {r.ticks.map((t) => (
+            <span>{t}</span>
+          ))}
+        </div>
+        <div class="area">
+          <div
+            class="frame"
+            tabindex="0"
+            role="slider"
+            aria-label={`Day to read (${r.label})`}
+            aria-valuemin={0}
+            aria-valuemax={r.dates.length - 1}
+            aria-valuenow={r.dates.length - 1}
+            data-plot
+            data-dates={JSON.stringify(r.dates)}
+            data-values={JSON.stringify(r.values)}
+            data-max={r.max}
+          >
+            <svg
+              viewBox={`0 0 ${W} ${H}`}
+              preserveAspectRatio="none"
+              role="img"
+              aria-label={r.summary}
+            >
+              {[50, 100, 150].map((y) => (
+                <line x1="0" y1={y} x2={W} y2={y} class="grid" />
+              ))}
+              {r.segments.map((points) => (
+                <polyline points={points} class="line" />
+              ))}
+            </svg>
+            <span class="rule" hidden />
+            <span class="dot" hidden />
+            <span class="readout" hidden />
+          </div>
+          <div class="x-axis" aria-hidden="true">
+            {r.labels.map((l) => (
+              <span>{l}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  ))}
+  <p class="note">
+    Each point is the number of installs in the 30 days up to that day, from daily snapshots of
+    Homebrew's public, opt-out analytics: read it as relative popularity.
+  </p>
+</section>
+
+<script>
+  const MONTHS = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  for (const chart of document.querySelectorAll<HTMLElement>('[data-chart]')) {
+    const tabs = [...chart.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const select = (tab: HTMLButtonElement) => {
+      for (const t of tabs) {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        chart.querySelector<HTMLElement>(`#${t.getAttribute('aria-controls')}`)!.hidden = !on;
+      }
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(tab));
+      tab.addEventListener('keydown', (event) => {
+        const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[
+          event.key
+        ];
+        if (next === undefined) return;
+        event.preventDefault();
+        const target = tabs[(next + tabs.length) % tabs.length];
+        select(target);
+        target.focus();
+      });
+    });
+
+    // Hover or arrow keys show the value on a given day.
+    for (const plot of chart.querySelectorAll<HTMLElement>('[data-plot]')) {
+      const dates: string[] = JSON.parse(plot.dataset.dates!);
+      const values: (number | null)[] = JSON.parse(plot.dataset.values!);
+      const max = Number(plot.dataset.max);
+      const rule = plot.querySelector<HTMLElement>('.rule')!;
+      const dot = plot.querySelector<HTMLElement>('.dot')!;
+      const readout = plot.querySelector<HTMLElement>('.readout')!;
+      let index = values.length - 1;
+      const show = (i: number) => {
+        index = Math.max(0, Math.min(values.length - 1, i));
+        const value = values[index];
+        const x = values.length === 1 ? 50 : (index / (values.length - 1)) * 100;
+        for (const el of [rule, dot, readout]) el.hidden = false;
+        rule.style.left = dot.style.left = `${x}%`;
+        dot.hidden = value === null;
+        dot.style.top = `${100 - ((value ?? 0) / max) * 100}%`;
+        const [, month, day] = dates[index].split('-').map(Number);
+        const date = `${day} ${MONTHS[month - 1]}`;
+        readout.textContent = `${date}: ${value === null ? 'no data' : value.toLocaleString('en-US')}`;
+        plot.setAttribute('aria-valuenow', String(index));
+        plot.setAttribute(
+          'aria-valuetext',
+          `${date}: ${value === null ? 'no data' : `${value.toLocaleString('en-US')} installs in the previous 30 days`}`,
+        );
+        readout.style.left = `${Math.min(Math.max(x, 12), 88)}%`;
+      };
+      const hide = () => {
+        for (const el of [rule, dot, readout]) el.hidden = true;
+      };
+      plot.addEventListener('pointermove', (event) => {
+        const box = plot.getBoundingClientRect();
+        show(Math.round(((event.clientX - box.left) / box.width) * (values.length - 1)));
+      });
+      plot.addEventListener('pointerleave', hide);
+      plot.addEventListener('blur', hide);
+      plot.addEventListener('focus', () => show(index));
+      plot.addEventListener('keydown', (event) => {
+        const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+        if (step === undefined) return;
+        event.preventDefault();
+        show(index + step);
+      });
+    }
+  }
+</script>
+
+<style>
+  .chart {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 28px;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--chip);
+  }
+  .tabs button {
+    height: var(--touch);
+    padding: 0 16px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-body);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .tabs [aria-selected='true'] {
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: var(--shadow-tab);
+  }
+  .plot {
+    display: flex;
+    gap: 10px;
+  }
+  .y-axis {
+    flex: none;
+    width: 36px;
+    height: 200px;
+    margin-top: -8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--text-meta);
+    text-align: right;
+  }
+  .area {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .frame {
+    position: relative;
+    height: 200px;
+    border-left: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .grid {
+    stroke: var(--divider);
+  }
+  .line {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2.5;
+    vector-effect: non-scaling-stroke;
+    stroke-linejoin: round;
+  }
+  .rule {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--text-meta);
+    pointer-events: none;
+  }
+  .dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 2px var(--surface);
+    pointer-events: none;
+  }
+  .readout {
+    position: absolute;
+    top: 6px;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .x-axis {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-meta);
+  }
+  .note {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+  @media (max-width: 480px) {
+    .chart {
+      padding: 22px;
+    }
+  }
+</style>

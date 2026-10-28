@@ -5,6 +5,7 @@ import AppIcon from '../../components/AppIcon.astro';
 import Badge from '../../components/Badge.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Command from '../../components/Command.astro';
+import InstallsChart from '../../components/InstallsChart.astro';
 import SourceBadge from '../../components/SourceBadge.astro';
 import Base from '../../layouts/Base.astro';
 import {
@@ -34,7 +35,7 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const { meta, categoryBySlug, tapById } = getCatalog();
+const { meta, categoryBySlug, tapById, history } = getCatalog();
 const today = meta.generatedOn;
 const community = entry.source === 'community';
 const tap = community ? tapById.get(entry.tap) : undefined;
@@ -83,6 +84,10 @@ const replacement = entry.deprecation?.replacement
   : undefined;
 
 const typeWord = entry.kind === 'cask' ? 'app' : 'tool';
+// Until there's a week of daily snapshots the chart would be a dot or a stub: stat cards only.
+const MIN_CHART_DAYS = 7;
+const series = history.installs[entry.id];
+const showChart = history.dates.length >= MIN_CHART_DAYS && !!series;
 const title = `${entry.name}: install with Homebrew`;
 const description = [
   entry.desc ? (entry.desc.endsWith('.') ? entry.desc : `${entry.desc}.`) : null,
@@ -257,6 +262,8 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
           </section>
         )}
 
+        {showChart && <InstallsChart dates={history.dates} values={series} name={entry.name} />}
+
         <section class="panel">
           <h2>Manage it</h2>
           <div class="manage-row">
@@ -402,8 +409,8 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
             <span class="trust-text">
               <strong>From an independent developer's tap</strong>
               <span>
-                Homebrew doesn't review community taps. The {typeWord} comes from {entry.tap}'s own
-                repository: check the definition before installing.
+                Homebrew doesn't review community taps. This {typeWord}'s definition is in{' '}
+                {entry.tap} on GitHub: check it before installing.
               </span>
             </span>
           ) : (
@@ -488,7 +495,7 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
     gap: 8px;
   }
   .install {
-    flex: 1 1 380px;
+    flex: 1 1 400px;
     min-width: 0;
     max-width: 420px;
     display: flex;
@@ -514,8 +521,8 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
     background: var(--navy);
     color: var(--code-dark-text);
     font-size: 14px;
-    white-space: nowrap;
-    overflow-x: auto;
+    /* Long tap commands wrap rather than hide their end. */
+    overflow-wrap: anywhere;
   }
   .install-actions {
     display: flex;
