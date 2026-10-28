@@ -1,0 +1,464 @@
+---
+// A community tap: what it is, how to add it, how much it's used, and its packages.
+// See docs/PRODUCT.md › Tap. Only taps the pipeline could read have a page.
+import AppIcon from '../../../components/AppIcon.astro';
+import Badge from '../../../components/Badge.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import GetButton from '../../../components/GetButton.astro';
+import StatCard from '../../../components/StatCard.astro';
+import Base from '../../../layouts/Base.astro';
+import { displayVersion, getCatalog, kindLabel, type Entry } from '../../../lib/catalog';
+import { agoLabel, compactNumber, fullNumber, shortDate } from '../../../lib/format';
+import type { Tap } from '../../../../scripts/data/types.ts';
+
+export function getStaticPaths() {
+  const { taps, byId } = getCatalog();
+  return taps
+    .map((tap) => ({
+      tap,
+      packages: tap.packageIds
+        .map((id) => byId.get(id))
+        .filter((e): e is Entry => !!e?.hasPage)
+        .sort((a, b) => b.popularity.d30 - a.popularity.d30 || a.id.localeCompare(b.id)),
+    }))
+    .filter(({ tap, packages }) => tap.enriched && packages.length > 0)
+    .map(({ tap, packages }) => {
+      const [owner, repo] = tap.id.split('/');
+      return { params: { owner, repo }, props: { tap, packages } };
+    });
+}
+
+interface Props {
+  tap: Tap;
+  packages: Entry[];
+}
+
+const { tap, packages } = Astro.props;
+const { meta } = getCatalog();
+const today = meta.generatedOn;
+const pushed = tap.pushedAt?.slice(0, 10) ?? null;
+const initials = tap.owner
+  .replace(/[^a-z0-9]/gi, '')
+  .slice(0, 2)
+  .toLowerCase();
+const counts = {
+  formulae: packages.filter((p) => p.kind === 'formula').length,
+  casks: packages.filter((p) => p.kind === 'cask').length,
+};
+const what = [
+  counts.formulae
+    ? `${counts.formulae} command-line ${counts.formulae === 1 ? 'tool' : 'tools'}`
+    : null,
+  counts.casks ? `${counts.casks} ${counts.casks === 1 ? 'app' : 'apps'}` : null,
+]
+  .filter(Boolean)
+  .join(' and ');
+const description = tap.description ?? `An independent developer's Homebrew tap with ${what}.`;
+const tapCommand = `brew tap ${tap.id}`;
+---
+
+<Base
+  title={`${tap.id}: community Homebrew tap`}
+  description={`${description} Not reviewed by Homebrew. Add it with ${tapCommand}.`}
+>
+  <div class="container page">
+    <Breadcrumb
+      items={[
+        { label: 'Discover', href: '/discover' },
+        { label: 'Community', href: '/search?source=community' },
+        { label: tap.id },
+      ]}
+    />
+
+    <section class="hero" aria-labelledby="tap-name">
+      <div class="identity">
+        <span class="avatar" aria-hidden="true">
+          {initials}
+        </span>
+        <div class="titles">
+          <h1 id="tap-name">{tap.id}</h1>
+          <p class="desc">{description}</p>
+          <div class="badges">
+            <Badge variant="community" size="md">
+              Community tap
+            </Badge>
+            <Badge variant="info" size="md">
+              {tap.owner}/{tap.repo}
+            </Badge>
+            {pushed && (
+              <Badge variant="info" size="md">
+                Updated {agoLabel(pushed, today)}
+              </Badge>
+            )}
+            {tap.archived && (
+              <Badge variant="warning" size="md">
+                Archived
+              </Badge>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div class="add">
+        <h2 class="add-label">Add this tap</h2>
+        <code class="add-command">{tapCommand}</code>
+        <button type="button" class="copy" data-copy={tapCommand}>
+          Copy command
+        </button>
+        <p class="add-note">
+          Optional: installing a package by its full name adds the tap for you.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <div class="container page body">
+    <section class="safety" aria-labelledby="safety-title">
+      <span class="safety-icon" aria-hidden="true">
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"></path>
+          <path d="M12 8v5"></path>
+          <circle cx="12" cy="16.5" r="0.6"></circle>
+        </svg>
+      </span>
+      <span class="safety-text">
+        <strong id="safety-title">Community tap: not reviewed by Homebrew</strong>
+        <span>
+          Packages here come straight from the developer's own repository. Look at the source and
+          its activity before you install.
+        </span>
+      </span>
+      <a class="source" href={tap.url} rel="noopener">
+        View source
+      </a>
+    </section>
+
+    <section class="stats" aria-labelledby="stats-title">
+      <h2 id="stats-title" class="visually-hidden">
+        Tap numbers
+      </h2>
+      <div class="stat-grid">
+        <StatCard label="Packages on Brewhunt" value={fullNumber(packages.length)} />
+        <StatCard label="Installs · 30 days" value={compactNumber(tap.installs30d)} />
+        {tap.stars !== null && <StatCard label="GitHub stars" value={compactNumber(tap.stars)} />}
+        {pushed && (
+          <StatCard label="Last push" value={agoLabel(pushed, today)} notes={[shortDate(pushed)]} />
+        )}
+      </div>
+      <p class="stats-source">
+        Installs of every package in the tap in the 30 days to {shortDate(meta.analytics.d30.end)},
+        from Homebrew's public, opt-out analytics. Stars and activity from GitHub.
+      </p>
+    </section>
+
+    <section class="packages" aria-labelledby="packages-title">
+      <div class="section-head">
+        <span class="eyebrow">In this tap</span>
+        <h2 id="packages-title">Packages</h2>
+      </div>
+      <ul class="rows">
+        {packages.map((entry) => (
+          <li class="row">
+            <a class="main" href={entry.url}>
+              <AppIcon pkg={entry} size={56} />
+              <span class="text">
+                <span class:list={['name', { mono: entry.kind === 'formula' }]}>
+                  {entry.kind === 'formula' ? entry.token : entry.name}
+                </span>
+                {entry.line && <span class="line">{entry.line}</span>}
+                <span class="meta">
+                  {[kindLabel(entry), displayVersion(entry)].filter(Boolean).join(' · ')}
+                </span>
+              </span>
+            </a>
+            <span class="installs">{compactNumber(entry.installs.d30)} installs · 30d</span>
+            <GetButton entry={entry} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 36px;
+  }
+  .body {
+    gap: 40px;
+    padding-top: 32px;
+    padding-bottom: 64px;
+  }
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px 40px;
+  }
+  .identity {
+    flex: 999 1 520px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .avatar {
+    width: 96px;
+    height: 96px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--tile-terminal);
+    box-shadow: 0 0 0 4px var(--surface);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 30px;
+  }
+  .titles {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 44px;
+    line-height: 1.05;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
+  }
+  .desc {
+    margin: 0;
+    font-size: 17px;
+    color: var(--text-secondary);
+  }
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .add {
+    flex: 1 1 360px;
+    min-width: 0;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-float);
+  }
+  .add-label {
+    margin: 0;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .add-command {
+    padding: 13px 16px;
+    border-radius: var(--radius-code);
+    background: var(--navy);
+    color: var(--code-dark-text);
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+  .copy {
+    height: 48px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .add-note {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .safety {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 24px;
+    padding: 20px 24px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: inset 0 0 0 1.5px #d5d8e0;
+  }
+  .safety-icon {
+    width: 44px;
+    height: 44px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--ink);
+    color: #fff;
+  }
+  .safety-text {
+    flex: 1 1 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .safety-text span {
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .source {
+    display: flex;
+    align-items: center;
+    height: var(--touch);
+    padding: 0 18px;
+    border-radius: var(--radius-pill);
+    background: var(--chip);
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: 12px;
+  }
+  .stats-source {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+  .packages {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .section-head {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .eyebrow {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .section-head h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 32px;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .rows {
+    margin: 0;
+    padding: 8px 24px;
+    list-style: none;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+  }
+  .row + .row {
+    border-top: 1px solid var(--divider);
+  }
+  .main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .name {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .name.mono {
+    font-family: var(--font-mono);
+  }
+  .main:hover .name {
+    text-decoration: underline;
+  }
+  .line {
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--text-meta);
+    overflow-wrap: anywhere;
+  }
+  .installs {
+    font-size: 14px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  @media (max-width: 760px) {
+    .add {
+      max-width: none;
+    }
+    h1 {
+      font-size: 34px;
+    }
+  }
+  @media (max-width: 480px) {
+    .installs {
+      display: none;
+    }
+    .identity {
+      gap: 16px;
+    }
+    .avatar {
+      width: 64px;
+      height: 64px;
+      font-size: 22px;
+    }
+    .rows {
+      padding: 4px 16px;
+    }
+  }
+</style>

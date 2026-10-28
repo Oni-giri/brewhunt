@@ -58,6 +58,24 @@ const linuxOnly = (p: Package) => p.platforms?.length === 1 && p.platforms[0] ==
 
 export const appUrl = (id: string) => `/app/${id}`;
 
+/** The tap's page, if it has one (the pipeline read it and it lists packages with pages). */
+export function tapUrl(tapId: string): string | null {
+  const tap = getCatalog().tapById.get(tapId);
+  if (!tap?.enriched) return null;
+  return tap.packageIds.some((id) => getCatalog().byId.get(id)?.hasPage) ? `/tap/${tap.id}` : null;
+}
+
+/**
+ * Versioned casks often share their app's name (every `aerospace@0.x` cask is "AeroSpace"),
+ * so add the version when the name doesn't already say it.
+ */
+function displayName(p: Package): string {
+  const at = p.token.indexOf('@');
+  if (p.kind !== 'cask' || at < 0) return p.name;
+  const suffix = p.token.slice(at + 1);
+  return p.name.toLowerCase().includes(suffix.toLowerCase()) ? p.name : `${p.name} (${suffix})`;
+}
+
 function build(): Catalog {
   if (!existsSync(join(DATA_DIR, 'packages.json'))) {
     throw new Error(
@@ -90,6 +108,7 @@ function build(): Catalog {
     const page = hasPage(p);
     return {
       ...p,
+      name: displayName(p),
       line: editorial.tagline ?? p.desc,
       developer: editorial.developer ?? null,
       keywords: editorial.keywords ?? [],

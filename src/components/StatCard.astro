@@ -1,0 +1,49 @@
+---
+// A number with its label ("Installs · 30 days") and optional notes under it.
+interface Props {
+  label: string;
+  value: string;
+  notes?: string[];
+  /** Colour the value as a rise (trends). */
+  up?: boolean;
+}
+
+const { label, value, notes = [], up = false } = Astro.props;
+---
+
+<div class="stat">
+  <span class="label">{label}</span>
+  <span class:list={['value', { up }]}>{value}</span>
+  {notes.map((note) => (
+    <span class="note">{note}</span>
+  ))}
+</div>
+
+<style>
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 18px 20px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .label {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .value {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .up {
+    color: var(--trend-up);
+  }
+  .note {
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+</style>

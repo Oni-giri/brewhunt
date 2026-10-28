@@ -20,6 +20,7 @@ import {
   pickFor,
   similar,
   sourceRepo,
+  tapUrl,
   type Entry,
 } from '../../lib/catalog';
 import { agoLabel, compactNumber, fullNumber, shortDate, trendLabel } from '../../lib/format';
@@ -39,6 +40,8 @@ const { meta, categoryBySlug, tapById, history } = getCatalog();
 const today = meta.generatedOn;
 const community = entry.source === 'community';
 const tap = community ? tapById.get(entry.tap) : undefined;
+// Link the tap to its page here, or to GitHub when it has none.
+const tapHref = community ? (tapUrl(entry.tap) ?? tap?.url ?? null) : null;
 const primary = entry.categories[0] ? categoryBySlug.get(entry.categories[0]) : undefined;
 const pick = pickFor(entry.id);
 const related = similar(entry);
@@ -186,15 +189,8 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
         </div>
         {community && (
           <p class="install-note">
-            From{' '}
-            {tap ? (
-              <a href={tap.url} rel="noopener">
-                {entry.tap}
-              </a>
-            ) : (
-              entry.tap
-            )}
-            , an independent developer's tap: not reviewed by Homebrew.
+            From {tapHref ? <a href={tapHref}>{entry.tap}</a> : entry.tap}, an independent
+            developer's tap: not reviewed by Homebrew.
           </p>
         )}
       </div>
@@ -351,10 +347,8 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
               <dt>Source</dt>
               <dd>
                 {community ? (
-                  tap ? (
-                    <a href={tap.url} rel="noopener">
-                      {entry.tap}
-                    </a>
+                  tapHref ? (
+                    <a href={tapHref}>{entry.tap}</a>
                   ) : (
                     entry.tap
                   )
