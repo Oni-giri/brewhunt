@@ -1,0 +1,152 @@
+# Editorial fields per package, keyed by package id. See content/README.md.
+#   tagline: one line (60 characters at most, no full stop) shown in lists instead of
+#            Homebrew's description. Only add one where Homebrew's description is unclear.
+#   developer: who makes it, for the app page's Information list.
+#   keywords: lowercase search terms Homebrew's data doesn't link to the package (command
+#             names, former names, common abbreviations). Homebrew already links formula
+#             aliases (rg for ripgrep, nvim for neovim) and old cask tokens: don't repeat them.
+
+# Windows & desktop
+rectangle:
+  developer: Ryan Hanson
+alt-tab:
+  tagline: Windows-style window switcher with previews
+  developer: Louis Pontoise
+monitorcontrol:
+  tagline: Brightness and volume for external displays
+nikitabobko/tap/aerospace:
+  tagline: i3-like tiling window manager
+  developer: Nikita Bobko
+amethyst:
+  developer: Ian Ynda-Hummel
+betterdisplay:
+  tagline: Custom resolutions, HiDPI and display controls
+loop:
+  tagline: Resize windows from a radial menu
+rectangle-pro:
+  tagline: Rectangle with extra power-user features
+moom:
+  tagline: Move and zoom windows with mouse or keyboard
+swish:
+  tagline: Control windows with trackpad gestures
+dockdoor:
+  tagline: Window previews for the Dock and a window switcher
+
+# Menu bar
+jordanbaird-ice:
+  tagline: Tidy up a crowded menu bar
+  developer: Jordan Baird
+stats:
+  developer: Serhiy Mytrovtsiy
+itsycal:
+  developer: Mowglii
+
+# Screenshots
+shottr:
+  tagline: Screenshots with annotation and OCR
+
+# Video & audio
+blackhole-2ch:
+  tagline: Virtual audio driver for routing sound between apps
+  keywords: [blackhole]
+vlc:
+  keywords: [videolan]
+obs:
+  keywords: [obs-studio]
+ffmpeg:
+  keywords: [ffprobe, ffplay]
+yt-dlp:
+  keywords: [youtube-dl]
+
+# Productivity
+obsidian:
+  tagline: Notes in local Markdown files, linked together
+maccy:
+  tagline: Clipboard history, searchable from the keyboard
+  developer: Alexey Rodionov
+hammerspoon:
+  tagline: Automate macOS with Lua scripts
+
+# Terminal tools
+iterm2:
+  keywords: [iterm]
+eza:
+  keywords: [exa]
+ghostty:
+  tagline: Native, GPU-accelerated terminal emulator
+  developer: Mitchell Hashimoto
+ripgrep:
+  tagline: Search file contents recursively, respecting .gitignore
+  developer: Andrew Gallant
+fzf:
+  developer: Junegunn Choi
+zoxide:
+  developer: Ajeet D'Souza
+  keywords: [z]
+lazygit:
+  developer: Jesse Duffield
+btop:
+  tagline: Resource monitor in the terminal
+bat:
+  developer: David Peter
+  keywords: [batcat]
+fd:
+  developer: David Peter
+  keywords: [fd-find]
+yazi:
+  tagline: Terminal file manager written in Rust
+warp:
+  tagline: Terminal with block-based output and built-in AI
+zellij:
+  tagline: Terminal workspace and multiplexer
+starship:
+  tagline: Customisable prompt for any shell
+neovim:
+  tagline: Vim-based text editor focused on extensibility
+htop:
+  tagline: Interactive process viewer
+fastfetch:
+  tagline: Show system information in the terminal
+  keywords: [neofetch]
+
+# Developer tools
+visual-studio-code:
+  keywords: [vscode]
+gh:
+  keywords: [github-cli]
+awscli:
+  keywords: [aws]
+hashicorp/tap/terraform:
+  keywords: [tf]
+docker-desktop:
+  tagline: Run Docker containers on your Mac
+orbstack:
+  tagline: Run Docker containers and Linux machines
+
+# AI tools
+llama.cpp:
+  keywords: [llama-cpp, llama-server]
+copilot-cli:
+  tagline: GitHub Copilot's coding agent in the terminal
+macwhisper:
+  tagline: Transcribe audio on your Mac with Whisper models
+
+# Browsers
+thebrowsercompany-dia:
+  tagline: Browser with an AI assistant, from The Browser Company
+
+# Writing & notes
+mactex:
+  keywords: [latex, tex live]
+
+# Design
+imagemagick:
+  keywords: [magick]
+figma:
+  tagline: Collaborative interface design tool
+drawio:
+  tagline: Draw flowcharts, diagrams and wireframes
+
+# Security & privacy
+1password:
+  tagline: Password manager with browser autofill

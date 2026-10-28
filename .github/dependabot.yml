@@ -8,3 +8,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      # One PR for routine bumps instead of one per package.
+      minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # TypeScript 7 isn't supported by @astrojs/check and typescript-eslint yet.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']

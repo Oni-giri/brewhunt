@@ -1,0 +1,15 @@
+# Overrides for the pipeline's flags. See content/README.md.
+
+library:
+  # Formulae the pipeline flags as libraries (mostly installed as a dependency) that
+  # should still appear in charts and discovery.
+  show:
+    # JavaScript runtime that people install by name; flagged because yt-dlp depends on it.
+    - deno
+    # The sqlite3 command-line shell; flagged because Python, Node and Rust depend on it.
+    - sqlite
+  # Formulae to treat as libraries even though the pipeline doesn't flag them.
+  hide: []
+
+# Packages removed from every list. Their app pages stay.
+hidden: []

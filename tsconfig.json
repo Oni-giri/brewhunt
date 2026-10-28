@@ -1,5 +1,9 @@
 {
   "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    // scripts/ runs directly in Node 24, which strips types but can't compile enums and the like.
+    "erasableSyntaxOnly": true
+  },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "exclude": ["dist", "data", ".cache"]
 }

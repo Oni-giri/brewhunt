@@ -1,0 +1,79 @@
+# Collections: hand-picked sets of packages, shown as cards on Discover. See content/README.md.
+# The first four packages make the card's icon stack.
+
+- slug: set-up-a-new-mac
+  title: Set up a new Mac
+  subtitle: The essentials, in one go
+  tile: blue
+  packages:
+    - rectangle
+    - maccy
+    - stats
+    - iina
+    - raycast
+    - jordanbaird-ice # Ice
+    - shottr
+    - keka
+    - appcleaner
+    - alt-tab
+
+- slug: command-line-essentials
+  title: Command-line essentials
+  subtitle: What power users install first
+  tile: terminal
+  packages:
+    - fzf
+    - ripgrep
+    - zoxide
+    - eza
+    - bat
+    - fd
+    - jq
+    - lazygit
+    - btop
+    - tmux
+    - starship
+    - git-delta
+
+- slug: menu-bar-essentials
+  title: Menu bar essentials
+  subtitle: Small tools that live at the top of the screen
+  tile: purple
+  packages:
+    - jordanbaird-ice # Ice
+    - stats
+    - itsycal
+    - meetingbar
+    - keepingyouawake
+    - aldente
+    - swiftbar
+    - clocker
+
+- slug: developer-setup
+  title: Developer setup
+  subtitle: An editor, a terminal, containers and runtimes
+  tile: slate
+  packages:
+    - visual-studio-code
+    - ghostty
+    - orbstack
+    - gh
+    - node
+    - uv
+    - mise
+    - lazygit
+    - bruno
+    - tableplus
+
+- slug: local-ai
+  title: Local AI
+  subtitle: Run language models on your own Mac
+  tile: purple
+  packages:
+    - ollama-app # Ollama
+    - lm-studio
+    - jan
+    - anythingllm
+    - llama.cpp
+    - draw-things
+    - macwhisper

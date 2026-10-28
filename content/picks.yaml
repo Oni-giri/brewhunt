@@ -1,0 +1,34 @@
+# Editor's picks, newest first. See content/README.md.
+# Discover's hero shows the first pick; a category page shows the newest pick whose
+# `category` is that page's. A pick's package must be listed in its category.
+# Blurbs say what the app does, plainly: no rankings, prices or claims we can't back up.
+
+- id: jordanbaird-ice # Ice
+  date: 2026-10-28
+  category: menu-bar
+  blurb: Hide the icons you don't need and keep the menu bar calm — even on a MacBook with a notch.
+
+- id: rectangle
+  date: 2026-10-28
+  category: windows-desktop
+  blurb: Snap windows to halves, thirds and corners with a keystroke, or by dragging them to an edge of the screen. Free and open source.
+
+- id: ghostty
+  date: 2026-10-28
+  category: terminal-tools
+  blurb: A terminal emulator with a native macOS interface, GPU-accelerated rendering and a plain-text configuration file.
+
+- id: shottr
+  date: 2026-10-28
+  category: screenshots
+  blurb: Take a screenshot, then annotate it, measure distances on screen or copy its text with OCR.
+
+- id: iina
+  date: 2026-10-28
+  category: video-audio
+  blurb: A video player built on mpv, with a native macOS interface, picture-in-picture and online subtitle search.
+
+- id: maccy
+  date: 2026-10-28
+  category: productivity
+  blurb: Keeps a history of everything you copy. Press a shortcut, type to search and paste any earlier item.

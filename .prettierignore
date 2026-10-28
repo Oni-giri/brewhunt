@@ -4,3 +4,5 @@ node_modules/
 design/
 package-lock.json
 *.md
+data/
+.cache/

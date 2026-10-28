@@ -4,12 +4,26 @@
 
 The app store for everything you can install with Homebrew: discover Mac apps and command-line tools, see what's new and trending, and grab the one-line install command.
 
-**Status:** design handoff. Nothing is built yet.
+**Status:** M0 (site shell) and M1 (data pipeline) are done; M2 (core pages) is next. See the roadmap.
 
 - Product spec: [`docs/PRODUCT.md`](docs/PRODUCT.md)
 - Design system: [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md)
 - Data plan: [`docs/DATA.md`](docs/DATA.md)
 - Roadmap: [`docs/ROADMAP.md`](docs/ROADMAP.md)
 - Designs: [`design/`](design/README.md) (static HTML, screenshots, prototypes, brand assets)
+- Editorial content: [`content/`](content/README.md) (categories, picks, collections)
+- Calls to review: [`docs/DECISIONS.md`](docs/DECISIONS.md)
+
+## Develop
+
+Needs Node 24 (`.nvmrc`).
+
+```sh
+npm install
+npm run data:pull   # latest data from the `data` branch into data/ (or `npm run data` to build it yourself)
+npm run dev         # http://localhost:4321
+npm test            # unit tests (Vitest)
+npm run check       # types; `npm run lint`, `npm run format:check`, `npm run validate:content` too
+```
 
 Not affiliated with the Homebrew project or Apple.

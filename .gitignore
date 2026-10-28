@@ -6,3 +6,6 @@ dist/
 .DS_Store
 .wrangler/
 .codex-review/
+# Pipeline output (lives on the `data` branch) and its scratch space: cloned repos, API cache.
+/data/
+.cache/

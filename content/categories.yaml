@@ -1,0 +1,397 @@
+# Categories, in display order. See content/README.md.
+#
+# A package can be in several categories; its first one in this file is its primary
+# category (breadcrumbs, "Rank #n in …"). List the best-known packages first: the first
+# few stand for the category in icon stacks and "Rectangle, AltTab, MonitorControl".
+# Ids are Homebrew names: formula name, cask token (often not the app name: Ice is
+# jordanbaird-ice) or owner/tap/name for community taps.
+
+- slug: windows-desktop
+  name: Windows & desktop
+  description: Snap, tile and switch windows, and get more out of your displays.
+  tile: blue
+  subcategories:
+    - { slug: snapping, name: Snapping }
+    - { slug: tiling, name: Tiling }
+    - { slug: switching, name: Switching }
+    - { slug: displays, name: Displays }
+  packages:
+    - { id: rectangle, sub: snapping }
+    - { id: alt-tab, sub: switching }
+    - { id: monitorcontrol, sub: displays }
+    - { id: nikitabobko/tap/aerospace, sub: tiling }
+    - { id: amethyst, sub: tiling }
+    - { id: betterdisplay, sub: displays }
+    - { id: loop, sub: snapping }
+    - { id: rectangle-pro, sub: snapping }
+    - { id: moom, sub: snapping }
+    - { id: swish, sub: snapping }
+    - { id: lunar, sub: displays }
+    - { id: dockdoor, sub: switching }
+    - { id: contexts, sub: switching }
+    - { id: rcmd, sub: switching }
+    - { id: displayplacer, sub: displays }
+
+- slug: menu-bar
+  name: Menu bar
+  description: Calendars, system monitors and tools that tidy up a crowded menu bar.
+  tile: purple
+  packages:
+    - { id: jordanbaird-ice } # Ice
+    - { id: stats }
+    - { id: itsycal }
+    - { id: hiddenbar }
+    - { id: thaw }
+    - { id: bartender }
+    - { id: swiftbar }
+    - { id: xbar }
+    - { id: istat-menus }
+    - { id: meetingbar }
+    - { id: keepingyouawake }
+    - { id: aldente }
+    - { id: clocker }
+    - { id: one-switch }
+    - { id: reminders-menubar }
+    - { id: felixkratz/formulae/sketchybar }
+    - { id: theboredteam/boring-notch/boring-notch }
+    - { id: menubarx }
+
+- slug: screenshots
+  name: Screenshots
+  description: Capture, annotate and record your screen.
+  tile: green
+  packages:
+    - { id: shottr }
+    - { id: cleanshot }
+    - { id: macshot }
+    - { id: snagit }
+    - { id: snipaste }
+    - { id: snapzy }
+    - { id: capso }
+    - { id: xnapper }
+    - { id: textsniper }
+    - { id: kap }
+    - { id: cap }
+    - { id: screen-studio }
+    - { id: licecap }
+
+- slug: video-audio
+  name: Video & audio
+  description: Play, edit and convert video and audio, and route sound between apps.
+  tile: pink
+  subcategories:
+    - { slug: players, name: Players }
+    - { slug: music, name: Music }
+    - { slug: editing, name: Editing & converting }
+    - { slug: audio, name: Audio tools }
+    - { slug: capture, name: Recording & downloading }
+  packages:
+    - { id: iina, sub: players }
+    - { id: vlc, sub: players }
+    - { id: handbrake-app, sub: editing } # HandBrake
+    - { id: obs, sub: capture }
+    - { id: audacity, sub: audio }
+    - { id: spotify, sub: music }
+    - { id: blackhole-2ch, sub: audio }
+    - { id: ffmpeg, sub: editing }
+    - { id: yt-dlp, sub: capture }
+    - { id: mpv, sub: players }
+    - { id: kodi, sub: players }
+    - { id: jellyfin-media-player, sub: players }
+    - { id: tidal, sub: music }
+    - { id: foobar2000, sub: music }
+    - { id: musicbrainz-picard, sub: music }
+    - { id: losslesscut, sub: editing }
+    - { id: shotcut, sub: editing }
+    - { id: kdenlive, sub: editing }
+    - { id: shutter-encoder, sub: editing }
+    - { id: background-music, sub: audio }
+    - { id: eqmac, sub: audio }
+    - { id: soundsource, sub: audio }
+    - { id: audio-hijack, sub: capture }
+    - { id: downie, sub: capture }
+
+- slug: productivity
+  name: Productivity
+  description: Launchers, clipboard history, to-do lists, calendars and automation.
+  tile: yellow
+  packages:
+    - { id: raycast }
+    - { id: obsidian }
+    - { id: maccy }
+    - { id: alfred }
+    - { id: notion }
+    - { id: todoist-app } # Todoist
+    - { id: ticktick }
+    - { id: notion-calendar }
+    - { id: fantastical }
+    - { id: espanso }
+    - { id: hammerspoon }
+    - { id: keyboard-maestro }
+    - { id: bettertouchtool }
+    - { id: homerow }
+    - { id: shortcat }
+    - { id: clipy }
+    - { id: paste }
+
+- slug: utilities
+  name: Utilities
+  description: Archivers, uninstallers, disk tools and other everyday helpers.
+  tile: teal
+  packages:
+    - { id: keka }
+    - { id: appcleaner }
+    - { id: the-unarchiver }
+    - { id: pearcleaner }
+    - { id: grandperspective }
+    - { id: daisydisk }
+    - { id: omnidisksweeper }
+    - { id: onyx }
+    - { id: karabiner-elements }
+    - { id: linearmouse }
+    - { id: mos }
+    - { id: scroll-reverser }
+    - { id: logi-options+ } # Logitech Options+
+    - { id: qlmarkdown }
+    - { id: syntax-highlight }
+    - { id: imageoptim }
+    - { id: clop }
+    - { id: keycastr }
+    - { id: localsend }
+    - { id: transmission }
+    - { id: balenaetcher } # Etcher
+    - { id: raspberry-pi-imager }
+    - { id: coconutbattery }
+    - { id: macs-fan-control }
+    - { id: latest }
+
+- slug: terminal-tools
+  name: Terminal tools
+  description: Terminal apps, shell add-ons and modern takes on classic command-line tools.
+  tile: terminal
+  subcategories:
+    - { slug: terminals, name: Terminals }
+    - { slug: shell, name: Shell }
+    - { slug: files, name: Files & search }
+    - { slug: git, name: Git }
+    - { slug: text, name: Text & data }
+    - { slug: system, name: System }
+  packages:
+    - { id: ripgrep, sub: files }
+    - { id: fzf, sub: files }
+    - { id: eza, sub: files }
+    - { id: zoxide, sub: shell }
+    - { id: lazygit, sub: git }
+    - { id: btop, sub: system }
+    - { id: ghostty, sub: terminals }
+    - { id: fd, sub: files }
+    - { id: bat, sub: files }
+    - { id: yazi, sub: files }
+    - { id: iterm2, sub: terminals }
+    - { id: warp, sub: terminals }
+    - { id: kitty, sub: terminals }
+    - { id: wezterm, sub: terminals }
+    - { id: tmux, sub: terminals }
+    - { id: zellij, sub: terminals }
+    - { id: starship, sub: shell }
+    - { id: atuin, sub: shell }
+    - { id: fish, sub: shell }
+    - { id: git-delta, sub: git }
+    - { id: jq, sub: text }
+    - { id: yq, sub: text }
+    - { id: neovim, sub: text }
+    - { id: htop, sub: system }
+    - { id: fastfetch, sub: system }
+
+- slug: developer-tools
+  name: Developer tools
+  description: Code editors, Git clients, containers, and tools for APIs, databases and the cloud.
+  tile: slate
+  subcategories:
+    - { slug: editors, name: Editors }
+    - { slug: git, name: Git }
+    - { slug: containers, name: Containers & VMs }
+    - { slug: apis, name: APIs & networking }
+    - { slug: databases, name: Databases }
+    - { slug: cloud, name: Cloud }
+  packages:
+    - { id: visual-studio-code, sub: editors }
+    - { id: docker-desktop, sub: containers }
+    - { id: gh, sub: git }
+    - { id: zed, sub: editors }
+    - { id: cursor, sub: editors }
+    - { id: sublime-text, sub: editors }
+    - { id: jetbrains-toolbox, sub: editors }
+    - { id: github, sub: git } # GitHub Desktop
+    - { id: fork, sub: git }
+    - { id: orbstack, sub: containers }
+    - { id: colima, sub: containers }
+    - { id: podman-desktop, sub: containers }
+    - { id: utm, sub: containers }
+    - { id: postman, sub: apis }
+    - { id: bruno, sub: apis }
+    - { id: insomnia, sub: apis }
+    - { id: proxyman, sub: apis }
+    - { id: ngrok, sub: apis }
+    - { id: tableplus, sub: databases }
+    - { id: dbeaver-community, sub: databases }
+    - { id: beekeeper-studio, sub: databases }
+    - { id: hashicorp/tap/terraform, sub: cloud } # HashiCorp's tap: Terraform isn't in homebrew/core
+    - { id: awscli, sub: cloud }
+    - { id: gcloud-cli, sub: cloud }
+
+- slug: ai-tools
+  name: AI tools
+  description: Chat apps, local models, coding agents and dictation.
+  tile: purple
+  subcategories:
+    - { slug: chat, name: Chat apps }
+    - { slug: local, name: Local models }
+    - { slug: coding, name: Coding agents }
+    - { slug: dictation, name: Dictation }
+  packages:
+    - { id: chatgpt, sub: chat }
+    - { id: claude, sub: chat }
+    - { id: codex, sub: coding }
+    - { id: claude-code, sub: coding }
+    - { id: ollama-app, sub: local } # Ollama, the app
+    - { id: lm-studio, sub: local }
+    - { id: perplexity, sub: chat }
+    - { id: cherry-studio, sub: chat }
+    - { id: ollama, sub: local } # Ollama, the command-line tool and server
+    - { id: llama.cpp, sub: local }
+    - { id: jan, sub: local }
+    - { id: anythingllm, sub: local }
+    - { id: draw-things, sub: local }
+    - { id: copilot-cli, sub: coding }
+    - { id: opencode, sub: coding }
+    - { id: charmbracelet/tap/crush, sub: coding }
+    - { id: qwen-code, sub: coding }
+    - { id: block-goose, sub: coding } # Goose
+    - { id: antigravity, sub: coding }
+    - { id: cursor, sub: coding }
+    - { id: superwhisper, sub: dictation }
+    - { id: macwhisper, sub: dictation }
+    - { id: voiceink, sub: dictation }
+    - { id: handy, sub: dictation }
+
+- slug: browsers
+  name: Browsers
+  description: Web browsers, from the big names to privacy-focused alternatives.
+  tile: orange
+  packages:
+    - { id: google-chrome }
+    - { id: firefox }
+    - { id: brave-browser }
+    - { id: microsoft-edge }
+    - { id: zen } # Zen Browser
+    - { id: thebrowsercompany-dia } # Dia
+    - { id: vivaldi }
+    - { id: opera }
+    - { id: helium-browser } # Helium
+    - { id: librewolf }
+    - { id: ungoogled-chromium }
+    - { id: orion }
+    - { id: duckduckgo }
+    - { id: tor-browser }
+    - { id: mullvad-browser }
+    - { id: floorp }
+    - { id: waterfox }
+
+- slug: communication
+  name: Communication
+  description: Messaging, email and video calls.
+  tile: green
+  packages:
+    - { id: slack }
+    - { id: discord }
+    - { id: zoom }
+    - { id: whatsapp }
+    - { id: microsoft-teams }
+    - { id: telegram }
+    - { id: signal }
+    - { id: element }
+    - { id: beeper }
+    - { id: wechat }
+    - { id: thunderbird }
+    - { id: readdle-spark } # Spark
+    - { id: proton-mail }
+    - { id: mimestream }
+    - { id: webex }
+    - { id: mattermost }
+    - { id: zulip }
+    - { id: ferdium }
+
+- slug: writing-notes
+  name: Writing & notes
+  description: Note-taking apps, Markdown editors, office suites and research tools.
+  tile: yellow
+  packages:
+    - { id: obsidian }
+    - { id: notion }
+    - { id: logseq }
+    - { id: joplin }
+    - { id: anytype }
+    - { id: typora }
+    - { id: zettlr }
+    - { id: notesnook }
+    - { id: standard-notes }
+    - { id: affine }
+    - { id: siyuan }
+    - { id: microsoft-onenote }
+    - { id: libreoffice }
+    - { id: onlyoffice }
+    - { id: microsoft-word }
+    - { id: scrivener }
+    - { id: zotero }
+    - { id: calibre }
+    - { id: mactex }
+    - { id: pandoc }
+
+- slug: design
+  name: Design
+  description: Interface design, illustration, photo editing and 3D.
+  tile: pink
+  packages:
+    - { id: figma }
+    - { id: affinity }
+    - { id: blender }
+    - { id: sketch }
+    - { id: inkscape }
+    - { id: gimp }
+    - { id: krita }
+    - { id: drawio } # draw.io
+    - { id: canva }
+    - { id: pika }
+    - { id: rawtherapee }
+    - { id: xnviewmp }
+    - { id: freecad }
+    - { id: imagemagick }
+    - { id: lunacy }
+
+- slug: security-privacy
+  name: Security & privacy
+  description: Password managers, VPNs, firewalls and encryption tools.
+  tile: teal
+  packages:
+    - { id: 1password }
+    - { id: bitwarden }
+    - { id: keepassxc }
+    - { id: proton-pass }
+    - { id: protonvpn }
+    - { id: mullvad-vpn }
+    - { id: tailscale-app } # Tailscale
+    - { id: cloudflare-warp }
+    - { id: lulu }
+    - { id: little-snitch }
+    - { id: knockknock }
+    - { id: blockblock }
+    - { id: oversight }
+    - { id: malwarebytes }
+    - { id: cryptomator }
+    - { id: veracrypt }
+    - { id: gpg-suite }
+    - { id: gnupg }
+    - { id: age }
+    - { id: yubico-authenticator }
+    - { id: ente-auth }
