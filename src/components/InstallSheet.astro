@@ -1,0 +1,268 @@
+---
+// The "Get" sheet: one dialog per page, filled from the Get link that opened it. Also wires up
+// every [data-copy] button on the page (copy a command, show "Copied ✓").
+---
+
+<dialog id="install-sheet" class="sheet" aria-labelledby="sheet-name">
+  <div class="body">
+    <div class="head">
+      <span class="app-icon" data-sheet-icon style="--size:60px;--radius:14px;--font:24px"></span>
+      <span class="titles">
+        <span id="sheet-name" class="name" data-sheet-name></span>
+        <span class="line" data-sheet-line></span>
+      </span>
+      <button type="button" class="close" data-sheet-close aria-label="Close">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="install">
+      <span class="label">Install with Homebrew</span>
+      <code class="command" data-sheet-command></code>
+      <span class="hint">
+        Paste it in Terminal. Don't have Homebrew yet?{' '}
+        <a href="https://brew.sh" rel="noopener">
+          Set it up first
+        </a>
+        .
+      </span>
+      <span class="hint" data-sheet-community hidden>
+        From an independent developer's tap: not reviewed by Homebrew.
+      </span>
+    </div>
+    <div class="actions">
+      <button type="button" class="copy" data-copy="" data-sheet-copy>
+        Copy command
+      </button>
+      <a class="page" data-sheet-page href="/discover">
+        View app page
+      </a>
+    </div>
+    <span class="visually-hidden" role="status" data-copy-status></span>
+  </div>
+</dialog>
+<span class="visually-hidden" role="status" id="copy-status"></span>
+
+<script>
+  const sheet = document.getElementById('install-sheet') as HTMLDialogElement | null;
+
+  function fill(link: HTMLElement) {
+    if (!sheet) return;
+    const d = link.dataset;
+    const icon = sheet.querySelector<HTMLElement>('[data-sheet-icon]')!;
+    icon.dataset.tile = d.tile ?? 'blue';
+    icon.classList.toggle('mono', d.mono !== undefined);
+    icon.style.setProperty('--font', d.mono !== undefined ? '20px' : '24px');
+    icon.textContent = d.initials ?? '';
+    sheet.querySelector('[data-sheet-name]')!.textContent = d.name ?? '';
+    sheet.querySelector('[data-sheet-line]')!.textContent = d.line ?? '';
+    sheet.querySelector('[data-sheet-command]')!.textContent = d.command ?? '';
+    (sheet.querySelector('[data-sheet-community]') as HTMLElement).hidden =
+      d.community === undefined;
+    const copy = sheet.querySelector<HTMLButtonElement>('[data-sheet-copy]')!;
+    copy.dataset.copy = d.command ?? '';
+    copy.textContent = 'Copy command';
+    const page = sheet.querySelector<HTMLAnchorElement>('[data-sheet-page]')!;
+    page.href = d.url ?? '/discover';
+    // On the app page itself the link would go nowhere new.
+    page.hidden = d.url === location.pathname;
+  }
+
+  let opener: HTMLElement | null = null;
+
+  document.addEventListener('click', (event) => {
+    const link = (event.target as Element).closest<HTMLElement>('a[data-get]');
+    if (!link || !sheet || typeof sheet.showModal !== 'function') return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    opener = link;
+    fill(link);
+    sheet.showModal();
+  });
+
+  sheet?.addEventListener('click', (event) => {
+    // A click on the dialog element itself is a click on the backdrop around the body.
+    if (event.target === sheet || (event.target as Element).closest('[data-sheet-close]'))
+      sheet.close();
+  });
+
+  sheet?.addEventListener('close', () => {
+    opener?.focus();
+    opener = null;
+  });
+
+  async function copyText(text: string): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Older browsers, or no clipboard permission: fall back to a hidden textarea.
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.append(area);
+      area.select();
+      const ok = document.execCommand('copy');
+      area.remove();
+      return ok;
+    }
+  }
+
+  document.addEventListener('click', async (event) => {
+    const button = (event.target as Element).closest<HTMLButtonElement>('button[data-copy]');
+    if (!button?.dataset.copy) return;
+    const label = button.dataset.label ?? button.textContent ?? 'Copy';
+    button.dataset.label = label;
+    const ok = await copyText(button.dataset.copy);
+    button.textContent = ok ? 'Copied ✓' : 'Press ⌘C to copy';
+    // Announce it: inside the open dialog, the page's own status region is inert.
+    const status =
+      button.closest('dialog')?.querySelector('[data-copy-status]') ??
+      document.getElementById('copy-status');
+    if (status) status.textContent = ok ? 'Command copied to the clipboard.' : '';
+    setTimeout(() => {
+      if (button.isConnected) button.textContent = label;
+    }, 2000);
+  });
+</script>
+
+<style>
+  .sheet {
+    width: calc(100% - 48px);
+    max-width: 460px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-sheet);
+  }
+  .sheet[open] {
+    animation: sheet-in 0.25s ease-out both;
+  }
+  .sheet::backdrop {
+    background: var(--backdrop);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  @keyframes sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sheet[open] {
+      animation: none;
+    }
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 28px;
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .titles {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    overflow-wrap: anywhere;
+  }
+  .line {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: var(--touch);
+    height: var(--touch);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--chip);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .install {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .command {
+    padding: 14px 16px;
+    border-radius: var(--radius-code);
+    background: var(--navy);
+    color: var(--code-dark-text);
+    font-size: 14px;
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+  .hint {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .copy,
+  .page {
+    flex: 1 1 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    border-radius: var(--radius-pill);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .copy {
+    border: 0;
+    background: var(--ink);
+    color: #fff;
+    cursor: pointer;
+  }
+  .page {
+    background: var(--chip);
+    color: var(--ink);
+  }
+  .page[hidden] {
+    display: none;
+  }
+</style>

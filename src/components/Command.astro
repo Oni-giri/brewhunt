@@ -1,0 +1,76 @@
+---
+// A shell command with a copy button (handled by the script in InstallSheet.astro).
+interface Props {
+  command: string;
+  /** Visible label for the copy button; the accessible name adds the command. */
+  copyLabel?: string;
+  /** `dark`: navy block (install card). `light`: grey (manage commands). */
+  tone?: 'dark' | 'light';
+}
+
+const { command, copyLabel = 'Copy', tone = 'light' } = Astro.props;
+---
+
+<div class:list={['command', tone]}>
+  <code>{command}</code>
+  <button type="button" class="copy" data-copy={command} aria-label={`Copy ${command}`}>
+    {copyLabel}
+  </button>
+</div>
+
+<style>
+  .command {
+    flex: 1 1 260px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 4px 4px 14px;
+    border-radius: var(--radius-code);
+  }
+  .light {
+    background: var(--code-bg);
+  }
+  .dark {
+    background: var(--navy);
+    color: var(--code-dark-text);
+  }
+  code {
+    flex: 1;
+    min-width: 0;
+    padding: 7px 0;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+  /* Narrow screens: wrap long commands rather than hide their end behind a scroll. */
+  @media (max-width: 480px) {
+    code {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+  }
+  .copy {
+    flex: none;
+    min-width: var(--touch);
+    height: var(--touch);
+    padding: 0 12px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--link);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .dark .copy {
+    color: #fff;
+  }
+  .copy:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+  .dark .copy:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+</style>

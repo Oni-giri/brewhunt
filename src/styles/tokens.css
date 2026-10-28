@@ -36,6 +36,24 @@
     #f4f7fb 100%
   );
 
+  --code-bg: #f4f5f8;
+  --code-dark-text: #f2f2f5;
+  --info-bg: #e8f0ff;
+  --claim: linear-gradient(180deg, #cfe3fa, #eaf3fd);
+  --backdrop: rgba(10, 16, 40, 0.45);
+
+  /* App icon tiles (initial-letter placeholders until developers add real icons) */
+  --tile-blue: linear-gradient(160deg, #5aa9ff, #1f5fd6);
+  --tile-orange: linear-gradient(160deg, #ffb347, #f26b1d);
+  --tile-green: linear-gradient(160deg, #7be495, #1e9e5a);
+  --tile-purple: linear-gradient(160deg, #c3a6ff, #6b3fd6);
+  --tile-pink: linear-gradient(160deg, #ff8fb1, #e0336e);
+  --tile-yellow: linear-gradient(160deg, #ffe88a, #f2b705);
+  --tile-yellow-text: #3a2a00;
+  --tile-teal: linear-gradient(160deg, #7fe3e0, #159c9a);
+  --tile-slate: linear-gradient(160deg, #b8c2d3, #5b6577);
+  --tile-terminal: linear-gradient(160deg, #3a3a40, #0e0e10);
+
   /* Type */
   --font-heading: 'Geist', -apple-system, system-ui, sans-serif;
   --font-body:
@@ -62,4 +80,7 @@
   --shadow-lift: 0 24px 40px -24px rgba(8, 25, 80, 0.4);
   --shadow-dropdown: 0 20px 40px -20px rgba(8, 25, 80, 0.5);
   --shadow-search: 0 20px 40px -24px rgba(8, 25, 80, 0.6);
+  --shadow-sheet: 0 40px 80px -30px rgba(8, 25, 80, 0.6);
+  --shadow-icon-lg: inset 0 2px 0 rgba(255, 255, 255, 0.5), 0 24px 40px -20px rgba(8, 25, 80, 0.6);
+  --shadow-tab: 0 1px 3px rgba(0, 0, 0, 0.12);
 }

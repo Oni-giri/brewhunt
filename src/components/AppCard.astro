@@ -1,0 +1,82 @@
+---
+// Boxed app row: icon, name (+ Community badge), one line, Get. Used for similar apps and
+// search results; `meta` adds a caption line ("Mac app · 12.4k installs").
+import type { Entry } from '../lib/catalog';
+import AppIcon from './AppIcon.astro';
+import Badge from './Badge.astro';
+import GetButton from './GetButton.astro';
+
+interface Props {
+  entry: Entry;
+  meta?: string;
+}
+
+const { entry, meta } = Astro.props;
+---
+
+<li class="card">
+  <a class="main" href={entry.url}>
+    <AppIcon pkg={entry} size={52} />
+    <span class="text">
+      <span class="title">
+        <span class="name">{entry.name}</span>
+        {entry.source === 'community' && <Badge variant="community">Community</Badge>}
+      </span>
+      {entry.line && <span class="line">{entry.line}</span>}
+      {meta && <span class="meta">{meta}</span>}
+    </span>
+  </a>
+  <GetButton entry={entry} />
+</li>
+
+<style>
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+  }
+  .name {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .main:hover .name {
+    text-decoration: underline;
+  }
+  .line {
+    font-size: 14px;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .meta {
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+</style>

@@ -16,3 +16,6 @@ updates:
       # TypeScript 7 isn't supported by @astrojs/check and typescript-eslint yet.
       - dependency-name: typescript
         update-types: ['version-update:semver-major']
+      # Node types follow the Node version in .nvmrc (24), not the latest Node.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']

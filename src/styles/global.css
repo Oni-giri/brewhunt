@@ -41,6 +41,87 @@ main {
   outline-offset: 2px;
 }
 
+/* Page column: content max-width with side gutters. */
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+/* Cards that rise on hover (disabled for reduced motion). */
+.lift {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lift {
+    transition: none;
+  }
+  .lift:hover {
+    transform: none;
+  }
+}
+
+/* App icon tiles: see components/AppIcon.astro. */
+.app-icon {
+  width: var(--size, 48px);
+  height: var(--size, 48px);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius, 11px);
+  background: var(--tile-blue);
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--font, 18px);
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--ring, transparent);
+  user-select: none;
+}
+.app-icon.mono {
+  font-family: var(--font-mono);
+}
+.app-icon.raised {
+  box-shadow: var(--shadow-icon-lg);
+}
+.app-icon[data-tile='orange'] {
+  background: var(--tile-orange);
+}
+.app-icon[data-tile='green'] {
+  background: var(--tile-green);
+}
+.app-icon[data-tile='purple'] {
+  background: var(--tile-purple);
+}
+.app-icon[data-tile='pink'] {
+  background: var(--tile-pink);
+}
+.app-icon[data-tile='yellow'] {
+  background: var(--tile-yellow);
+  color: var(--tile-yellow-text);
+}
+.app-icon[data-tile='teal'] {
+  background: var(--tile-teal);
+}
+.app-icon[data-tile='slate'] {
+  background: var(--tile-slate);
+}
+.app-icon[data-tile='terminal'] {
+  background: var(--tile-terminal);
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

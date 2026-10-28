@@ -1,0 +1,20 @@
+---
+import Badge from './Badge.astro';
+
+interface Props {
+  source: 'official' | 'community';
+  size?: 'sm' | 'md';
+}
+
+const { source, size } = Astro.props;
+---
+
+{source === 'official' ? (
+  <Badge variant="official" size={size}>
+    Official
+  </Badge>
+) : (
+  <Badge variant="community" size={size}>
+    Community
+  </Badge>
+)}

@@ -1,0 +1,57 @@
+---
+interface Props {
+  /** Links in order; the last item is the current page and has no href. */
+  items: { label: string; href?: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="crumbs">
+  <ol>
+    {items.map((item) => (
+      <li>
+        {item.href ? (
+          <a href={item.href}>{item.label}</a>
+        ) : (
+          <span aria-current="page">{item.label}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .crumbs {
+    margin: -10px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: var(--touch);
+  }
+  li + li::before {
+    content: '›';
+    color: var(--text-secondary);
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+  }
+  [aria-current] {
+    overflow-wrap: anywhere;
+  }
+</style>

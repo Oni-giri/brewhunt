@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import InstallSheet from '../components/InstallSheet.astro';
 import { cleanPath } from '../components/nav';
 
 interface Props {
@@ -9,17 +10,20 @@ interface Props {
   description?: string;
   /** For pages that shouldn't be indexed or have a canonical URL, like the 404. */
   noindex?: boolean;
+  /** Use `title` as the whole <title>, without " · Brewhunt". */
+  exactTitle?: boolean;
 }
 
 const {
   title,
   noindex = false,
+  exactTitle = false,
   description = 'The app store for everything you can install with Homebrew: discover Mac apps and command-line tools, see what’s new and trending, and grab the one-line install command.',
 } = Astro.props;
 
 const canonical = new URL(cleanPath(Astro.url.pathname), Astro.site);
 const ogImage = new URL('/og-image.png', Astro.site);
-const fullTitle = title === 'Brewhunt' ? title : `${title} · Brewhunt`;
+const fullTitle = exactTitle || title === 'Brewhunt' ? title : `${title} · Brewhunt`;
 ---
 
 <!doctype html>
@@ -45,6 +49,7 @@ const fullTitle = title === 'Brewhunt' ? title : `${title} · Brewhunt`;
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    <slot name="head" />
   </head>
   <body>
     <a class="skip-link" href="#main">
@@ -55,6 +60,7 @@ const fullTitle = title === 'Brewhunt' ? title : `${title} · Brewhunt`;
       <slot />
     </main>
     <Footer />
+    <InstallSheet />
   </body>
 </html>
 

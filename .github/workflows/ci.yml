@@ -39,7 +39,8 @@ jobs:
           if [ "$status" -eq 0 ]; then
             echo "ref=data" >> "$GITHUB_OUTPUT"
           elif [ "$status" -eq 2 ]; then
-            echo "::notice::No data branch yet; building without data."
+            echo "::error::No data branch: run the Data workflow first (the site can't build without data)."
+            exit 1
           else
             echo "::error::Couldn't check for the data branch (git exit $status)."
             exit 1

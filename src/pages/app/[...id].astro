@@ -1,0 +1,832 @@
+---
+// One page per package (cask, formula or community tap package). See docs/PRODUCT.md › App.
+import AppCard from '../../components/AppCard.astro';
+import AppIcon from '../../components/AppIcon.astro';
+import Badge from '../../components/Badge.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Command from '../../components/Command.astro';
+import SourceBadge from '../../components/SourceBadge.astro';
+import Base from '../../layouts/Base.astro';
+import {
+  brewCommand,
+  categoryRank,
+  displayVersion,
+  forgeOwner,
+  getCatalog,
+  kindLabel,
+  kindRank,
+  licenseLabel,
+  pickFor,
+  similar,
+  sourceRepo,
+  type Entry,
+} from '../../lib/catalog';
+import { agoLabel, compactNumber, fullNumber, shortDate, trendLabel } from '../../lib/format';
+
+export function getStaticPaths() {
+  return getCatalog()
+    .entries.filter((e) => e.hasPage)
+    .map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: Entry;
+}
+
+const { entry } = Astro.props;
+const { meta, categoryBySlug, tapById } = getCatalog();
+const today = meta.generatedOn;
+const community = entry.source === 'community';
+const tap = community ? tapById.get(entry.tap) : undefined;
+const primary = entry.categories[0] ? categoryBySlug.get(entry.categories[0]) : undefined;
+const pick = pickFor(entry.id);
+const related = similar(entry);
+const kind = kindLabel(entry);
+const license = licenseLabel(entry);
+const version = displayVersion(entry);
+const updated = entry.updatedKind === 'version' && entry.updatedAt ? entry.updatedAt : null;
+const developer = entry.developer ?? forgeOwner(entry.homepage);
+const repo = sourceRepo(entry.homepage);
+const isGithubRepo = !!repo && repo.includes('github.com');
+// Links from community taps are the tap author's word, not ours or Homebrew's.
+const externalRel = community ? 'nofollow noopener ugc' : 'noopener';
+
+const inCategory = categoryRank(entry);
+const amongKind = kindRank(entry);
+const rankNote = inCategory
+  ? `#${inCategory.rank} in ${inCategory.category.name}`
+  : amongKind
+    ? `#${fullNumber(amongKind)} among ${entry.kind === 'cask' ? 'Mac apps' : 'command-line tools'}`
+    : null;
+
+const stats: { label: string; value: string; notes: string[] }[] = [
+  ['30d', '30 days'],
+  ['90d', '90 days'],
+  ['365d', '1 year'],
+].map(([key, label]) => {
+  const k = `d${key.replace('d', '')}` as 'd30' | 'd90' | 'd365';
+  const notes: string[] = [];
+  if (entry.installsOnRequest)
+    notes.push(`${compactNumber(entry.installsOnRequest[k])} on request`);
+  if (k === 'd30' && rankNote) notes.push(rankNote);
+  return { label: `Installs · ${label}`, value: compactNumber(entry.installs[k]), notes };
+});
+
+const trendBasis =
+  entry.trend?.basis === 'previous-30-days'
+    ? 'Share of installs vs. previous 30 days'
+    : 'Share of installs vs. the 60 days before';
+
+const deprecationReason = entry.deprecation?.reason?.replaceAll('_', ' ') ?? null;
+const replacement = entry.deprecation?.replacement
+  ? getCatalog().byId.get(entry.deprecation.replacement)
+  : undefined;
+
+const typeWord = entry.kind === 'cask' ? 'app' : 'tool';
+const title = `${entry.name}: install with Homebrew`;
+const description = [
+  entry.desc ? (entry.desc.endsWith('.') ? entry.desc : `${entry.desc}.`) : null,
+  `Install with \`${entry.installCommand}\`.`,
+  entry.installs.d30 > 0
+    ? `${compactNumber(entry.installs.d30)} installs in the last 30 days.`
+    : null,
+]
+  .filter(Boolean)
+  .join(' ')
+  .replaceAll('`', '');
+
+const canonical = new URL(entry.url, Astro.site).href;
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: entry.name,
+    ...(entry.desc ? { description: entry.desc } : {}),
+    url: canonical,
+    applicationCategory: entry.kind === 'cask' ? 'UtilitiesApplication' : 'DeveloperApplication',
+    operatingSystem: (entry.platforms ?? ['macos'])
+      .map((p) => (p === 'macos' ? 'macOS' : 'Linux'))
+      .join(', '),
+    ...(version && entry.version !== 'latest' ? { softwareVersion: version } : {}),
+    ...(entry.homepage ? { sameAs: entry.homepage } : {}),
+    ...(developer ? { author: { '@type': 'Organization', name: developer } } : {}),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { name: 'Discover', item: new URL('/discover', Astro.site).href },
+      ...(primary
+        ? [{ name: primary.name, item: new URL(`/category/${primary.slug}`, Astro.site).href }]
+        : []),
+      { name: entry.name, item: canonical },
+    ].map((crumb, i) => ({ '@type': 'ListItem', position: i + 1, ...crumb })),
+  },
+];
+// JSON inside <script> must not close the tag early.
+const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
+---
+
+<Base title={title} description={description}>
+  <script type="application/ld+json" slot="head" set:html={jsonLd} />
+  <div class="container page">
+    <Breadcrumb
+      items={[
+        { label: 'Discover', href: '/discover' },
+        ...(primary ? [{ label: primary.name, href: `/category/${primary.slug}` }] : []),
+        { label: entry.name },
+      ]}
+    />
+
+    <section class="hero" aria-labelledby="app-name">
+      <div class="identity">
+        <AppIcon pkg={entry} size={112} raised class="hero-icon" />
+        <div class="titles">
+          <h1 id="app-name">{entry.name}</h1>
+          {entry.desc && <p class="desc">{entry.desc}</p>}
+          <div class="badges">
+            <SourceBadge source={entry.source} size="md" />
+            <Badge variant="info" size="md">
+              {kind}
+            </Badge>
+            {license && (
+              <Badge variant="info" size="md">
+                {license}
+              </Badge>
+            )}
+            {updated && (
+              <Badge variant="info" size="md">
+                Updated {agoLabel(updated, today)}
+              </Badge>
+            )}
+            {entry.deprecated && (
+              <Badge variant="warning" size="md">
+                Deprecated
+              </Badge>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div class="install" id="install">
+        <h2 class="install-label">Install with Homebrew</h2>
+        <code class="install-command">{entry.installCommand}</code>
+        <div class="install-actions">
+          <button type="button" class="copy-primary" data-copy={entry.installCommand}>
+            Copy command
+          </button>
+          <a class="secondary" href="https://brew.sh" rel="noopener">
+            New to Homebrew?
+          </a>
+        </div>
+        {community && (
+          <p class="install-note">
+            From{' '}
+            {tap ? (
+              <a href={tap.url} rel="noopener">
+                {entry.tap}
+              </a>
+            ) : (
+              entry.tap
+            )}
+            , an independent developer's tap: not reviewed by Homebrew.
+          </p>
+        )}
+      </div>
+    </section>
+  </div>
+
+  <div class="container page body">
+    {entry.deprecated && (
+      <section class="notice" aria-label="Deprecated">
+        <strong>Homebrew has deprecated this {entry.kind === 'cask' ? 'cask' : 'formula'}</strong>
+        <span>
+          {deprecationReason ? `Reason: ${deprecationReason}.` : null}
+          {entry.deprecation?.disableDate
+            ? ` It ${entry.deprecation.disableDate > today ? 'will be' : 'may soon be'} disabled${entry.deprecation.disableDate > today ? ` on ${shortDate(entry.deprecation.disableDate)}` : ''}, after which it can't be installed.`
+            : ' It may be removed in the future.'}
+          {replacement && (
+            <>
+              {' '}
+              Homebrew suggests <a href={replacement.url}>{replacement.name}</a> instead.
+            </>
+          )}
+        </span>
+      </section>
+    )}
+
+    <section class="stats" aria-labelledby="stats-title">
+      <h2 id="stats-title" class="visually-hidden">
+        Install numbers
+      </h2>
+      <div class="stat-grid">
+        {stats.map((s) => (
+          <div class="stat">
+            <span class="stat-label">{s.label}</span>
+            <span class="stat-value">{s.value}</span>
+            {s.notes.map((n) => (
+              <span class="stat-note">{n}</span>
+            ))}
+          </div>
+        ))}
+        {entry.trend && (
+          <div class="stat">
+            <span class="stat-label">Trend</span>
+            <span class:list={['stat-value', { up: entry.trend.change > 0 }]}>
+              {trendLabel(entry.trend.change)}
+            </span>
+            <span class="stat-note">{trendBasis}</span>
+          </div>
+        )}
+      </div>
+      <p class="stats-source">
+        From Homebrew's public, opt-out analytics for the 30, 90 and 365 days to{' '}
+        {shortDate(meta.analytics.d30.end)}: read them as relative popularity.
+        {entry.installsOnRequest &&
+          ' Installs count every time the formula was installed, including as a dependency of something else; installs on request are the times someone asked for it.'}
+      </p>
+    </section>
+
+    <div class="columns">
+      <div class="main-col">
+        {pick && (
+          <section class="panel">
+            <span class="eyebrow">Editor's pick</span>
+            <h2>Why it's worth a look</h2>
+            <p class="prose">{pick.blurb}</p>
+          </section>
+        )}
+
+        <section class="panel">
+          <h2>Manage it</h2>
+          <div class="manage-row">
+            <span class="manage-label">Install</span>
+            <Command command={entry.installCommand} />
+          </div>
+          <div class="manage-row">
+            <span class="manage-label">Update</span>
+            <Command command={brewCommand(entry, 'upgrade')} />
+          </div>
+          <div class="manage-row">
+            <span class="manage-label">Uninstall</span>
+            <Command command={brewCommand(entry, 'uninstall')} />
+          </div>
+          {entry.autoUpdates && (
+            <p class="manage-note">
+              This app updates itself, so <code>brew upgrade</code> skips it unless you add{' '}
+              <code>--greedy</code>.
+            </p>
+          )}
+        </section>
+
+        {entry.caveats && (
+          <section class="panel">
+            <h2>After installing</h2>
+            <p class="manage-note">Homebrew shows these notes when it installs {entry.name}:</p>
+            <pre class="caveats">{entry.caveats}</pre>
+          </section>
+        )}
+      </div>
+
+      <aside class="side-col">
+        <section class="info">
+          <h2>Information</h2>
+          <dl>
+            {developer && (
+              <div>
+                <dt>Developer</dt>
+                <dd>{developer}</dd>
+              </div>
+            )}
+            {primary && (
+              <div>
+                <dt>Category</dt>
+                <dd>
+                  <a href={`/category/${primary.slug}`}>{primary.name}</a>
+                </dd>
+              </div>
+            )}
+            <div>
+              <dt>Type</dt>
+              <dd>{kind}</dd>
+            </div>
+            {license && (
+              <div>
+                <dt>License</dt>
+                <dd>{license}</dd>
+              </div>
+            )}
+            {version && (
+              <div>
+                <dt>Version</dt>
+                <dd class="version">{version}</dd>
+              </div>
+            )}
+            {updated && (
+              <div>
+                <dt>Updated</dt>
+                <dd>{shortDate(updated)}</dd>
+              </div>
+            )}
+            {entry.firstSeen && (
+              <div>
+                <dt>Added to Homebrew</dt>
+                <dd>{shortDate(entry.firstSeen)}</dd>
+              </div>
+            )}
+            {entry.minMacos && (
+              <div>
+                <dt>Requires</dt>
+                <dd>macOS {entry.minMacos} or later</dd>
+              </div>
+            )}
+            <div>
+              <dt>Source</dt>
+              <dd>
+                {community ? (
+                  tap ? (
+                    <a href={tap.url} rel="noopener">
+                      {entry.tap}
+                    </a>
+                  ) : (
+                    entry.tap
+                  )
+                ) : (
+                  'Official catalog'
+                )}
+              </dd>
+            </div>
+          </dl>
+          <div class="links">
+            {entry.homepage && !repo && (
+              <a href={entry.homepage} rel={externalRel}>
+                Website
+              </a>
+            )}
+            {repo && (
+              <a href={repo} rel={externalRel}>
+                Source code
+              </a>
+            )}
+            {isGithubRepo && (
+              <a href={`${repo}/issues`} rel={externalRel}>
+                Report an issue
+              </a>
+            )}
+            {entry.sourceUrl && (
+              <a href={entry.sourceUrl} rel="noopener">
+                {entry.kind === 'cask' ? 'Cask' : 'Formula'} definition
+              </a>
+            )}
+          </div>
+        </section>
+
+        <section class="trust">
+          <span class="trust-icon" aria-hidden="true">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"></path>
+              {!community && <path d="M9 12l2 2 4-4" />}
+              {community && <path d="M12 8v5M12 16h.01" />}
+            </svg>
+          </span>
+          {community ? (
+            <span class="trust-text">
+              <strong>From an independent developer's tap</strong>
+              <span>
+                Homebrew doesn't review community taps. The {typeWord} comes from {entry.tap}'s own
+                repository: check the definition before installing.
+              </span>
+            </span>
+          ) : (
+            <span class="trust-text">
+              <strong>From Homebrew's official catalog</strong>
+              <span>
+                Every change to this listing is reviewed by Homebrew's maintainers before it ships.
+              </span>
+            </span>
+          )}
+        </section>
+      </aside>
+    </div>
+
+    {related.length > 0 && (
+      <section class="similar" aria-labelledby="similar-title">
+        <div class="section-head">
+          <span class="eyebrow">Alternatives</span>
+          <h2 id="similar-title">Similar apps</h2>
+        </div>
+        <ul class="card-grid">
+          {related.map((e) => (
+            <AppCard entry={e} />
+          ))}
+        </ul>
+      </section>
+    )}
+  </div>
+</Base>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 36px;
+  }
+  .body {
+    gap: 48px;
+    padding-top: 40px;
+    padding-bottom: 64px;
+  }
+
+  /* --- Header --- */
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px 40px;
+  }
+  .identity {
+    flex: 999 1 520px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .titles {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 52px;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    overflow-wrap: anywhere;
+  }
+  .desc {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-secondary);
+  }
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .install {
+    flex: 1 1 380px;
+    min-width: 0;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-float);
+    scroll-margin-top: 24px;
+  }
+  .install-label {
+    margin: 0;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .install-command {
+    padding: 13px 16px;
+    border-radius: var(--radius-code);
+    background: var(--navy);
+    color: var(--code-dark-text);
+    font-size: 14px;
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+  .install-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .copy-primary,
+  .secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    border-radius: var(--radius-pill);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .copy-primary {
+    flex: 1 1 auto;
+    padding: 0 18px;
+    border: 0;
+    background: var(--ink);
+    color: #fff;
+    cursor: pointer;
+  }
+  .secondary {
+    flex: 0 1 auto;
+    padding: 0 16px;
+    background: var(--chip);
+    color: var(--ink);
+    font-size: 15px;
+  }
+  .install-note {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  /* --- Notice --- */
+  .notice {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: -16px;
+    padding: 16px 20px;
+    border-radius: var(--radius-card);
+    background: #fff8eb;
+    border: 1px solid #f2c779;
+    color: #4d3200;
+  }
+
+  /* --- Stats --- */
+  .stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+    gap: 12px;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 18px 20px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .stat-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .stat-value {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .stat-value.up {
+    color: var(--trend-up);
+  }
+  .stat-note {
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+  .stats-source {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-meta);
+  }
+
+  /* --- Columns --- */
+  .columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .main-col {
+    flex: 999 1 560px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .side-col {
+    flex: 1 1 300px;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  @media (max-width: 760px) {
+    .side-col {
+      max-width: none;
+    }
+  }
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 28px;
+    border-radius: var(--radius-panel);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .panel h2,
+  .section-head h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .eyebrow {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .panel .eyebrow {
+    margin-bottom: -10px;
+  }
+  .prose {
+    margin: 0;
+    font-size: 17px;
+    color: var(--text-body);
+  }
+  .manage-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+  }
+  .manage-label {
+    width: 120px;
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .manage-note {
+    margin: 0;
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .manage-note code {
+    font-size: 14px;
+  }
+  .caveats {
+    margin: 0;
+    padding: 14px 16px;
+    border-radius: var(--radius-code);
+    background: var(--code-bg);
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  /* --- Aside --- */
+  .info {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 24px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .info h2 {
+    margin: 0 0 8px;
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+  }
+  dl {
+    margin: 0;
+  }
+  dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--divider);
+    font-size: 15px;
+  }
+  dt {
+    flex: none;
+    color: var(--text-secondary);
+  }
+  dd {
+    min-width: 0;
+    margin: 0;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 16px;
+    padding-top: 6px;
+    font-size: 15px;
+  }
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+  }
+  .trust {
+    display: flex;
+    gap: 14px;
+    padding: 20px 24px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .trust-icon {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--info-bg);
+    color: var(--link);
+  }
+  .trust-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .trust-text span {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  /* --- Similar --- */
+  .similar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .section-head {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .section-head h2 {
+    font-size: 32px;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (max-width: 760px) {
+    .identity {
+      align-items: flex-start;
+      gap: 18px;
+    }
+    h1 {
+      font-size: 40px;
+    }
+    .install {
+      max-width: none;
+    }
+  }
+  @media (max-width: 480px) {
+    .identity :global(.hero-icon) {
+      --size: 72px !important;
+      --radius: 16px !important;
+      --font: 30px !important;
+    }
+    h1 {
+      font-size: 34px;
+    }
+    .desc {
+      font-size: 16px;
+    }
+    .panel {
+      padding: 22px;
+    }
+    .manage-label {
+      width: auto;
+    }
+  }
+</style>

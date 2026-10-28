@@ -1,0 +1,66 @@
+---
+// "Get": opens the install sheet (InstallSheet.astro) with this package's command. It's a link
+// to the app page's install card, so it still works before the script loads or without it.
+import type { Entry } from '../lib/catalog';
+import { tileFor } from '../lib/tiles';
+
+interface Props {
+  entry: Entry;
+  /** `chip`: grey pill with a blue label (lists). `primary`: black "Get <name>" (feature cards). */
+  variant?: 'chip' | 'primary';
+}
+
+const { entry, variant = 'chip' } = Astro.props;
+const { tile, initials, mono } = tileFor(entry);
+---
+
+<a
+  class:list={['get', variant]}
+  href={`${entry.url}#install`}
+  data-get
+  data-url={entry.url}
+  data-name={entry.name}
+  data-line={entry.line ?? ''}
+  data-command={entry.installCommand}
+  data-community={entry.source === 'community' ? '' : undefined}
+  data-tile={tile}
+  data-initials={initials}
+  data-mono={mono ? '' : undefined}
+  aria-label={variant === 'chip' ? `Get ${entry.name}` : undefined}
+  aria-haspopup="dialog"
+>
+  {variant === 'chip' ? 'Get' : `Get ${entry.name}`}
+</a>
+
+<style>
+  .get {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    height: var(--touch);
+    padding: 0 18px;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .chip {
+    background: var(--chip);
+    color: var(--link);
+  }
+  .chip:hover {
+    background: #e2e4ea;
+    color: var(--link-hover);
+  }
+  .primary {
+    padding: 0 22px;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 600;
+  }
+  .primary:hover {
+    background: #000;
+    color: #fff;
+  }
+</style>
