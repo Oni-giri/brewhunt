@@ -9,3 +9,6 @@ dist/
 # Pipeline output (lives on the `data` branch) and its scratch space: cloned repos, API cache.
 /data/
 .cache/
+# Browser test output.
+/playwright-report/
+/test-results/

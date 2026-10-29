@@ -6,3 +6,5 @@ package-lock.json
 *.md
 data/
 .cache/
+playwright-report/
+test-results/

@@ -23,6 +23,7 @@ npm install
 npm run data:pull   # latest data from the `data` branch into data/ (or `npm run data` to build it yourself)
 npm run dev         # http://localhost:4321
 npm test            # unit tests (Vitest)
+npm run build && npm run test:browser   # browser tests (Playwright) on the build; first `npx playwright install --only-shell chromium`
 npm run check       # types; `npm run lint`, `npm run format:check`, `npm run validate:content` too
 ```
 

@@ -1,0 +1,26 @@
+// axe's WCAG 2.x A and AA rules on every kind of page, at desktop and phone widths.
+
+import AxeBuilder from '@axe-core/playwright';
+import { expect, PAGES, searchReady, test } from './fixtures.ts';
+
+const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+
+for (const width of [1280, 390]) {
+  test.describe(`at ${width}px`, () => {
+    test.use({ viewport: { width, height: 900 } });
+    for (const path of PAGES) {
+      test(path, async ({ page }) => {
+        await page.goto(path, { waitUntil: 'networkidle' });
+        if (path.startsWith('/search')) await searchReady(page);
+        const { violations } = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+        const found = violations.map((v) => ({
+          rule: v.id,
+          impact: v.impact,
+          help: v.help,
+          nodes: v.nodes.slice(0, 3).map((n) => n.target.join(' ')),
+        }));
+        expect(found).toEqual([]);
+      });
+    }
+  });
+}

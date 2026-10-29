@@ -18,7 +18,8 @@ The UI checks so far ran from scripts outside the repo. Before changing UI again
 - `@playwright/test` pinned, Chromium only, run against `astro preview` of the CI build in a separate CI job.
 - Suites: overflow at 1280/390/320, console errors, tab and dialog keyboard behaviour (charts, new, category, install sheet), search interactions, icon fallback with the CDN blocked, axe (WCAG A/AA).
 - Search timing: CDP 4× CPU throttle, cold cache, time from the first keystroke to the first rendered result, median of 5 runs, budget 1s.
-- Reduced-motion screenshots at 1280/390/320 committed as baselines for A3.
+- ~~Reduced-motion screenshots at 1280/390/320 committed as baselines for A3.~~ Changed when building it: full-page screenshots would change every day with the data, and the body font (system stack) renders differently on this server and on GitHub's machines, so baselines would fail CI every morning. Reduced motion is checked through computed styles instead (no animation, no transform, pause button hidden); A3 extends those checks to its transitions.
+- Done 29 Oct 2026: `tests/browser/`, `npm run test:browser`, CI job `browser` (deploy waits for it). jsDelivr is blocked by default so the suite doesn't depend on it; one test lets it through. The installs-chart test skips until the data has 7 days of history.
 
 ## Phase A · Quick fixes (no new data sources)
 
