@@ -39,6 +39,7 @@ test('charts: each period page marks its period', async ({ page }) => {
 test('new: type tabs and the installing toggle filter the list', async ({ page }) => {
   await page.goto('/new');
   const total = await visibleRows(page, '#new-list .row');
+  const withInstalls = await visibleRows(page, '#new-list .row[data-installing]');
   await page.getByRole('tab', { name: 'Mac apps' }).click();
   const mac = await visibleRows(page, '#new-list .row');
   expect(mac).toBeGreaterThan(0);
@@ -51,10 +52,9 @@ test('new: type tabs and the installing toggle filter the list', async ({ page }
   expect(new Set(sources)).toEqual(new Set(['community']));
   await page.getByRole('tab', { name: 'Everything' }).click();
   await page.getByLabel('Only ones people are already installing').check();
-  const installing = await page
-    .locator('#new-list .row:visible')
-    .evaluateAll((els) => els.every((e) => (e as HTMLElement).dataset.installing !== undefined));
-  expect(installing).toBe(true);
+  expect(withInstalls).toBeGreaterThan(0);
+  expect(await visibleRows(page, '#new-list .row')).toBe(withInstalls);
+  expect(await visibleRows(page, '#new-list .row[data-installing]')).toBe(withInstalls);
   await page.getByLabel('Only ones people are already installing').uncheck();
   expect(await visibleRows(page, '#new-list .row')).toBe(total);
   const lastWeek = page.locator('[data-last-week]');
@@ -63,6 +63,40 @@ test('new: type tabs and the installing toggle filter the list', async ({ page }
     await expect(page.locator('[data-week=last]')).toBeVisible();
     expect(await page.evaluate(() => document.activeElement?.tagName)).toBe('H2');
   }
+});
+
+test('new: tabs follow the arrow keys, Home and End', async ({ page }) => {
+  await page.goto('/new');
+  const total = await visibleRows(page, '#new-list .row');
+  const tab = (name: string) => page.getByRole('tab', { name, exact: true });
+  const expectSelected = async (name: string) => {
+    await expect(tab(name)).toBeFocused();
+    await expect(tab(name)).toHaveAttribute('aria-selected', 'true');
+    await expect(tab(name)).toHaveAttribute('tabindex', '0');
+  };
+  const sources = () =>
+    page
+      .locator('#new-list .row:visible')
+      .evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.source))
+      .then((list) => new Set(list));
+
+  await tab('Everything').focus();
+  await page.keyboard.press('ArrowRight');
+  await expectSelected('Mac apps');
+  const mac = await visibleRows(page, '#new-list .row');
+  expect(mac).toBeGreaterThan(0);
+  expect(mac).toBeLessThan(total);
+  await page.keyboard.press('End');
+  await expectSelected('Community');
+  expect(await sources()).toEqual(new Set(['community']));
+  await page.keyboard.press('ArrowRight');
+  await expectSelected('Everything');
+  expect(await visibleRows(page, '#new-list .row')).toBe(total);
+  await page.keyboard.press('ArrowLeft');
+  await expectSelected('Community');
+  await page.keyboard.press('Home');
+  await expectSelected('Everything');
+  expect(await visibleRows(page, '#new-list .row')).toBe(total);
 });
 
 test('category: subcategory filter, count and sort', async ({ page }) => {
@@ -104,7 +138,8 @@ test('app page: installs chart has range tabs, hover and keyboard readout', asyn
   const chart = page.locator('[data-chart]');
   // App pages show the chart once the data has 7 days of history, and a range tab for each
   // range the history covers.
-  test.skip((await chart.count()) === 0, 'fewer than 7 days of install history');
+  const days = Number(await page.locator('[data-history-days]').getAttribute('data-history-days'));
+  test.skip(days < 7, `${days} days of install history`);
   await expect(chart).toBeVisible();
   const tabs = chart.getByRole('tab');
   const selected = chart.locator('[role=tab][aria-selected=true]');

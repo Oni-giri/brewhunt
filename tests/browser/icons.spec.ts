@@ -1,5 +1,6 @@
 // App icons load from jsDelivr, and every icon falls back to its letter tile when they can't.
 
+import { readFileSync } from 'node:fs';
 import { expect, test } from './fixtures.ts';
 
 test.describe('with jsDelivr blocked', () => {
@@ -30,10 +31,18 @@ test.describe('with jsDelivr blocked', () => {
   });
 });
 
-test.describe('with jsDelivr reachable', () => {
+test.describe('with icons available', () => {
+  // jsDelivr itself isn't under test: every icon request gets the same local PNG, so the job
+  // doesn't fail (and block the deploy) when the CDN has a bad day.
   test.use({ cdn: true });
+  test.beforeEach(async ({ context }) => {
+    const png = readFileSync('public/brewhunt-flask-128.png');
+    await context.route('**/cdn.jsdelivr.net/**', (route) =>
+      route.fulfill({ contentType: 'image/png', body: png }),
+    );
+  });
 
-  test('real icons load on an app page and in the install sheet', async ({ page }) => {
+  test('icons load on an app page and in the install sheet', async ({ page }) => {
     await page.goto('/app/firefox');
     const img = page.locator('.app-icon.raised.has-icon img');
     await expect(img).toHaveCount(1);

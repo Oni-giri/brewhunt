@@ -137,7 +137,8 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
 
 <Base title={title} description={description}>
   <script type="application/ld+json" slot="head" set:html={jsonLd} />
-  <div class="container page">
+  <!-- data-history-days: lets the browser tests tell "no chart yet" from "chart broken". -->
+  <div class="container page" data-history-days={history.dates.length}>
     <Breadcrumb
       items={[
         { label: 'Discover', href: '/discover' },
