@@ -45,6 +45,8 @@ export interface Package {
   name: string;
   desc: string | null;
   homepage: string | null;
+  /** The package's own GitHub repository, when one is found (scripts/data/repos.ts). */
+  repo: Repo | null;
   version: string | null;
   /** SPDX expression. Formulae only: casks don't declare a licence. */
   license: string | null;
@@ -91,6 +93,19 @@ export interface Package {
   platforms: ('macos' | 'linux')[] | null;
   /** Runtime dependencies (formula names). */
   dependencies: string[];
+}
+
+export interface Repo {
+  /** `https://github.com/cli/cli`, as GitHub gives it (after any rename). */
+  url: string;
+  /** `cli/cli`. */
+  name: string;
+  /** `releases`: no code, only downloads (obsidianmd/obsidian-releases). */
+  kind: 'source' | 'releases';
+  stars: number;
+  /** Last push (ISO timestamp). */
+  pushedAt: string | null;
+  archived: boolean;
 }
 
 export interface Deprecation {

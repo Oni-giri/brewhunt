@@ -138,6 +138,8 @@ function build(): Catalog {
     const page = hasPage(p);
     return {
       ...p,
+      // Data from before repositories were looked up has no field.
+      repo: p.repo ?? null,
       commandLine:
         p.kind === 'formula' ||
         (editorial.type ? editorial.type === 'cli' : installsOnlyPrograms(p)),

@@ -440,6 +440,10 @@ describe('real files', () => {
       token: 'bats-assert',
       desc: 'Common assertions for Bats',
       homepage: 'https://github.com/bats-core/bats-assert',
+      sourceUrls: [
+        'https://github.com/bats-core/bats-assert/archive/refs/tags/v2.2.4.tar.gz',
+        'https://github.com/bats-core/bats-assert.git',
+      ],
       version: '2.2.4',
       license: 'MIT',
       name: null,
@@ -518,6 +522,8 @@ describe('real files', () => {
       token: 'aerospace',
       desc: 'AeroSpace is an i3-like tiling window manager for macOS',
       homepage: 'https://github.com/nikitabobko/AeroSpace',
+      // Cut at the interpolated version: enough to find the repository.
+      sourceUrls: ['https://github.com/nikitabobko/AeroSpace/releases/download/v'],
       version: '0.21.3-Beta',
       license: null,
       name: 'AeroSpace',

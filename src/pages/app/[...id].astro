@@ -50,8 +50,11 @@ const license = licenseLabel(entry);
 const version = displayVersion(entry);
 const updated = entry.updatedKind === 'version' && entry.updatedAt ? entry.updatedAt : null;
 const developer = entry.developer ?? forgeOwner(entry.homepage);
-const repo = sourceRepo(entry.homepage);
-const isGithubRepo = !!repo && repo.includes('github.com');
+// The GitHub repository the pipeline found (repos.ts), else a GitLab or Codeberg homepage.
+const homepageRepo = sourceRepo(entry.homepage);
+const repo = entry.repo?.url ?? homepageRepo;
+const repoLabel = entry.repo?.kind === 'releases' ? 'Downloads on GitHub' : 'Source code';
+const canReport = entry.repo?.kind === 'source' && !entry.repo.archived;
 // Links from community taps are the tap author's word, not ours or Homebrew's.
 const externalRel = community ? 'nofollow noopener ugc' : 'noopener';
 
@@ -360,17 +363,26 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
             </div>
           </dl>
           <div class="links">
-            {entry.homepage && !repo && (
+            {entry.homepage && !homepageRepo && (
               <a href={entry.homepage} rel={externalRel}>
                 Website
               </a>
             )}
             {repo && (
-              <a href={repo} rel={externalRel}>
-                Source code
-              </a>
+              <span class="repo">
+                <a href={repo} rel={externalRel}>
+                  {repoLabel}
+                </a>
+                {entry.repo && (
+                  <span class="stars">
+                    <span aria-hidden="true">★</span>
+                    <span class="visually-hidden">GitHub stars:</span>
+                    {compactNumber(entry.repo.stars)}
+                  </span>
+                )}
+              </span>
             )}
-            {isGithubRepo && (
+            {canReport && (
               <a href={`${repo}/issues`} rel={externalRel}>
                 Report an issue
               </a>
@@ -745,6 +757,17 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
     display: inline-flex;
     align-items: center;
     min-height: var(--touch);
+  }
+  .repo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stars {
+    display: inline-flex;
+    gap: 3px;
+    color: var(--text-meta);
+    font-variant-numeric: tabular-nums;
   }
   .trust {
     display: flex;

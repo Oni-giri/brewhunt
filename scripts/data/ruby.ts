@@ -9,6 +9,11 @@ export interface RubyPackage {
   desc: string | null;
   /** http(s) URLs only. */
   homepage: string | null;
+  /**
+   * The `url` and `head` stanzas, each cut at its first interpolation (`…/download/v#{…}`): enough
+   * to find a GitHub repository (repos.ts), not URLs to show or fetch.
+   */
+  sourceUrls: string[];
   /** Formulae: `version`, else read from the download URL. Casks: `version`, `:latest` → `latest`. */
   version: string | null;
   /** Formulae only: casks don't declare a licence. */
@@ -60,6 +65,7 @@ function parse(kind: RubyPackage['kind'], source: string, fileToken: string): Ru
     token: fileToken,
     desc: null,
     homepage: null,
+    sourceUrls: [],
     version: null,
     license: null,
     name: null,
@@ -89,6 +95,10 @@ function parse(kind: RubyPackage['kind'], source: string, fileToken: string): Ru
     if (desc) pkg.desc = cleanString(firstLiteral(desc.args), MAX_DESC, 'truncate');
     const homepage = first(calls, 'homepage');
     if (homepage) pkg.homepage = httpUrl(firstLiteral(homepage.args, pkg.version));
+    pkg.sourceUrls = [...(calls.get('url') ?? []), ...(calls.get('head') ?? [])]
+      .map((call) => literalPrefix(splitArgs(call.args)[0] ?? []))
+      .filter((url): url is string => url !== null)
+      .slice(0, 10);
     if (kind === 'formula') {
       const license = first(calls, 'license');
       if (license) pkg.license = parseLicense(license.args);
@@ -880,6 +890,19 @@ function literal(args: Token[], version: string | null = null): string | null {
     }
   }
   return out;
+}
+
+/** A string argument's text up to its first interpolation; null when it isn't a string. */
+function literalPrefix(args: Token[]): string | null {
+  if (args.length === 0 || args.some((token) => token.type !== 'str')) return null;
+  let out = '';
+  for (const token of args) {
+    for (const part of token.parts ?? []) {
+      if (!('text' in part)) return cleanString(out, MAX_URL, 'reject');
+      out += part.text;
+    }
+  }
+  return cleanString(out, MAX_URL, 'reject');
 }
 
 /** The first argument as a string: `homepage "https://…", browsed: "2026-09-05"`. */

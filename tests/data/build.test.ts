@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { buildCatalog, resolveDates, type BuildInput } from '../../scripts/data/build.ts';
+import {
+  buildCatalog,
+  repoCandidates,
+  resolveDates,
+  type BuildInput,
+} from '../../scripts/data/build.ts';
+import type { RepoInfo } from '../../scripts/data/repos.ts';
 import type { RepoHistory } from '../../scripts/data/git.ts';
 import {
   caskSchema,
@@ -101,6 +107,7 @@ function input(overrides: Partial<BuildInput> = {}, homebrew: Partial<HomebrewDa
     snapshots: new Map(),
     trackedSince: { 'homebrew/core': '2025-09-23', 'homebrew/cask': '2025-09-23' },
     bootstrapped: new Set(['homebrew/core', 'homebrew/cask']),
+    repos: new Map(),
     ...overrides,
   };
 }
@@ -191,6 +198,7 @@ describe('buildCatalog', () => {
             token: 'widget',
             desc: 'Makes widgets',
             homepage: 'https://acme.dev',
+            sourceUrls: [],
             version: '3.1',
             license: 'Apache-2.0',
             name: null,
@@ -209,6 +217,7 @@ describe('buildCatalog', () => {
             token: 'widget@1',
             desc: null,
             homepage: null,
+            sourceUrls: [],
             version: '1.0',
             license: null,
             name: null,
@@ -366,5 +375,81 @@ describe('resolveDates', () => {
       updatedAt: '2026-10-25',
       updatedKind: 'version',
     });
+  });
+});
+
+describe('package repositories', () => {
+  const info = (nameWithOwner: string, more: Partial<RepoInfo> = {}): RepoInfo => ({
+    nameWithOwner,
+    url: `https://github.com/${nameWithOwner}`,
+    isFork: false,
+    isArchived: false,
+    stars: 100,
+    pushedAt: '2026-10-01T00:00:00Z',
+    homepageUrl: null,
+    hasCode: true,
+    hasReleases: true,
+    ...more,
+  });
+  const withUrls = () =>
+    input(
+      {},
+      {
+        formulae: [
+          formula('wget', {
+            urls: { stable: { url: 'https://github.com/someone/wget-mirror/archive/1.0.tar.gz' } },
+          }),
+          formula('gh', {
+            homepage: 'https://cli.github.com/',
+            urls: {
+              stable: { url: 'https://github.com/cli/cli/archive/refs/tags/v2.0.tar.gz' },
+              head: { url: 'https://github.com/cli/cli.git' },
+            },
+          }),
+        ],
+        casks: [
+          cask('rectangle', {
+            url: 'https://github.com/rxhanson/Rectangle/releases/download/v2/Rectangle.dmg',
+          }),
+        ],
+      },
+    );
+
+  it('lists every candidate once, lowercased', () => {
+    const { homebrew } = withUrls();
+    expect(repoCandidates(homebrew, [])).toEqual(['cli/cli', 'rxhanson/rectangle', 'someone/wget-mirror']);
+  });
+
+  it('keeps a repository only when it is the package’s own', () => {
+    const repos = new Map([
+      ['cli/cli', info('cli/cli', { homepageUrl: 'https://cli.github.com' })],
+      ['rxhanson/rectangle', info('rxhanson/Rectangle')],
+      ['someone/wget-mirror', info('someone/wget-mirror', { isFork: true })],
+    ]);
+    const pkgs = byId(buildCatalog({ ...withUrls(), repos }));
+    expect(pkgs.get('gh')!.repo).toEqual({
+      url: 'https://github.com/cli/cli',
+      name: 'cli/cli',
+      kind: 'source',
+      stars: 100,
+      pushedAt: '2026-10-01T00:00:00Z',
+      archived: false,
+    });
+    expect(pkgs.get('rectangle')!.repo?.name).toBe('rxhanson/Rectangle');
+    expect(pkgs.get('wget')!.repo).toBeNull();
+  });
+
+  it('keeps yesterday’s repository when GitHub didn’t answer today', () => {
+    const yesterday = byId(
+      buildCatalog({ ...withUrls(), repos: new Map([['cli/cli', info('cli/cli', { homepageUrl: 'cli.github.com' })]]) }),
+    ).get('gh')!;
+    expect(yesterday.repo?.name).toBe('cli/cli');
+    const today = byId(buildCatalog({ ...withUrls(), previousPackages: [yesterday] })).get('gh')!;
+    expect(today.repo).toEqual(yesterday.repo);
+    // But a repository GitHub says is gone is dropped.
+    const gone = byId(
+      buildCatalog({ ...withUrls(), previousPackages: [yesterday], repos: new Map([['cli/cli', null]]) }),
+    ).get('gh')!;
+    expect(gone.repo).toBeNull();
   });
 });

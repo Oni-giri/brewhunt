@@ -1,16 +1,18 @@
 // Daily data pipeline. Usage:
 //   node scripts/data/run.ts [--data data] [--work .cache/pipeline] [--taps 100] [--cache-api]
 // Reads the previous state from <data>/state, writes <data>/state and <data>/site.
-// Set GITHUB_TOKEN for tap descriptions (the anonymous API limit is 60 requests an hour).
+// Set GITHUB_TOKEN for tap descriptions (the anonymous API limit is 60 requests an hour) and
+// package repositories (GraphQL needs a token; without one, yesterday's repositories are kept).
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
-import { buildCatalog } from './build.ts';
+import { buildCatalog, repoCandidates } from './build.ts';
 import { cloneRepo, readHistory, type RepoHistory } from './git.ts';
 import { checkHomebrew, fetchHomebrew } from './homebrew.ts';
 import { fetchIcons, updateIcons, type IconSet } from './icons.ts';
 import { addDays } from './metrics.ts';
+import { fetchRepos, type RepoLookup } from './repos.ts';
 import {
   readPackages,
   readSnapshots,
@@ -104,6 +106,20 @@ async function main() {
     throw new Error(`Only ${tapsRead} of ${taps.length} taps could be read; not publishing.`);
   }
 
+  const repoKeys = repoCandidates(homebrew, taps);
+  let repos: RepoLookup = new Map();
+  let repoWarning: string | null;
+  const token = process.env.GITHUB_TOKEN;
+  if (token) {
+    log(`Looking up ${repoKeys.length} GitHub repositories…`);
+    const result = await fetchRepos(repoKeys, token);
+    repos = result.lookup;
+    repoWarning = result.warning;
+    log(`Repositories: ${repos.size}/${repoKeys.length} answered in ${result.queries} queries, ${result.cost} points`);
+  } else {
+    repoWarning = 'No GITHUB_TOKEN: package repositories carried over from the previous run.';
+  }
+
   const output = buildCatalog({
     today,
     homebrew,
@@ -116,7 +132,9 @@ async function main() {
     snapshots,
     trackedSince,
     bootstrapped,
+    repos,
   });
+  if (repoWarning) output.meta.warnings.push(repoWarning);
   // A repository that couldn't be read today keeps its previous tracking window.
   for (const [repo, state] of Object.entries(previous.repos)) output.state.repos[repo] ??= state;
 

@@ -4,6 +4,7 @@
 import { addedDate, lastTouched, versionDate, type RepoHistory } from './git.ts';
 import type { AnalyticsFeed, AnalyticsFile, AnalyticsPeriod, Cask, Formula, HomebrewData } from './homebrew.ts';
 import { addDays, computeTrend, isLibrary } from './metrics.ts';
+import { candidates, pickRepo, type RepoLookup } from './repos.ts';
 import { splitTapName, type TapRef, type TapScan } from './taps.ts';
 import type {
   Deprecation,
@@ -42,6 +43,8 @@ export interface BuildInput {
   trackedSince: Record<string, string>;
   /** Repositories read for the first time today: no previous state to carry over. */
   bootstrapped: Set<string>;
+  /** Today's GitHub lookups for the candidates `repoCandidates` lists (run.ts). */
+  repos: RepoLookup;
 }
 
 export interface BuildOutput {
@@ -140,7 +143,9 @@ function minMacos(cask: Cask): string | null {
 const isHttpUrl = (url: string | null | undefined): url is string => !!url && /^https?:\/\/[^\s]+$/i.test(url);
 
 interface Draft {
-  pkg: Omit<Package, 'trend' | 'firstSeen' | 'updatedAt' | 'updatedKind' | 'library'>;
+  pkg: Omit<Package, 'trend' | 'firstSeen' | 'updatedAt' | 'updatedKind' | 'library' | 'repo'>;
+  /** Download and source URLs to find the GitHub repository in; null keeps yesterday's. */
+  sourceUrls: (string | null | undefined)[] | null;
   /** Version string that identifies a release (formulae include the revision). */
   datingVersion: string | null;
   /** Repository-relative path of the definition, for git dates. */
@@ -231,6 +236,7 @@ export function buildCatalog(input: BuildInput): BuildOutput {
             : ['macos', 'linux'],
         dependencies: f.dependencies,
       },
+      sourceUrls: [f.urls.stable?.url, f.urls.head?.url],
       datingVersion: formulaVersion(f),
       path: f.ruby_source_path,
       repo: CORE_TAP,
@@ -271,6 +277,7 @@ export function buildCatalog(input: BuildInput): BuildOutput {
         platforms: caskPlatforms(c.supported_platforms),
         dependencies: [],
       },
+      sourceUrls: [c.url],
       datingVersion: c.version,
       path: c.ruby_source_path,
       repo: CASK_TAP,
@@ -329,6 +336,7 @@ export function buildCatalog(input: BuildInput): BuildOutput {
       for (const prev of input.previousPackages.filter((p) => p.tap === ref.id)) {
         drafts.push({
           pkg: { ...prev, installs: zeroCounts(), installsOnRequest: prev.kind === 'formula' ? zeroCounts() : null },
+          sourceUrls: null,
           datingVersion: prev.version,
           path: null,
           repo: ref.id,
@@ -381,6 +389,7 @@ export function buildCatalog(input: BuildInput): BuildOutput {
           platforms: parsed.platforms,
           dependencies: parsed.dependencies,
         },
+        sourceUrls: parsed.sourceUrls,
         datingVersion: parsed.version,
         path,
         repo: ref.id,
@@ -412,6 +421,7 @@ export function buildCatalog(input: BuildInput): BuildOutput {
 
   const packages: Package[] = [];
   const seen = new Set<string>();
+  const previousRepo = new Map(input.previousPackages.map((p) => [p.id, p.repo ?? null]));
   for (const draft of drafts) {
     const { pkg } = draft;
     if (seen.has(pkg.id)) continue;
@@ -456,8 +466,15 @@ export function buildCatalog(input: BuildInput): BuildOutput {
         )
       : null;
 
+    // A candidate GitHub didn't answer for today keeps yesterday's repository.
+    const picked =
+      draft.sourceUrls === null
+        ? undefined
+        : pickRepo(pkg, candidates(pkg.homepage, draft.sourceUrls), input.repos);
+    const repo = picked === undefined ? (previousRepo.get(pkg.id) ?? null) : picked;
     packages.push({
       ...pkg,
+      repo,
       installs,
       installsOnRequest: onRequest,
       trend,
@@ -540,4 +557,16 @@ export function buildCatalog(input: BuildInput): BuildOutput {
   };
 
   return { packages, taps, meta, history, state: nextState, snapshotDate, snapshot };
+}
+
+/** Every GitHub repository a package points at, to look up before building (run.ts). */
+export function repoCandidates(homebrew: HomebrewData, taps: readonly TapScan[]): string[] {
+  const keys = new Set<string>();
+  const add = (homepage: string | null, urls: (string | null | undefined)[]) => {
+    for (const key of candidates(isHttpUrl(homepage) ? homepage : null, urls)) keys.add(key);
+  };
+  for (const f of homebrew.formulae) add(f.homepage, [f.urls.stable?.url, f.urls.head?.url]);
+  for (const c of homebrew.casks) add(c.homepage, [c.url]);
+  for (const scan of taps) for (const { parsed } of scan.ok ? scan.packages : []) add(parsed.homepage, parsed.sourceUrls);
+  return [...keys].sort();
 }

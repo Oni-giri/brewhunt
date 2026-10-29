@@ -28,6 +28,13 @@ export const formulaSchema = z.object({
   license: z.string().nullable(),
   homepage: z.string().nullable(),
   versions: z.object({ stable: z.string().nullable() }),
+  // Source URLs: where to look for the package's GitHub repository.
+  urls: z
+    .object({
+      stable: z.object({ url: z.string() }).nullable().optional(),
+      head: z.object({ url: z.string() }).nullable().optional(),
+    })
+    .default({}),
   revision: z.number().int().default(0),
   dependencies: z.array(z.string()).default([]),
   requirements: z.array(z.object({ name: z.string() })).default([]),
@@ -54,6 +61,8 @@ export const caskSchema = z.object({
   name: z.array(z.string()).default([]),
   desc: z.string().nullable(),
   homepage: z.string().nullable(),
+  /** Download URL, often a GitHub release asset. */
+  url: z.string().nullable().default(null),
   version: z.string().nullable(),
   auto_updates: z.boolean().nullable().default(false),
   depends_on: z

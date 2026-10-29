@@ -14,6 +14,7 @@ All data is public. Docs: https://formulae.brew.sh/docs/api/ and https://docs.br
 | Dates (added, updated) | git history of `Homebrew/homebrew-core`, `Homebrew/homebrew-cask` and each community tap |
 | Community package metadata | the tap's GitHub repo (`owner/homebrew-tap`), read as text |
 | Tap description, stars | GitHub REST API `repos/{owner}/{repo}` |
+| Package GitHub repositories (link, stars, kind) | GitHub GraphQL `repository(owner, name)`, for the `github.com` repositories in homepages and download URLs (`scripts/data/repos.ts`; rules in `docs/DECISIONS.md`) |
 | Mac app icons | [CaskFlow](https://github.com/alielsokary/CaskFlow)'s `icons` branch: `icons.json` lists the cask tokens with a 256px PNG |
 
 Notes:
@@ -29,7 +30,7 @@ Notes:
 
 `.github/workflows/data.yml` runs daily at 06:17 UTC (and on demand):
 
-1. **refresh** (read-only token, no secrets): `node scripts/data/run.ts` downloads the API files, clones homebrew-core, homebrew-cask and the top 100 taps, and writes `data/`. It refuses to publish if Homebrew returns something implausible (too few packages, stale analytics).
+1. **refresh** (read-only token, no secrets): `node scripts/data/run.ts` downloads the API files, clones homebrew-core, homebrew-cask and the top 100 taps, looks up package repositories on GitHub, and writes `data/`. It refuses to publish if Homebrew returns something implausible (too few packages, stale analytics).
 2. **publish** (can push, runs no pipeline code): commits `data/` to the `data` branch if anything changed.
 3. **site**: runs `ci.yml` (lint, tests, `validate:content`, build, deploy) against that data commit.
 
