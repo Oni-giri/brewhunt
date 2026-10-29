@@ -120,6 +120,10 @@ async function main() {
   // A repository that couldn't be read today keeps its previous tracking window.
   for (const [repo, state] of Object.entries(previous.repos)) output.state.repos[repo] ??= state;
 
+  const icons = await updateIcons(dataDir, () => cachedIcons(join(workDir, 'api'), args['cache-api']));
+  log(`App icons: ${icons.icons?.tokens.length ?? 0} at CaskFlow ${icons.icons?.commit.slice(0, 7) ?? '(none)'}`);
+  if (icons.warning) output.meta.warnings.push(icons.warning);
+
   await writeSnapshot(dataDir, output.snapshotDate, output.snapshot);
   await writeState(dataDir, output.state);
   await writeJson(join(dataDir, 'site', 'packages.json'), output.packages);
@@ -127,11 +131,7 @@ async function main() {
   await writeJson(join(dataDir, 'site', 'meta.json'), output.meta);
   await writeJson(join(dataDir, 'site', 'history.json'), output.history);
 
-  const icons = await updateIcons(dataDir, () => cachedIcons(join(workDir, 'api'), args['cache-api']));
-  log(`App icons: ${icons.icons?.tokens.length ?? 0} at CaskFlow ${icons.icons?.commit.slice(0, 7) ?? '(none)'}`);
-
   const { counts, warnings } = output.meta;
-  if (icons.warning) warnings.push(icons.warning);
   log(
     `Wrote ${output.packages.length} packages (${counts.formulae} formulae, ${counts.casks} casks, ` +
       `${counts.community} community) and ${counts.taps} taps for analytics ending ${output.snapshotDate}`,

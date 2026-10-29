@@ -37,6 +37,7 @@ const fontSize = Math.round(size * (mono ? 0.34 : 0.39));
       loading={raised ? 'eager' : 'lazy'}
       fetchpriority={raised ? 'high' : undefined}
       decoding="async"
+      referrerpolicy="no-referrer"
       onerror={ICON_FALLBACK}
     />
   )}

@@ -7,6 +7,7 @@ export function iconImage(src: string, size: number): HTMLImageElement {
   img.alt = '';
   img.width = img.height = size;
   img.decoding = 'async';
+  img.referrerPolicy = 'no-referrer';
   img.addEventListener('error', () => {
     img.parentElement?.classList.remove('has-icon');
     img.remove();
