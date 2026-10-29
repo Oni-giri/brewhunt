@@ -57,7 +57,7 @@ Codex review after A1–A2 and after A3–A4.
 
 **B3 `/developers`.** Replaces the landing `#developers` anchor (footer links updated).
 - Get your app into Homebrew: your own tap vs homebrew-cask/core, with Homebrew's notability rules quoted from their docs and linked. Brewhunt lists the top 100 taps; how to ask to be added.
-- Claim your listing: explains verification (D2); "coming soon" until D2 ships.
+- Claim your listing: "coming soon" (v2, with GitHub sign-in).
 - Sponsor Brewhunt: one labelled "Sponsored" slot on Discover, a category or search; never in charts, install numbers or rankings; founding-sponsor offer; Tally form.
 
 Codex review after B.
@@ -103,9 +103,11 @@ Codex review after C (security focus: fetcher, prompt injection, untrusted text 
 
 ## Phase D · App page
 
-**D1 Redesign** around the new data, mocked up first and in the design's style: header with source/type badges and facts strip; About (labelled "Summary written by Brewhunt from the README and website", with source links, or the developer's text when verified); screenshots carousel (keyboard and swipe, lazy, credited); GitHub card (stars, last commit, licence, issues); installs chart (needs 7 days of history); Manage it; Information; Similar apps from shared tags and categories (acceptance: calibre's similar apps are e-book or reading apps); "Is this your app?" → `/developers#claim`. Fill the empty column under "Manage it". Every enrichment block says where it came from.
+**D1 Redesign** around the new data, mocked up first and in the design's style: header with source/type badges and facts strip; About (labelled "Summary written by Brewhunt from the README and website", with source links, with the developer's own text in v2); screenshots carousel (keyboard and swipe, lazy, credited); GitHub card (stars, last commit, licence, issues); installs chart (needs 7 days of history); Manage it; Information; Similar apps from shared tags and categories (acceptance: calibre's similar apps are e-book or reading apps); "Is this your app?" → `/developers#claim`. Fill the empty column under "Manage it". Every enrichment block says where it came from.
 
-**D2 Developer verification (v1, no accounts).** A developer adds `.brewhunt.yml` to the default branch of the repo Homebrew's entry points to, or `/.well-known/brewhunt.json` on the homepage domain. Schema (zod, strict): tagline and description (plain text, length limits), links (absolute `https:` URLs only, no credentials, rendered with `rel="nofollow noopener ugc"`), screenshots (`https:` URLs fetched through the C9 asset pipeline; never hotlinked). The page shows their text instead of the AI's, with a "Verified by the developer" badge. It never changes installs, rankings, charts, source status or the install command. Deleting the file reverts it. A fork or another domain can't claim. Also: a Content-Security-Policy in `public/_headers` (no inline-script exceptions beyond what Astro needs, `img-src` limited to the site, the asset domain and jsDelivr) as a second line of defence. v2 replaces this with GitHub sign-in and payments.
+**D2 Content-Security-Policy.** A CSP in `public/_headers` (no inline-script exceptions beyond what Astro needs; `img-src` limited to the site, the asset domain and jsDelivr) as a second line of defence for crawled text and URLs. Every external URL rendered on a page (homepages, repos, screenshot sources) must be an absolute `https:` URL without credentials.
+
+Developer verification is not in M5: owner's call (29 Oct 2026) to build it in v2 with GitHub sign-in, the developer UI and payments, with the same URL and content rules.
 
 Codex review after D.
 

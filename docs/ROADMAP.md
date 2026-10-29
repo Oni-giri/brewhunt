@@ -51,7 +51,7 @@ Plan and acceptance criteria: `docs/plans/M5-enrichment.md` (phases 0, A–E).
 - Import an existing Brewfile to see your setup and get suggestions.
 
 ### v3 · For developers
-- Claim a listing (verify via GitHub repo ownership), add icon, screenshots, description, links.
+- Claim a listing: GitHub sign-in, ownership checked against the repo Homebrew's entry points to; a developer UI to edit the tagline, description, screenshots and links (https-only links, screenshots through the asset pipeline); payments for sponsored spots. Postponed from M5 (see `docs/plans/M5-enrichment.md`).
 - Verified badge and a developer dashboard with install trends.
 - Help get a tap or cask into Homebrew; launch announcements in "New this week".
 - Promoted placements, clearly labelled. This is the business model.
