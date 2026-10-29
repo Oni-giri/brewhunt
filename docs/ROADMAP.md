@@ -33,6 +33,9 @@
 
 ## Beyond v1: the long-term roadmap
 
+## M5 · Search, pages, enrichment
+Plan and acceptance criteria: `docs/plans/M5-enrichment.md` (phases 0, A–E).
+
 ### v1.x · Richer discovery
 - Move the daily snapshots from the `data` git branch to Cloudflare R2 once the branch gets heavy (about 55MB a year of history).
 - Weekly "New this week" newsletter and RSS feeds per category.
