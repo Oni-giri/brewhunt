@@ -124,6 +124,10 @@ const entries: IndexEntry[] = [
     listed: false,
   }),
   cask('dtctl', 'dtctl', 'Dynatrace from your terminal', 100, { commandLine: true }),
+  cask('calibre', 'calibre', 'E-books management software', 3_640),
+  cask('frappe-books', 'Frappe Books', 'Book-keeping software for small businesses', 18),
+  cask('zettlr', 'Zettlr', 'Markdown editor for writing', 20),
+  formula('zk', 'Plain text Zettelkasten notes', 5_000),
   cask('café', 'Café Ünïcode', 'Accented name', 10),
   cask('fontless', 'Disabled thing', 'No page', 99_999, { hasPage: false }),
 ];
@@ -290,6 +294,17 @@ describe('search ranking', () => {
       'amethyst',
     ]);
     expect(ids('browser')).toEqual(['google-chrome', 'firefox', 'firefox@nightly']);
+  });
+
+  it('weighs weaker matches by how established the package is', () => {
+    // calibre only says "E-books"; Frappe Books has the word in its name but 18 installs.
+    expect(ids('books')).toEqual(['calibre', 'frappe-books']);
+  });
+
+  it('keeps the start of a name strong for small packages', () => {
+    // Still typing "zett": Zettlr (20 installs) over a popular description match.
+    expect(ids('zett')).toEqual(['zettlr', 'zk']);
+    expect(ids('zettlr')[0]).toBe('zettlr');
   });
 
   it('ranks versioned, deprecated, library and Linux-only packages lower', () => {

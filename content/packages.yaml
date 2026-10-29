@@ -5,12 +5,14 @@
 #            Homebrew's description. Only add one where Homebrew's description is unclear.
 #   developer: who makes it, for the app page's Information list.
 #   keywords: lowercase search terms Homebrew's data doesn't link to the package (command
-#             names, former names, common abbreviations). Homebrew already links formula
+#             names, former names, common abbreviations, what people call that kind of app
+#             when the package never says it). Homebrew already links formula
 #             aliases (rg for ripgrep, nvim for neovim) and old cask tokens: don't repeat them.
 
 # Windows & desktop
 rectangle:
   developer: Ryan Hanson
+  keywords: [window manager]
 alt-tab:
   tagline: Windows-style window switcher with previews
   developer: Louis Pontoise
@@ -146,6 +148,8 @@ thebrowsercompany-dia:
   tagline: Browser with an AI assistant, from The Browser Company
 
 # Writing & notes
+calibre:
+  keywords: [ebook, epub, kindle]
 mactex:
   keywords: [latex, tex live]
 

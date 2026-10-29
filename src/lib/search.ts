@@ -258,19 +258,38 @@ export const TIER = {
   lineWord: 100,
 } as const;
 
+/**
+ * Points for one query word. The start of a name is strong evidence on its own; other matches (a
+ * whole word of the name, a category, a keyword, the description) count in proportion to how
+ * established the package is, so "books" finds calibre ("E-books management") before an
+ * 18-install book-keeping app with "books" in its name. Exact matches keep a floor.
+ */
 export function tokenScore(item: Item, token: string): number {
-  if (item.keys.includes(token)) return TIER.exact;
-  if (item.heads.some((h) => h.startsWith(token)) || item.nameWords.includes(` ${token} `))
-    return TIER.namePrefix;
-  if (item.categoryWords.includes(` ${token}`)) return TIER.category;
-  if (item.nameWords.includes(` ${token}`)) return TIER.nameWord;
-  if (item.altWords.includes(` ${token}`)) return TIER.altWord;
-  if (item.lineWords.includes(` ${token}`)) return TIER.lineWord;
+  const weight = established(item.installs30);
+  if (item.keys.includes(token)) return TIER.exact * Math.max(EXACT_FLOOR, weight);
+  // Still typing ("obsi"): the start of a name is what they're after.
+  if (
+    item.heads.some(
+      (h) => h.length > token.length && h.startsWith(token) && h[token.length] !== ' ',
+    )
+  )
+    return TIER.namePrefix * Math.max(PREFIX_FLOOR, weight);
+  if (item.nameWords.includes(` ${token} `)) return TIER.namePrefix * weight;
+  if (item.categoryWords.includes(` ${token}`)) return TIER.category * weight;
+  if (item.nameWords.includes(` ${token}`)) return TIER.nameWord * weight;
+  if (item.altWords.includes(` ${token}`)) return TIER.altWord * weight;
+  if (item.lineWords.includes(` ${token}`)) return TIER.lineWord * weight;
   return 0;
 }
 
-/** Popular packages first among similar matches: 10 installs ≈ 40 points, 100k ≈ 200. */
-export const popularityBoost = (installs30: number) => Math.log10(installs30 + 1) * 40;
+/** How much a package's weaker matches count: 0.25 for a handful of installs, 1 at 10,000 a month. */
+export const established = (installs30: number) =>
+  Math.min(1, Math.max(0.25, Math.log10(installs30 + 1) / 4));
+const EXACT_FLOOR = 0.6;
+const PREFIX_FLOOR = 0.75;
+
+/** Popular packages first among similar matches: 10 installs ≈ 60 points, 100k ≈ 300. */
+export const popularityBoost = (installs30: number) => Math.log10(installs30 + 1) * 60;
 
 /**
  * Searchable, but below the packages most people are looking for. Typing a library's or a

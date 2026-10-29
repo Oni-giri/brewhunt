@@ -43,7 +43,7 @@ A package can be in several categories. Its first category in file order is its 
 - `type`: casks only, `app` or `cli`, when the cask doesn't make it clear whether it's a Mac app or a command-line tool (a `.pkg` installer can hold either). Without it, a cask that installs only command-line programs (`binary`) is a command-line tool and anything else is a Mac app.
 - `tagline`: replaces Homebrew's description in lists. 60 characters at most, no full stop. Only add one where Homebrew's description is unclear or clumsy.
 - `developer`: shown in the app page's Information list.
-- `keywords`: lowercase search terms Homebrew's data doesn't link to the package, such as command names, former names and common abbreviations: `visual-studio-code: { keywords: [vscode] }`. Up to 10, each 30 characters at most. Homebrew's data already links formula aliases (`rg` for ripgrep, `nvim` for neovim) and old cask tokens, so don't repeat them.
+- `keywords`: lowercase search terms Homebrew's data doesn't link to the package, such as command names, former names, common abbreviations and what people call that kind of app when the package never says it (`ebook` for calibre): `visual-studio-code: { keywords: [vscode] }`. Up to 10, each 30 characters at most. Homebrew's data already links formula aliases (`rg` for ripgrep, `nvim` for neovim) and old cask tokens, so don't repeat them.
 
 **overrides.yaml**:
 
