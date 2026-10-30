@@ -152,10 +152,14 @@ const ENDPOINT = 'https://api.github.com/graphql';
  */
 export const BATCH = 50;
 const MIN_BATCH = 10;
-/** Queries in flight once the first one has shown the budget. */
-const CONCURRENCY = 2;
 /** Batches of MIN_BATCH or fewer that failed twice before the lookup gives up. */
 const MAX_FAILURES = 3;
+/**
+ * Total time to spend waiting when GitHub says to slow down (403/429 with the hourly budget
+ * left: its secondary limits, which Actions' token hits after a few dozen quick queries).
+ */
+const MAX_WAIT_MS = 10 * 60_000;
+const DEFAULT_WAIT_MS = 60_000;
 
 // Counting releases (`releases { totalCount }`) times out; the latest one is cheap.
 const FIELDS = `nameWithOwner url isFork isArchived stargazerCount pushedAt homepageUrl
@@ -252,17 +256,33 @@ export interface FetchReposResult {
   warning: string | null;
 }
 
+/** GitHub asked us to wait before the next query. */
+class SlowDown extends Error {
+  readonly waitMs: number;
+  constructor(message: string, waitMs: number) {
+    super(message);
+    this.waitMs = waitMs;
+  }
+}
+
+export interface FetchReposOptions {
+  fetch?: typeof fetch;
+  sleep?: (ms: number) => Promise<void>;
+}
+
 /**
- * Looks up every candidate, BATCH per query: one query first to learn the budget, then
- * CONCURRENCY at a time. A batch that fails is split in half (or, at MIN_BATCH, retried once).
- * Stops, keeping what it has, when the hourly budget couldn't cover the next queries or GitHub
- * keeps failing.
+ * Looks up every candidate, BATCH per query, one query at a time. A batch that fails is split in
+ * half (or, at MIN_BATCH, retried once); when GitHub says to slow down, it waits as told. Stops,
+ * keeping what it has, when the hourly budget couldn't cover the next query, GitHub keeps
+ * failing, or the waiting adds up to MAX_WAIT_MS.
  */
 export async function fetchRepos(
   keys: readonly string[],
   token: string,
-  fetchImpl: typeof fetch = fetch,
+  options: FetchReposOptions = {},
 ): Promise<FetchReposResult> {
+  const fetchImpl = options.fetch ?? fetch;
+  const sleep = options.sleep ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
   const lookup: RepoLookup = new Map();
   const queue: { keys: string[]; tries: number }[] = [];
   for (let i = 0; i < keys.length; i += BATCH) queue.push({ keys: keys.slice(i, i + BATCH), tries: 0 });
@@ -271,6 +291,7 @@ export async function fetchRepos(
   let lastCost = 1;
   let remaining = Infinity;
   let failures = 0;
+  let waited = 0;
   let unanswered = 0;
   let lastError: string | null = null;
   let stopped: string | null = null;
@@ -285,7 +306,15 @@ export async function fetchRepos(
     queries++;
     const header = Number(res.headers.get('x-ratelimit-remaining') ?? NaN);
     if (Number.isFinite(header)) remaining = Math.min(remaining, header);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      const text = (await res.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 200);
+      const message = `HTTP ${res.status}${text ? `: ${text}` : ''}`;
+      if ((res.status === 403 || res.status === 429) && remaining > 0) {
+        const after = Number(res.headers.get('retry-after') ?? NaN);
+        throw new SlowDown(message, Number.isFinite(after) ? after * 1000 : DEFAULT_WAIT_MS);
+      }
+      throw new Error(message);
+    }
     const response = (await res.json()) as Response;
     const rate = response.data?.rateLimit;
     if (rate) {
@@ -301,12 +330,29 @@ export async function fetchRepos(
     }
   };
 
-  const attempt = async (item: { keys: string[]; tries: number }) => {
+  while (queue.length > 0) {
+    if (remaining < lastCost * 2) {
+      stopped = `GitHub's GraphQL budget ran low (${remaining} points left)`;
+      break;
+    }
+    if (failures >= MAX_FAILURES) {
+      stopped = 'GitHub repository lookup kept failing';
+      break;
+    }
+    const item = queue.shift()!;
     try {
       await query(item.keys);
     } catch (error) {
-      lastError = String(error);
-      if (item.keys.length > MIN_BATCH) {
+      lastError = error instanceof Error ? error.message : String(error);
+      if (error instanceof SlowDown) {
+        queue.unshift(item);
+        if (waited + error.waitMs > MAX_WAIT_MS) {
+          stopped = 'GitHub kept asking to slow down';
+          break;
+        }
+        waited += error.waitMs;
+        await sleep(error.waitMs);
+      } else if (item.keys.length > MIN_BATCH) {
         const half = Math.ceil(item.keys.length / 2);
         queue.unshift({ keys: item.keys.slice(0, half), tries: 0 }, { keys: item.keys.slice(half), tries: 0 });
       } else if (item.tries === 0) {
@@ -317,26 +363,12 @@ export async function fetchRepos(
         unanswered += item.keys.length;
       }
     }
-  };
-
-  let first = true;
-  while (queue.length > 0) {
-    if (remaining < lastCost * (CONCURRENCY + 2)) {
-      stopped = `GitHub's GraphQL budget ran low (${remaining} points left)`;
-      break;
-    }
-    if (failures >= MAX_FAILURES) {
-      stopped = 'GitHub repository lookup kept failing';
-      break;
-    }
-    // The first query alone: it tells us what the budget allows.
-    await Promise.all(queue.splice(0, first ? 1 : CONCURRENCY).map(attempt));
-    first = false;
   }
   for (const item of queue) unanswered += item.keys.length;
   const warning =
     unanswered === 0
       ? null
       : `${stopped ?? 'GitHub repository lookup incomplete'}: ${unanswered} of ${keys.length} repositories not looked up (last error: ${lastError}); their packages keep yesterday's repository`;
+  if (waited > 0) console.warn(`GitHub asked to slow down: waited ${Math.round(waited / 1000)}s in all`);
   return { lookup, cost, queries, warning };
 }

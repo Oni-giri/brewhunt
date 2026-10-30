@@ -218,54 +218,82 @@ describe('GitHub GraphQL', () => {
     };
   const sizes = (calls: string[][]) => calls.map((c) => c.length);
 
+  /** Records each query's size and passes it to `reply`. */
+  const recording = (reply: (url: unknown, init?: RequestInit) => Promise<Response>) => {
+    const calls: number[] = [];
+    const fetch = (async (url: unknown, init?: RequestInit) => {
+      calls.push(Object.keys(JSON.parse(String(init!.body)).variables).length / 2);
+      return reply(url, init);
+    }) as typeof globalThis.fetch;
+    return { calls, fetch };
+  };
+  const waits: number[] = [];
+  const sleep = async (ms: number) => void waits.push(ms);
+
   it('batches 50 per query and adds up the cost', async () => {
     const keys = Array.from({ length: 120 }, (_, i) => `o/r${i}`);
-    const calls: string[][] = [];
-    const reply = answer({ cost: 2, remaining: 900 });
-    const result = await fetchRepos(keys, 'token', async (url, init) => {
-      calls.push(Object.keys(JSON.parse(String(init!.body)).variables).filter((k) => k[0] === 'n'));
-      return reply(url, init);
-    });
-    expect(sizes(calls)).toEqual([50, 50, 20]);
+    const { calls, fetch } = recording(answer({ cost: 2, remaining: 900 }));
+    const result = await fetchRepos(keys, 'token', { fetch, sleep });
+    expect(calls).toEqual([50, 50, 20]);
     expect(result).toMatchObject({ cost: 6, queries: 3, warning: null });
     expect(result.lookup.size).toBe(120);
   });
 
-  it('sends one query first and stops when the budget is low, keeping what it has', async () => {
+  it('stops when the budget is low, keeping what it has', async () => {
     const keys = Array.from({ length: 600 }, (_, i) => `o/r${i}`);
-    let calls = 0;
-    const reply = answer({ cost: 3, remaining: 10 });
-    const result = await fetchRepos(keys, 'token', async (url, init) => {
-      calls++;
-      return reply(url, init);
-    });
-    expect(calls).toBe(1);
+    const { calls, fetch } = recording(answer({ cost: 3, remaining: 5 }));
+    const result = await fetchRepos(keys, 'token', { fetch, sleep });
+    expect(calls).toEqual([50]);
     expect(result.lookup.size).toBe(50);
-    expect(result.warning).toMatch(/budget ran low \(10 points left\): 550 of 600/);
+    expect(result.warning).toMatch(/budget ran low \(5 points left\): 550 of 600/);
   });
 
-  it('reads the budget from the rate-limit header too', async () => {
+  it('stops when the hourly budget is spent (403 with none remaining)', async () => {
     const keys = Array.from({ length: 200 }, (_, i) => `o/r${i}`);
-    let calls = 0;
-    const result = await fetchRepos(keys, 'token', async () => {
-      calls++;
-      return respond({ message: 'API rate limit exceeded' }, 403, { 'x-ratelimit-remaining': '0' });
-    });
-    expect(calls).toBe(1);
-    expect(result.warning).toMatch(/budget ran low \(0 points left\)/);
+    const { calls, fetch } = recording(async () =>
+      respond({ message: 'API rate limit exceeded' }, 403, { 'x-ratelimit-remaining': '0' }),
+    );
+    const result = await fetchRepos(keys, 'token', { fetch, sleep });
+    expect(calls).toEqual([50]);
+    expect(result.warning).toMatch(/budget ran low \(0 points left\).*API rate limit exceeded/);
+  });
+
+  it('waits when GitHub says to slow down, then carries on', async () => {
+    waits.length = 0;
+    const keys = Array.from({ length: 100 }, (_, i) => `o/r${i}`);
+    let limited = 2;
+    const ok = answer();
+    const { calls, fetch } = recording(async (url, init) =>
+      limited-- > 0
+        ? respond({ message: 'You have exceeded a secondary rate limit' }, 403, { 'retry-after': '30' })
+        : ok(url, init),
+    );
+    const result = await fetchRepos(keys, 'token', { fetch, sleep });
+    // The same batch again, not split: it isn't too big, GitHub wants a pause.
+    expect(calls).toEqual([50, 50, 50, 50]);
+    expect(waits).toEqual([30_000, 30_000]);
+    expect(result.lookup.size).toBe(100);
+    expect(result.warning).toBeNull();
+  });
+
+  it('gives up after waiting 10 minutes in all', async () => {
+    waits.length = 0;
+    const keys = Array.from({ length: 100 }, (_, i) => `o/r${i}`);
+    const { fetch } = recording(async () => respond({ message: 'secondary rate limit' }, 429));
+    const result = await fetchRepos(keys, 'token', { fetch, sleep });
+    expect(waits).toEqual(Array(10).fill(60_000));
+    expect(result.warning).toMatch(/kept asking to slow down: 100 of 100 .*HTTP 429: .*secondary rate limit/);
   });
 
   it('splits a batch that times out and retries the halves', async () => {
     const keys = Array.from({ length: 50 }, (_, i) => `o/r${i}`);
-    const calls: number[] = [];
-    const result = await fetchRepos(
-      keys,
-      'token',
-      answer(undefined, (batch) => {
-        calls.push(batch.length);
-        return batch.length > 25 ? respond({ message: 'Gateway timeout' }, 504) : null;
-      }),
+    const ok = answer();
+    const { calls, fetch } = recording(async (url, init) =>
+      Object.keys(JSON.parse(String(init!.body)).variables).length / 2 > 25
+        ? respond({ message: 'Gateway timeout' }, 504)
+        : ok(url, init),
     );
+    const result = await fetchRepos(keys, 'token', { fetch, sleep });
     expect(calls).toEqual([50, 25, 25]);
     expect(result.lookup.size).toBe(50);
     expect(result.warning).toBeNull();
@@ -273,37 +301,37 @@ describe('GitHub GraphQL', () => {
 
   it('treats a GraphQL error in a 200 response as a failure, not an answer', async () => {
     const keys = Array.from({ length: 8 }, (_, i) => `o/r${i}`);
-    let calls = 0;
-    const result = await fetchRepos(keys, 'token', async () => {
-      calls++;
-      return respond({ data: null, errors: [{ type: 'RATE_LIMITED', message: 'Slow down' }] });
-    });
+    const { calls, fetch } = recording(async () =>
+      respond({ data: null, errors: [{ type: 'RATE_LIMITED', message: 'Slow down' }] }),
+    );
+    const result = await fetchRepos(keys, 'token', { fetch, sleep });
     // A small batch: tried twice.
-    expect(calls).toBe(2);
+    expect(calls).toEqual([8, 8]);
     expect(result.lookup.size).toBe(0);
-    expect(result.warning).toMatch(/8 of 8 repositories not looked up \(last error: Error: RATE_LIMITED: Slow down\)/);
+    expect(result.warning).toMatch(/8 of 8 repositories not looked up \(last error: RATE_LIMITED: Slow down\)/);
   });
 
   it('warns about repositories that failed inside an answered batch', async () => {
-    const result = await fetchRepos(['a/one', 'b/two'], 'token', async () =>
-      respond({
-        data: { rateLimit: { cost: 1, remaining: 900, resetAt: '' }, r0: node('a/one'), r1: null },
-        errors: [{ type: 'SERVICE_UNAVAILABLE', path: ['r1'], message: 'Timeout' }],
-      }),
-    );
+    const result = await fetchRepos(['a/one', 'b/two'], 'token', {
+      sleep,
+      fetch: async () =>
+        respond({
+          data: { rateLimit: { cost: 1, remaining: 900, resetAt: '' }, r0: node('a/one'), r1: null },
+          errors: [{ type: 'SERVICE_UNAVAILABLE', path: ['r1'], message: 'Timeout' }],
+        }),
+    });
     expect(result.lookup.size).toBe(1);
     expect(result.warning).toMatch(/1 of 2 repositories not looked up/);
   });
 
-  it('gives up after repeated failures, with a warning', async () => {
+  it('gives up after repeated failures, with GitHub’s message', async () => {
     const keys = Array.from({ length: 1000 }, (_, i) => `o/r${i}`);
-    let calls = 0;
-    const result = await fetchRepos(keys, 'token', async () => {
-      calls++;
-      return respond({ message: 'Bad gateway' }, 502);
-    });
+    const { calls, fetch } = recording(async () => respond({ message: 'Bad gateway' }, 502));
+    const result = await fetchRepos(keys, 'token', { fetch, sleep });
     expect(result.lookup.size).toBe(0);
-    expect(calls).toBeLessThan(30);
-    expect(result.warning).toMatch(/kept failing: 1000 of 1000 repositories not looked up \(last error: Error: HTTP 502\)/);
+    expect(calls.length).toBeLessThan(30);
+    expect(result.warning).toMatch(
+      /kept failing: 1000 of 1000 repositories not looked up \(last error: HTTP 502: \{"message":"Bad gateway"\}\)/,
+    );
   });
 });
