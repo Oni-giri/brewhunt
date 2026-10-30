@@ -193,6 +193,8 @@ const { pathname } = Astro.url;
     border: 1px solid var(--border);
     box-shadow: var(--shadow-header);
     color: var(--ink);
+    /* Stays put while the page under it fades (global.css). */
+    view-transition-name: site-header;
   }
 
   .nav-links {

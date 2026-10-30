@@ -1,7 +1,8 @@
 // Shared setup for the browser checks. Icons come from jsDelivr; by default it's blocked so the
 // tests don't depend on a third-party CDN (every icon falls back to its letter tile). Tests that
 // need the real icons opt in with `test.use({ cdn: true })`. Every page fails its test on a
-// JavaScript error or a console error, except failed loads from URLs in `ignoreErrorsFrom`.
+// JavaScript error or a console error, except failed loads from URLs in `ignoreErrorsFrom` and
+// skipped page transitions.
 
 import { readdirSync } from 'node:fs';
 import { test as base, expect, type Page } from '@playwright/test';
@@ -22,7 +23,12 @@ export const test = base.extend<{ cdn: boolean; ignoreErrorsFrom: string[]; erro
       const errors: string[] = [];
       // The blocked CDN logs a failed load for each icon: expected.
       const ignored = [CDN, ...ignoreErrorsFrom];
-      page.on('pageerror', (error) => errors.push(error.message));
+      page.on('pageerror', (error) => {
+        // When Chromium skips a cross-document view transition (headless often does: it has no
+        // steady frames), it rejects the transition's promises with no handler. Engine-internal,
+        // not the site's code.
+        if (!/^Transition was (aborted|skipped)/.test(error.message)) errors.push(error.message);
+      });
       page.on('console', (message) => {
         const url = message.location().url;
         if (message.type() === 'error' && !ignored.some((part) => url.includes(part)))

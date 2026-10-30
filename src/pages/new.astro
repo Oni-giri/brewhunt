@@ -181,10 +181,11 @@ const metaLine = (e: Entry) =>
 </Base>
 
 <script>
+  import { tabs } from '../lib/tabs';
+
   const controls = document.querySelector<HTMLElement>('[data-controls]');
   if (controls) {
     controls.hidden = false;
-    const tabs = [...controls.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
     const installing = controls.querySelector<HTMLInputElement>('[data-installing]')!;
     const rows = [...document.querySelectorAll<HTMLElement>('#new-list .row')];
     const none = document.querySelector<HTMLElement>('[data-none]')!;
@@ -209,27 +210,9 @@ const metaLine = (e: Entry) =>
         [...w.querySelectorAll<HTMLElement>('.day')].some((d) => !d.hidden),
       );
     };
-    const select = (tab: HTMLButtonElement) => {
+    tabs(controls.querySelector<HTMLElement>('[role="tablist"]')!, (tab) => {
       filter = tab.dataset.filter ?? 'all';
-      for (const t of tabs) {
-        const on = t === tab;
-        t.setAttribute('aria-selected', String(on));
-        t.tabIndex = on ? 0 : -1;
-      }
       apply();
-    };
-    tabs.forEach((tab, i) => {
-      tab.addEventListener('click', () => select(tab));
-      tab.addEventListener('keydown', (event) => {
-        const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[
-          event.key
-        ];
-        if (next === undefined) return;
-        event.preventDefault();
-        const target = tabs[(next + tabs.length) % tabs.length];
-        select(target);
-        target.focus();
-      });
     });
     installing.addEventListener('change', apply);
     document
@@ -329,9 +312,12 @@ const metaLine = (e: Entry) =>
     cursor: pointer;
   }
   .tabs [aria-selected='true'] {
-    background: var(--surface);
     color: var(--ink);
     font-weight: 600;
+  }
+  /* With the script, a sliding thumb (lib/tabs.ts) draws the selected tab's pill. */
+  .tabs:not(.has-thumb) [aria-selected='true'] {
+    background: var(--surface);
     box-shadow: var(--shadow-tab);
   }
   .toggle {

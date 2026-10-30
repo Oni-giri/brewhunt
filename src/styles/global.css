@@ -73,6 +73,45 @@ pre {
   }
 }
 
+/* Tabs: lib/tabs.ts adds .has-thumb and a thumb that slides under the selected tab. */
+.has-thumb {
+  position: relative;
+}
+.has-thumb > [role='tab'] {
+  position: relative;
+}
+.tab-thumb {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-tab);
+  pointer-events: none;
+}
+.tab-thumb.ready {
+  transition:
+    transform 0.2s ease-out,
+    width 0.2s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-thumb.ready {
+    transition: none;
+  }
+}
+
+/* Same-site page changes fade; the header stays put. Browsers without cross-document view
+   transitions just navigate. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+::view-transition-group(*) {
+  animation-duration: 0.15s;
+}
+
 /* App icon tiles: see components/AppIcon.astro. */
 .app-icon {
   width: var(--size, 48px);

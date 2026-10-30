@@ -149,6 +149,8 @@ const selected = ranges.findLast((r) => r.days <= 90) ?? ranges[0];
 </section>
 
 <script>
+  import { tabs } from '../lib/tabs';
+
   const MONTHS = [
     'Jan',
     'Feb',
@@ -165,28 +167,8 @@ const selected = ranges.findLast((r) => r.days <= 90) ?? ranges[0];
   ];
 
   for (const chart of document.querySelectorAll<HTMLElement>('[data-chart]')) {
-    const tabs = [...chart.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
-    const select = (tab: HTMLButtonElement) => {
-      for (const t of tabs) {
-        const on = t === tab;
-        t.setAttribute('aria-selected', String(on));
-        t.tabIndex = on ? 0 : -1;
-        chart.querySelector<HTMLElement>(`#${t.getAttribute('aria-controls')}`)!.hidden = !on;
-      }
-    };
-    tabs.forEach((tab, i) => {
-      tab.addEventListener('click', () => select(tab));
-      tab.addEventListener('keydown', (event) => {
-        const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[
-          event.key
-        ];
-        if (next === undefined) return;
-        event.preventDefault();
-        const target = tabs[(next + tabs.length) % tabs.length];
-        select(target);
-        target.focus();
-      });
-    });
+    const list = chart.querySelector<HTMLElement>('[role="tablist"]');
+    if (list) tabs(list);
 
     // Hover or arrow keys show the value on a given day.
     for (const plot of chart.querySelectorAll<HTMLElement>('[data-plot]')) {
@@ -288,9 +270,12 @@ const selected = ranges.findLast((r) => r.days <= 90) ?? ranges[0];
     cursor: pointer;
   }
   .tabs [aria-selected='true'] {
-    background: var(--surface);
     color: var(--ink);
     font-weight: 600;
+  }
+  /* With the script, a sliding thumb (lib/tabs.ts) draws the selected tab's pill. */
+  .tabs:not(.has-thumb) [aria-selected='true'] {
+    background: var(--surface);
     box-shadow: var(--shadow-tab);
   }
   .plot {
