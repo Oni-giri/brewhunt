@@ -216,7 +216,6 @@ describe('GitHub GraphQL', () => {
       keys.forEach((key, i) => (data[`r${i}`] = node(key)));
       return respond({ data });
     };
-  const sizes = (calls: string[][]) => calls.map((c) => c.length);
 
   /** Records each query's size and passes it to `reply`. */
   const recording = (reply: (url: unknown, init?: RequestInit) => Promise<Response>) => {
