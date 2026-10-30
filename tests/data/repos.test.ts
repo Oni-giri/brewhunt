@@ -131,6 +131,19 @@ describe('pickRepo', () => {
     expect(pickRepo(pkg('obsidian'), ['someone/mirror', 'not/asked'], lookup)).toBeUndefined();
     expect(pickRepo(pkg('x'), ['gone/x'], new Map([['gone/x', null]]))).toBeNull();
   });
+
+  it('looks past an unanswered candidate, and drops yesterday’s repository once it’s gone', () => {
+    const repos: RepoLookup = new Map([
+      ['a/obsidian', info('a/obsidian')],
+      ['old/obsidian', null],
+    ]);
+    expect(pickRepo(pkg('obsidian'), ['not/asked', 'a/obsidian'], repos)?.name).toBe('a/obsidian');
+    const yesterday = pickRepo(pkg('obsidian'), ['a/obsidian'], repos)!;
+    const gone = { ...yesterday, name: 'Old/Obsidian', url: 'https://github.com/Old/Obsidian' };
+    expect(pickRepo(pkg('obsidian'), ['old/obsidian', 'not/asked'], repos, gone)).toBeNull();
+    // Yesterday's wasn't answered today either: keep it.
+    expect(pickRepo(pkg('obsidian'), ['not/asked'], repos, yesterday)).toBeUndefined();
+  });
 });
 
 describe('GitHub GraphQL', () => {
@@ -155,7 +168,7 @@ describe('GitHub GraphQL', () => {
 
   it('reads a partial response: found, not found, and failed', () => {
     const lookup: RepoLookup = new Map();
-    readBatch(
+    const result = readBatch(
       ['a/one', 'b/gone', 'c/err'],
       {
         data: { r0: node('A/One'), r1: null, r2: null },
@@ -166,6 +179,7 @@ describe('GitHub GraphQL', () => {
       },
       lookup,
     );
+    expect(result).toEqual({ queryError: null, failed: 1 });
     expect(lookup.get('a/one')).toMatchObject({
       nameWithOwner: 'A/One',
       isArchived: true,
@@ -177,40 +191,108 @@ describe('GitHub GraphQL', () => {
     expect(lookup.has('c/err')).toBe(false);
   });
 
-  it('trusts nothing in a response with a query-wide error', () => {
+  it('trusts nothing in a response with a query-wide error, and says so', () => {
     const lookup: RepoLookup = new Map();
-    readBatch(['a/one'], { data: { r0: null }, errors: [{ message: 'Something went wrong' }] }, lookup);
+    expect(
+      readBatch(['a/one'], { data: { r0: null }, errors: [{ type: 'RATE_LIMITED', message: 'Slow down' }] }, lookup),
+    ).toEqual({ queryError: 'RATE_LIMITED: Slow down', failed: 0 });
+    expect(readBatch(['a/one'], { data: null }, lookup).queryError).toBe('no data in the response');
     expect(lookup.size).toBe(0);
   });
 
-  const respond = (body: unknown, status = 200) =>
-    new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
-
-  it('batches 100 per query and adds up the cost', async () => {
-    const keys = Array.from({ length: 250 }, (_, i) => `o/r${i}`);
-    const bodies: { variables: Record<string, string> }[] = [];
-    const result = await fetchRepos(keys, 'token', async (_url, init) => {
-      const body = JSON.parse(String(init!.body));
-      bodies.push(body);
-      const count = Object.keys(body.variables).length / 2;
-      const data: Record<string, unknown> = { rateLimit: { cost: 2, remaining: 900, resetAt: '' } };
-      for (let i = 0; i < count; i++) data[`r${i}`] = node(`o/${body.variables[`n${i}`]}`);
+  const respond = (body: unknown, status = 200, headers: Record<string, string> = {}) =>
+    new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', ...headers } });
+  /** Answers every repository in the query; `rate` is what rateLimit reports. */
+  const answer =
+    (rate = { cost: 1, remaining: 900 }, fail?: (keys: string[]) => Response | null) =>
+    async (_url: unknown, init?: RequestInit) => {
+      const { variables } = JSON.parse(String(init!.body)) as { variables: Record<string, string> };
+      const keys = Object.keys(variables)
+        .filter((k) => k.startsWith('n'))
+        .map((k) => `${variables[`o${k.slice(1)}`]}/${variables[k]}`);
+      const failed = fail?.(keys);
+      if (failed) return failed;
+      const data: Record<string, unknown> = { rateLimit: { ...rate, resetAt: '' } };
+      keys.forEach((key, i) => (data[`r${i}`] = node(key)));
       return respond({ data });
+    };
+  const sizes = (calls: string[][]) => calls.map((c) => c.length);
+
+  it('batches 50 per query and adds up the cost', async () => {
+    const keys = Array.from({ length: 120 }, (_, i) => `o/r${i}`);
+    const calls: string[][] = [];
+    const reply = answer({ cost: 2, remaining: 900 });
+    const result = await fetchRepos(keys, 'token', async (url, init) => {
+      calls.push(Object.keys(JSON.parse(String(init!.body)).variables).filter((k) => k[0] === 'n'));
+      return reply(url, init);
     });
-    expect(bodies.map((b) => Object.keys(b.variables).length / 2)).toEqual([100, 100, 50]);
+    expect(sizes(calls)).toEqual([50, 50, 20]);
     expect(result).toMatchObject({ cost: 6, queries: 3, warning: null });
-    expect(result.lookup.size).toBe(250);
+    expect(result.lookup.size).toBe(120);
   });
 
-  it('stops before the budget runs out, keeping what it has', async () => {
+  it('sends one query first and stops when the budget is low, keeping what it has', async () => {
     const keys = Array.from({ length: 600 }, (_, i) => `o/r${i}`);
+    let calls = 0;
+    const reply = answer({ cost: 3, remaining: 10 });
+    const result = await fetchRepos(keys, 'token', async (url, init) => {
+      calls++;
+      return reply(url, init);
+    });
+    expect(calls).toBe(1);
+    expect(result.lookup.size).toBe(50);
+    expect(result.warning).toMatch(/budget ran low \(10 points left\): 550 of 600/);
+  });
+
+  it('reads the budget from the rate-limit header too', async () => {
+    const keys = Array.from({ length: 200 }, (_, i) => `o/r${i}`);
     let calls = 0;
     const result = await fetchRepos(keys, 'token', async () => {
       calls++;
-      return respond({ data: { rateLimit: { cost: 3, remaining: 10, resetAt: '' } } });
+      return respond({ message: 'API rate limit exceeded' }, 403, { 'x-ratelimit-remaining': '0' });
     });
+    expect(calls).toBe(1);
+    expect(result.warning).toMatch(/budget ran low \(0 points left\)/);
+  });
+
+  it('splits a batch that times out and retries the halves', async () => {
+    const keys = Array.from({ length: 50 }, (_, i) => `o/r${i}`);
+    const calls: number[] = [];
+    const result = await fetchRepos(
+      keys,
+      'token',
+      answer(undefined, (batch) => {
+        calls.push(batch.length);
+        return batch.length > 25 ? respond({ message: 'Gateway timeout' }, 504) : null;
+      }),
+    );
+    expect(calls).toEqual([50, 25, 25]);
+    expect(result.lookup.size).toBe(50);
+    expect(result.warning).toBeNull();
+  });
+
+  it('treats a GraphQL error in a 200 response as a failure, not an answer', async () => {
+    const keys = Array.from({ length: 8 }, (_, i) => `o/r${i}`);
+    let calls = 0;
+    const result = await fetchRepos(keys, 'token', async () => {
+      calls++;
+      return respond({ data: null, errors: [{ type: 'RATE_LIMITED', message: 'Slow down' }] });
+    });
+    // A small batch: tried twice.
     expect(calls).toBe(2);
-    expect(result.warning).toMatch(/budget ran low/);
+    expect(result.lookup.size).toBe(0);
+    expect(result.warning).toMatch(/8 of 8 repositories not looked up \(last error: Error: RATE_LIMITED: Slow down\)/);
+  });
+
+  it('warns about repositories that failed inside an answered batch', async () => {
+    const result = await fetchRepos(['a/one', 'b/two'], 'token', async () =>
+      respond({
+        data: { rateLimit: { cost: 1, remaining: 900, resetAt: '' }, r0: node('a/one'), r1: null },
+        errors: [{ type: 'SERVICE_UNAVAILABLE', path: ['r1'], message: 'Timeout' }],
+      }),
+    );
+    expect(result.lookup.size).toBe(1);
+    expect(result.warning).toMatch(/1 of 2 repositories not looked up/);
   });
 
   it('gives up after repeated failures, with a warning', async () => {
@@ -221,7 +303,7 @@ describe('GitHub GraphQL', () => {
       return respond({ message: 'Bad gateway' }, 502);
     });
     expect(result.lookup.size).toBe(0);
-    expect(calls).toBeLessThan(12);
-    expect(result.warning).toMatch(/kept failing/);
+    expect(calls).toBeLessThan(30);
+    expect(result.warning).toMatch(/kept failing: 1000 of 1000 repositories not looked up \(last error: Error: HTTP 502\)/);
   });
 });

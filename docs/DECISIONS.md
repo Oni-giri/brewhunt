@@ -50,7 +50,7 @@ A cask that installs only command-line programs (`binary`, no app, pkg or plugin
 
 ## GitHub repositories from download URLs (30 Oct 2026)
 
-Homebrew gives a homepage, which is rarely the repository (gh's is cli.github.com). The data job also reads the formula `urls.stable`/`urls.head`, the cask `url` and community taps' `url`/`head` stanzas, keeps the `github.com/owner/repo` candidates and looks them up with GitHub GraphQL (`scripts/data/repos.ts`, about 8,100 repositories in 82 queries and 82 points of the hourly budget, about 4 minutes).
+Homebrew gives a homepage, which is rarely the repository (gh's is cli.github.com). The data job also reads the formula `urls.stable`/`urls.head`, the cask `url` and community taps' `url`/`head` stanzas, keeps the `github.com/owner/repo` candidates and looks them up with GitHub GraphQL (`scripts/data/repos.ts`, about 8,100 repositories in about 165 queries of 50, one point each, a few minutes).
 
 **Accepted when** the repository isn't a fork and: the homepage is the repository (the author's own word); or its name, owner, owner and name together, or a whole word of its name is the package's token (without `@version`) or display name (docker/compose for docker-compose, obsidianmd/obsidian-releases for obsidian); or its own homepage is on the same host as the package's (cli/cli is cli.github.com; the full hostname, never just the domain). Parts of words never match ("go" isn't in "mongo").
 
@@ -58,5 +58,7 @@ Homebrew gives a homepage, which is rarely the repository (gh's is cli.github.co
 
 **Checked on 30 Oct 2026:** 49 of the 60 most installed formulae and 20 of the 60 most installed casks get a repository (plan: 45 and 15). The 531 accepted only on owner or hostname were reviewed by hand from the most installed down; the questionable-looking ones were right (docker → docker/cli, telnet → apple-oss-distributions/remote_cmds).
 
-**Failure:** a candidate GitHub doesn't answer keeps yesterday's result, a repository GitHub says is gone is dropped, and the run never fails over it (a warning in meta.json).
+**Failure:** a batch that fails (HTTP error, or a GraphQL error about the whole query) is split in half and retried; one query goes first to learn the budget, and the lookup stops before it runs out. A package whose candidates GitHub didn't all answer keeps yesterday's repository, unless GitHub said that one is gone or no longer qualifies. The run never fails over it: meta.json gets a warning with the count and the last error.
+
+**Two repositories:** when the homepage is a repository (GitLab, Codeberg) and the GitHub one found is different (a mirror), the app page links both, and "Report an issue" goes to the homepage's.
 

@@ -105,12 +105,23 @@ export const repoKind = (info: RepoInfo): Repo['kind'] =>
 
 /**
  * The package's repository from today's lookup: a Repo, null when no candidate qualifies, or
- * undefined when a candidate wasn't looked up today (the caller keeps yesterday's answer).
+ * undefined when that depends on a candidate GitHub didn't answer today (the caller keeps
+ * yesterday's `previous`). Yesterday's repository is dropped once GitHub says it's gone or no
+ * longer qualifies, whatever else went unanswered.
  */
-export function pickRepo(pkg: RepoOwnerOf, keys: readonly string[], lookup: RepoLookup): Repo | null | undefined {
+export function pickRepo(
+  pkg: RepoOwnerOf,
+  keys: readonly string[],
+  lookup: RepoLookup,
+  previous: Repo | null = null,
+): Repo | null | undefined {
   const homepageKey = repoKey(pkg.homepage);
+  let unanswered = false;
   for (const key of keys) {
-    if (!lookup.has(key)) return undefined;
+    if (!lookup.has(key)) {
+      unanswered = true;
+      continue;
+    }
     const info = lookup.get(key);
     if (info && isOwnRepo(pkg, info, key === homepageKey)) {
       return {
@@ -123,16 +134,30 @@ export function pickRepo(pkg: RepoOwnerOf, keys: readonly string[], lookup: Repo
       };
     }
   }
-  return null;
+  if (!unanswered) return null;
+  if (previous) {
+    const key = previous.name.toLowerCase();
+    const info = lookup.get(key);
+    if (lookup.has(key) && !(info && isOwnRepo(pkg, info, key === homepageKey))) return null;
+  }
+  return undefined;
 }
 
 // --- GitHub ---
 
 const ENDPOINT = 'https://api.github.com/graphql';
-/** Repositories per query: GraphQL's node limit makes 100 the practical maximum. */
-export const BATCH = 100;
+/**
+ * Repositories per query. 100 is GraphQL's limit, but GitHub times out (502/504) on some batches
+ * that size; a batch that fails is split in half and tried again.
+ */
+export const BATCH = 50;
+const MIN_BATCH = 10;
+/** Queries in flight once the first one has shown the budget. */
+const CONCURRENCY = 2;
+/** Batches of MIN_BATCH or fewer that failed twice before the lookup gives up. */
+const MAX_FAILURES = 3;
 
-// Counting releases (`releases { totalCount }`) times out at this size; the latest one is cheap.
+// Counting releases (`releases { totalCount }`) times out; the latest one is cheap.
 const FIELDS = `nameWithOwner url isFork isArchived stargazerCount pushedAt homepageUrl
   languages(first: 1) { totalCount } latestRelease { createdAt }`;
 
@@ -149,7 +174,7 @@ interface RepoNode {
 }
 
 interface Response {
-  data?: { rateLimit?: { cost: number; remaining: number; resetAt: string } } & Record<string, unknown>;
+  data?: ({ rateLimit?: { cost: number; remaining: number; resetAt: string } } & Record<string, unknown>) | null;
   errors?: { type?: string; path?: (string | number)[]; message: string }[];
 }
 
@@ -175,22 +200,29 @@ fragment F on Repository { ${FIELDS} }`;
 
 /**
  * Reads one batch's response into `lookup`. A repository that doesn't exist comes back as null
- * with a NOT_FOUND error beside the others; any other error leaves that key out (not known today).
+ * with a NOT_FOUND error beside the others. Any other error on one repository leaves its key out
+ * (not known today); an error about the whole query (rate limit, timeout) changes nothing and is
+ * returned, for the caller to retry.
  */
-export function readBatch(keys: readonly string[], response: Response, lookup: RepoLookup): void {
+export function readBatch(
+  keys: readonly string[],
+  response: Response,
+  lookup: RepoLookup,
+): { queryError: string | null; failed: number } {
   const failed = new Set<number>();
   for (const error of response.errors ?? []) {
     const alias = error.path?.[0];
     const i = typeof alias === 'string' && /^r\d+$/.test(alias) ? Number(alias.slice(1)) : -1;
-    if (i < 0) {
-      // An error about the whole query: nothing in it can be trusted as "not found".
-      for (let j = 0; j < keys.length; j++) failed.add(j);
-    } else if (error.type !== 'NOT_FOUND') failed.add(i);
+    if (i < 0 || i >= keys.length) return { queryError: `${error.type ?? 'error'}: ${error.message}`, failed: 0 };
+    if (error.type !== 'NOT_FOUND') failed.add(i);
   }
+  if (!response.data) return { queryError: 'no data in the response', failed: 0 };
   keys.forEach((key, i) => {
-    if (failed.has(i)) return;
     const node = response.data?.[`r${i}`] as RepoNode | null | undefined;
-    if (node === undefined) return;
+    if (failed.has(i) || node === undefined) {
+      failed.add(i);
+      return;
+    }
     lookup.set(
       key,
       node === null
@@ -208,6 +240,7 @@ export function readBatch(keys: readonly string[], response: Response, lookup: R
           },
     );
   });
+  return { queryError: null, failed: failed.size };
 }
 
 export interface FetchReposResult {
@@ -220,8 +253,10 @@ export interface FetchReposResult {
 }
 
 /**
- * Looks up every candidate, 100 per query, two queries at a time. Stops (keeping what it has)
- * when the hourly budget couldn't cover the next queries or GitHub keeps failing.
+ * Looks up every candidate, BATCH per query: one query first to learn the budget, then
+ * CONCURRENCY at a time. A batch that fails is split in half (or, at MIN_BATCH, retried once).
+ * Stops, keeping what it has, when the hourly budget couldn't cover the next queries or GitHub
+ * keeps failing.
  */
 export async function fetchRepos(
   keys: readonly string[],
@@ -229,55 +264,79 @@ export async function fetchRepos(
   fetchImpl: typeof fetch = fetch,
 ): Promise<FetchReposResult> {
   const lookup: RepoLookup = new Map();
-  const batches: string[][] = [];
-  for (let i = 0; i < keys.length; i += BATCH) batches.push(keys.slice(i, i + BATCH));
+  const queue: { keys: string[]; tries: number }[] = [];
+  for (let i = 0; i < keys.length; i += BATCH) queue.push({ keys: keys.slice(i, i + BATCH), tries: 0 });
   let cost = 0;
   let queries = 0;
   let lastCost = 1;
   let remaining = Infinity;
   let failures = 0;
-  let warning: string | null = null;
+  let unanswered = 0;
+  let lastError: string | null = null;
+  let stopped: string | null = null;
 
-  const run = async (batch: string[]) => {
-    const body = JSON.stringify(batchQuery(batch));
-    for (let attempt = 0; attempt < 2; attempt++) {
-      try {
-        const res = await fetchImpl(ENDPOINT, {
-          method: 'POST',
-          headers: { authorization: `bearer ${token}`, 'content-type': 'application/json', 'user-agent': 'brewhunt' },
-          body,
-          signal: AbortSignal.timeout(30_000),
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const response = (await res.json()) as Response;
-        queries++;
-        const rate = response.data?.rateLimit;
-        if (rate) {
-          cost += rate.cost;
-          lastCost = rate.cost;
-          remaining = Math.min(remaining, rate.remaining);
-        }
-        readBatch(batch, response, lookup);
-        return;
-      } catch (error) {
-        if (attempt === 1) {
-          failures++;
-          warning = `GitHub repository lookup failed for some packages: ${String(error)}`;
-        }
+  const query = async (batch: string[]) => {
+    const res = await fetchImpl(ENDPOINT, {
+      method: 'POST',
+      headers: { authorization: `bearer ${token}`, 'content-type': 'application/json', 'user-agent': 'brewhunt' },
+      body: JSON.stringify(batchQuery(batch)),
+      signal: AbortSignal.timeout(30_000),
+    });
+    queries++;
+    const header = Number(res.headers.get('x-ratelimit-remaining') ?? NaN);
+    if (Number.isFinite(header)) remaining = Math.min(remaining, header);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const response = (await res.json()) as Response;
+    const rate = response.data?.rateLimit;
+    if (rate) {
+      cost += rate.cost;
+      lastCost = Math.max(1, rate.cost);
+      remaining = Math.min(remaining, rate.remaining);
+    }
+    const { queryError, failed } = readBatch(batch, response, lookup);
+    if (queryError) throw new Error(queryError);
+    if (failed) {
+      unanswered += failed;
+      lastError = `${failed} repositories failed in a batch`;
+    }
+  };
+
+  const attempt = async (item: { keys: string[]; tries: number }) => {
+    try {
+      await query(item.keys);
+    } catch (error) {
+      lastError = String(error);
+      if (item.keys.length > MIN_BATCH) {
+        const half = Math.ceil(item.keys.length / 2);
+        queue.unshift({ keys: item.keys.slice(0, half), tries: 0 }, { keys: item.keys.slice(half), tries: 0 });
+      } else if (item.tries === 0) {
+        // Straight away, so an outage reaches MAX_FAILURES before every batch has been split.
+        queue.unshift({ keys: item.keys, tries: 1 });
+      } else {
+        failures++;
+        unanswered += item.keys.length;
       }
     }
   };
 
-  for (let i = 0; i < batches.length; i += 2) {
-    if (remaining < lastCost * 4) {
-      warning = `GitHub's GraphQL budget ran low (${remaining} points left): ${batches.length - i} of ${batches.length} repository batches skipped`;
+  let first = true;
+  while (queue.length > 0) {
+    if (remaining < lastCost * (CONCURRENCY + 2)) {
+      stopped = `GitHub's GraphQL budget ran low (${remaining} points left)`;
       break;
     }
-    if (failures >= 3) {
-      warning = `GitHub repository lookup kept failing: ${batches.length - i} of ${batches.length} batches skipped`;
+    if (failures >= MAX_FAILURES) {
+      stopped = 'GitHub repository lookup kept failing';
       break;
     }
-    await Promise.all(batches.slice(i, i + 2).map(run));
+    // The first query alone: it tells us what the budget allows.
+    await Promise.all(queue.splice(0, first ? 1 : CONCURRENCY).map(attempt));
+    first = false;
   }
+  for (const item of queue) unanswered += item.keys.length;
+  const warning =
+    unanswered === 0
+      ? null
+      : `${stopped ?? 'GitHub repository lookup incomplete'}: ${unanswered} of ${keys.length} repositories not looked up (last error: ${lastError}); their packages keep yesterday's repository`;
   return { lookup, cost, queries, warning };
 }

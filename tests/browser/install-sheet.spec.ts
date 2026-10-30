@@ -53,7 +53,8 @@ test('sheet: a modifier click opens the app page instead', async ({ page, contex
     get.click({ modifiers: ['ControlOrMeta'] }),
   ]);
   await expect(page.locator('#install-sheet')).toBeHidden();
-  expect(popup.url()).toMatch(/#install$/);
+  // The new tab starts at about:blank before it navigates.
+  await popup.waitForURL(/#install$/);
 });
 
 test('sheet: community packages say they are not reviewed by Homebrew', async ({ page }) => {

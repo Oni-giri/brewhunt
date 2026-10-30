@@ -343,6 +343,17 @@ export function forgeOwner(url: string | null): string | null {
   return m ? m[1] : null;
 }
 
+/**
+ * Issues page of a homepage repository (sourceRepo): GitLab's under `/-/issues`, Codeberg's under
+ * `/issues`. GitHub's comes from the data job's repository check instead, so null here.
+ */
+export function forgeIssues(repo: string): string | null {
+  const host = new URL(repo).hostname;
+  if (host === 'gitlab.com') return `${repo}/-/issues`;
+  if (host === 'codeberg.org') return `${repo}/issues`;
+  return null;
+}
+
 /** The source repository when the homepage is one. */
 export function sourceRepo(url: string | null): string | null {
   if (!url) return null;

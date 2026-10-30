@@ -104,7 +104,18 @@ jobs:
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       # Downloads Chromium unless cached; always installs the system libraries it needs.
       - run: npx playwright install --with-deps --only-shell chromium
-      - run: npm run test:browser
+      # The daily data run (data.yml passes data-ref) changes only data: it runs the checks new
+      # data can break (layout and errors on every page type, accessibility, search speed).
+      # Pushes and PRs run everything.
+      - name: Browser tests
+        env:
+          DATA_RUN: ${{ inputs.data-ref != '' }}
+        run: |
+          if [ "$DATA_RUN" = "true" ]; then
+            npm run test:browser -- layout a11y search-timing
+          else
+            npm run test:browser
+          fi
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:

@@ -123,6 +123,8 @@ export interface Item {
   // Matching, all normalized:
   /** Whole names that count as an exact match: id, token, name and every alt. */
   keys: string[];
+  /** What `brew install` takes: token and id. */
+  ids: string[];
   /** What 1–2 character queries match the start of: id, token and alts. */
   shortKeys: string[];
   /** Name and token, for "starts with". */
@@ -188,6 +190,7 @@ export function prepare(index: SearchIndex): SearchData {
       installCommand: index.command[row] ?? `brew install ${kind === 'cask' ? '--cask ' : ''}${id}`,
       categories,
       keys: addUnique([normToken], normId, normName, ...normAlts),
+      ids: addUnique([normToken], normId),
       shortKeys: addUnique([normToken], normId, ...normAlts),
       heads: normName === normToken ? [normName] : [normName, normToken],
       nameWords: spaced(normName, normName === normToken ? '' : normToken),
@@ -315,8 +318,10 @@ export function score(item: Item, query: Query, every = true): number {
   if (query.short) {
     if (exact) base = TIER.exact;
     else if (item.shortKeys.some((k) => k.startsWith(query.text))) base = TIER.namePrefix;
-  } else if (exact && query.tokens.length > 1) {
-    // The whole query is one of its names: "visual studio code", "postgresql 17".
+  } else if (exact && (query.tokens.length > 1 || item.ids.includes(query.text))) {
+    // The whole query is what you'd install it by ("iperf", "duck") or its full multi-word name
+    // ("visual studio code"): first, however few installs it has. A one-word display name or
+    // keyword ("Notes") still counts by how established the package is (tokenScore).
     base = TIER.exact * query.tokens.length;
   } else {
     for (const token of query.tokens) {

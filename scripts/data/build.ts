@@ -470,7 +470,12 @@ export function buildCatalog(input: BuildInput): BuildOutput {
     const picked =
       draft.sourceUrls === null
         ? undefined
-        : pickRepo(pkg, candidates(pkg.homepage, draft.sourceUrls), input.repos);
+        : pickRepo(
+            pkg,
+            candidates(pkg.homepage, draft.sourceUrls),
+            input.repos,
+            previousRepo.get(pkg.id) ?? null,
+          );
     const repo = picked === undefined ? (previousRepo.get(pkg.id) ?? null) : picked;
     packages.push({
       ...pkg,

@@ -12,6 +12,7 @@ import {
   brewCommand,
   categoryRank,
   displayVersion,
+  forgeIssues,
   forgeOwner,
   getCatalog,
   kindLabel,
@@ -50,11 +51,25 @@ const license = licenseLabel(entry);
 const version = displayVersion(entry);
 const updated = entry.updatedKind === 'version' && entry.updatedAt ? entry.updatedAt : null;
 const developer = entry.developer ?? forgeOwner(entry.homepage);
-// The GitHub repository the pipeline found (repos.ts), else a GitLab or Codeberg homepage.
+// The repository the homepage is (GitHub, GitLab or Codeberg) and the GitHub repository the data
+// job found (repos.ts) are usually the same. When they differ (a GitHub mirror of a Codeberg
+// project) both are linked, and issues go to the homepage's: that's where the project says it lives.
 const homepageRepo = sourceRepo(entry.homepage);
-const repo = entry.repo?.url ?? homepageRepo;
-const repoLabel = entry.repo?.kind === 'releases' ? 'Downloads on GitHub' : 'Source code';
-const canReport = entry.repo?.kind === 'source' && !entry.repo.archived;
+const github = entry.repo;
+const separate =
+  !!github && !!homepageRepo && homepageRepo.toLowerCase() !== github.url.toLowerCase();
+const githubLabel =
+  github?.kind === 'releases'
+    ? 'Downloads on GitHub'
+    : separate
+      ? 'GitHub repository'
+      : 'Source code';
+const issuesUrl =
+  github && !separate
+    ? github.kind === 'source' && !github.archived
+      ? `${github.url}/issues`
+      : null
+    : homepageRepo && forgeIssues(homepageRepo);
 // Links from community taps are the tap author's word, not ours or Homebrew's.
 const externalRel = community ? 'nofollow noopener ugc' : 'noopener';
 
@@ -368,22 +383,25 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
                 Website
               </a>
             )}
-            {repo && (
+            {homepageRepo && (!github || separate) && (
+              <a href={homepageRepo} rel={externalRel}>
+                Source code
+              </a>
+            )}
+            {github && (
               <span class="repo">
-                <a href={repo} rel={externalRel}>
-                  {repoLabel}
+                <a href={github.url} rel={externalRel}>
+                  {githubLabel}
                 </a>
-                {entry.repo && (
-                  <span class="stars">
-                    <span aria-hidden="true">★</span>
-                    <span class="visually-hidden">GitHub stars:</span>
-                    {compactNumber(entry.repo.stars)}
-                  </span>
-                )}
+                <span class="stars">
+                  <span aria-hidden="true">★</span>
+                  <span class="visually-hidden">GitHub stars:</span>
+                  {compactNumber(github.stars)}
+                </span>
               </span>
             )}
-            {canReport && (
-              <a href={`${repo}/issues`} rel={externalRel}>
+            {issuesUrl && (
+              <a href={issuesUrl} rel={externalRel}>
                 Report an issue
               </a>
             )}

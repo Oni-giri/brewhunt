@@ -128,6 +128,10 @@ const entries: IndexEntry[] = [
   cask('frappe-books', 'Frappe Books', 'Book-keeping software for small businesses', 18),
   cask('zettlr', 'Zettlr', 'Markdown editor for writing', 20),
   formula('zk', 'Plain text Zettelkasten notes', 5_000),
+  formula('iperf', 'Tool to measure maximum TCP and UDP bandwidth', 40),
+  formula('iperf3', 'Update of iperf: measures TCP, UDP, and SCTP bandwidth', 5_000),
+  cask('notes-better', 'Notes', 'Simple notes', 8),
+  cask('bear', 'Bear', 'Notes app for Markdown writing', 4_000),
   cask('café', 'Café Ünïcode', 'Accented name', 10),
   cask('fontless', 'Disabled thing', 'No page', 99_999, { hasPage: false }),
 ];
@@ -149,6 +153,7 @@ const categories = [
     name: 'Terminal tools',
     packages: [{ id: 'ripgrep' }, { id: 'postgresql@18' }, { id: 'missing-package' }],
   },
+  { slug: 'writing-notes', name: 'Writing & notes', packages: [{ id: 'bear' }] },
 ];
 const collections = [
   {
@@ -307,6 +312,16 @@ describe('search ranking', () => {
     expect(ids('zettlr')[0]).toBe('zettlr');
   });
 
+  it('puts the package you’d install by that name first, however few installs it has', () => {
+    expect(ids('iperf')).toEqual(['iperf', 'iperf3']);
+  });
+
+  it('weighs a one-word display name by how established the package is', () => {
+    // "Notes" is notes-better's display name, not what you install it by: an established app
+    // filed under Writing & notes comes first.
+    expect(ids('notes').slice(0, 2)).toEqual(['bear', 'notes-better']);
+  });
+
   it('ranks versioned, deprecated, library and Linux-only packages lower', () => {
     expect(ids('firefox')).toEqual(['firefox', 'firefoxpwa', 'firefox@nightly']);
     expect(ids('youtube')[0]).toBe('yt-dlp');
@@ -362,7 +377,7 @@ describe('filters and sorts', () => {
   it('filters by categories (any of them) and counts each category', () => {
     const results = search(data, '', { ...noFilters, categories: ['browsers'] }, 'installs');
     expect(results.items.map((i) => i.id)).toEqual(['google-chrome', 'firefox']);
-    expect(results.categoryCounts).toEqual([4, 2, 2]);
+    expect(results.categoryCounts).toEqual([4, 2, 2, 1]);
     expect(
       ids('', { categories: ['browsers', 'windows-desktop'] }, 'installs').slice(0, 3),
     ).toEqual(['google-chrome', 'firefox', 'rectangle']);
