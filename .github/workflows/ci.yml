@@ -21,6 +21,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -82,6 +83,7 @@ jobs:
   browser:
     needs: check
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -102,8 +104,15 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
-      # Downloads Chromium unless cached; always installs the system libraries it needs.
-      - run: npx playwright install --with-deps --only-shell chromium
+      # Downloads Chromium unless cached; always installs the system libraries it needs. Usually
+      # 15s; the apt step once hung for half an hour, so it gets 4 minutes and one retry.
+      - name: Install Chromium
+        run: |
+          for attempt in 1 2; do
+            timeout 240 npx playwright install --with-deps --only-shell chromium && exit 0
+            echo "::warning::Installing Chromium failed or hung (attempt $attempt)"
+          done
+          exit 1
       # The daily data run (data.yml passes data-ref) changes only data: it runs the checks new
       # data can break (layout and errors on every page type, accessibility, search speed).
       # Pushes and PRs run everything.
@@ -129,6 +138,7 @@ jobs:
     needs: [check, browser]
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     concurrency:
       group: deploy-production
       cancel-in-progress: true
