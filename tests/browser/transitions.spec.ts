@@ -79,6 +79,27 @@ test('the thumb keeps up with a narrower window', async ({ page }) => {
   await expect.poll(() => thumbOffset(page, '[data-tabs]')).toBeLessThan(1);
 });
 
+test('a tab bar wider than the screen fades the side that is scrolled away', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/new');
+  const list = page.locator('[data-controls] [role="tablist"]');
+  await expect(list).toHaveAttribute('data-more', 'end');
+  await list.locator('[role="tab"]').first().focus();
+  await page.keyboard.press('End');
+  await expect(list).toHaveAttribute('data-more', 'start');
+});
+
+test('turning bold does not move the tabs', async ({ page }) => {
+  await page.goto('/new');
+  const lefts = () =>
+    page
+      .locator('[data-controls] [role="tab"]')
+      .evaluateAll((tabs) => tabs.map((t) => t.getBoundingClientRect().left));
+  const before = await lefts();
+  await page.locator('[data-controls] [role="tab"]').nth(1).click();
+  expect(await lefts()).toEqual(before);
+});
+
 test('same-site navigation fades between pages; header and footer move on their own', async ({
   page,
 }) => {

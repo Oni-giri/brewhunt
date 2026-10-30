@@ -79,6 +79,21 @@ pre {
 }
 .has-thumb > [role='tab'] {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition:
+    color 0.2s ease-out,
+    font-weight 0.2s ease-out;
+}
+/* An invisible bold copy of the label holds the tab at its bold width. */
+.has-thumb > [role='tab']::after {
+  content: attr(data-label);
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  font-weight: 600;
 }
 .tab-thumb {
   position: absolute;
@@ -95,7 +110,24 @@ pre {
     transform 0.2s ease-out,
     width 0.2s ease-out;
 }
+/* A list wider than the screen scrolls; the hidden side fades out. */
+.has-thumb[data-more='end'] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent);
+}
+.has-thumb[data-more='start'] {
+  mask-image: linear-gradient(to left, #000 calc(100% - 48px), transparent);
+}
+.has-thumb[data-more='both'] {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 48px,
+    #000 calc(100% - 48px),
+    transparent
+  );
+}
 @media (prefers-reduced-motion: reduce) {
+  .has-thumb > [role='tab'],
   .tab-thumb.ready {
     transition: none;
   }
