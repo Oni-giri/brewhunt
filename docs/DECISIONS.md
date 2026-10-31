@@ -62,6 +62,14 @@ A cask that installs only command-line programs (`binary`, no app, pkg or plugin
 
 **To reverse:** remove the `caskflow:` lists, and categories go back to the editors' lists.
 
+## Editor's picks without the screenshot area (31 Oct 2026)
+
+**Design:** pick cards (landing, Discover, category pages) open with a large area for a screenshot.
+
+**Decision (owner, 31 Oct 2026):** there are no screenshots yet, and a bigger copy of the icon in that space only repeated the row below it, so the cards start with the icon, name and Get, and the editors' blurb carries them. On Discover the pick takes half the row next to the collections instead of two thirds.
+
+**To reverse:** when phase C/D brings real screenshots, a pick that has one shows it in that space; a pick without one keeps the compact card.
+
 ## GitHub repositories from download URLs (30 Oct 2026)
 
 Homebrew gives a homepage, which is rarely the repository (gh's is cli.github.com). The data job also reads the formula `urls.stable`/`urls.head`, the cask `url` and community taps' `url`/`head` stanzas, keeps the `github.com/owner/repo` candidates and looks them up with GitHub GraphQL (`scripts/data/repos.ts`, about 8,100 repositories in about 165 queries of 50, one point each, one at a time: about 8 minutes).

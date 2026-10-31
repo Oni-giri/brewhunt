@@ -106,9 +106,6 @@ const others = categories.filter((c) => c.slug !== category.slug);
   <div class="container page body">
     {pick && (
       <section class="pick" aria-labelledby="pick-name">
-        <a class="stage" href={pick.entry.url} tabindex="-1" aria-hidden="true">
-          <AppIcon pkg={pick.entry} size={96} raised />
-        </a>
         <div class="pick-body">
           <span class="eyebrow">Editor's pick</span>
           <a class="pick-id" href={pick.entry.url}>
@@ -312,21 +309,6 @@ const others = categories.filter((c) => c.slug !== category.slug);
     background: var(--surface);
     border: 1px solid var(--border);
   }
-  .stage {
-    flex: 1 1 300px;
-    text-decoration: none;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background:
-      radial-gradient(
-        ellipse 60% 30% at 50% 108%,
-        rgba(255, 255, 255, 0.95),
-        rgba(255, 255, 255, 0) 70%
-      ),
-      linear-gradient(180deg, #2459d8, #a9cff6);
-  }
   .pick-body {
     flex: 2 1 380px;
     display: flex;
@@ -433,9 +415,6 @@ const others = categories.filter((c) => c.slug !== category.slug);
   @media (max-width: 480px) {
     .pick-body {
       padding: 24px;
-    }
-    .stage {
-      min-height: 160px;
     }
   }
 </style>

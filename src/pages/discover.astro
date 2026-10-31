@@ -94,10 +94,6 @@ const d30End = shortDate(meta.analytics.d30.end);
         </h2>
         {featured && (
           <article class="pick" id="editors-pick" aria-labelledby="pick-name">
-            {/* No screenshots until a developer claims the listing: the icon stands in. */}
-            <a class="stage lift" href={featured.entry.url} tabindex="-1" aria-hidden="true">
-              <AppIcon pkg={featured.entry} size={112} raised />
-            </a>
             <div class="pick-body">
               <span class="eyebrow">Editor's pick</span>
               <a class="pick-id" href={featured.entry.url}>
@@ -320,8 +316,9 @@ const d30End = shortDate(meta.analytics.d30.end);
     flex-wrap: wrap;
     gap: 20px;
   }
+  /* Without a screenshot the pick is text only: half the row, beside the collections. */
   .pick {
-    flex: 2 1 640px;
+    flex: 1 1 420px;
     min-width: 0;
     display: flex;
     flex-wrap: wrap;
@@ -330,26 +327,6 @@ const d30End = shortDate(meta.analytics.d30.end);
     background: var(--surface);
     border: 1px solid var(--border);
   }
-  .stage {
-    flex: 1 1 320px;
-    min-height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    background:
-      radial-gradient(
-        ellipse 60% 30% at 50% 108%,
-        rgba(255, 255, 255, 0.95),
-        rgba(255, 255, 255, 0) 70%
-      ),
-      linear-gradient(180deg, #2459d8, #a9cff6);
-  }
-  /* The stage is clipped by the card, so it lifts without a shadow. */
-  .stage.lift:hover {
-    box-shadow: none;
-  }
-  /* home.html sizes the body's content box: 300px + 2 × 32px padding. */
   .pick-body {
     flex: 1 1 364px;
     min-width: 0;
