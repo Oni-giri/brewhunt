@@ -53,6 +53,7 @@ Codex review after A1–A2 and after A3–A4.
 ## Phase B · New pages
 
 **B1 Header search suggestions.** Combobox in the header search: after 2 characters, up to 6 results with icon, name and line; arrows move, Enter opens the app, last option "See all results for …". Small suggest file (top ~3,000 listed packages: id, name, line, icon flag, popularity; ~80KB gzip) built next to the search index, loaded on first focus, same scoring code as `/search`. WAI-ARIA combobox, Escape closes, works at 390, in the Phase 0 suites.
+- Done 31 Oct 2026: `src/pages/search-suggest.json.ts` builds the full index's format for the 3,000 most installed listed packages, without dates and trends (80KB gzipped), so the header runs `prepare()` and `search()` from `src/lib/search.ts` unchanged; the file and the search code load on first focus. Rows show the Community badge (Official vs Community always visible). Nothing is highlighted until an arrow key, so typing and Enter still goes to `/search`. Escape closes the list first, then the search. Tests in `tests/browser/header.spec.ts`, plus axe with the list open in `a11y.spec.ts`.
 
 **B2 Categories.**
 - The data job downloads CaskFlow's `categories.json` (latest release; keep-yesterday rules as for icons) to `data/site/caskflow-categories.json`.

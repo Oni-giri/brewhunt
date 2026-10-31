@@ -24,3 +24,17 @@ for (const width of [1280, 390]) {
     }
   });
 }
+
+// The sweep above sees the header's suggestions hidden; check them open, with one highlighted.
+for (const width of [1280, 390]) {
+  test(`header suggestions open at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/discover');
+    await page.locator('[data-search-toggle]').click();
+    await page.keyboard.type('aerospace');
+    await expect(page.locator('#header-suggest [role="option"]').nth(1)).toBeAttached();
+    await page.keyboard.press('ArrowDown');
+    const { violations } = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+    expect(violations.map((v) => `${v.id}: ${v.nodes[0]?.target.join(' ')}`)).toEqual([]);
+  });
+}

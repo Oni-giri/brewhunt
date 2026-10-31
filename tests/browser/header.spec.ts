@@ -99,3 +99,98 @@ test.describe('with reduced motion', () => {
     expect(wall.button).toBe('none');
   });
 });
+
+const suggestion = '#header-suggest [role="option"]';
+
+for (const width of [1280, 390]) {
+  test.describe(`header suggestions at ${width}px`, () => {
+    test.use({ viewport: { width, height: 900 } });
+
+    test('appear from the second character, with "See all results" last', async ({ page }) => {
+      await page.goto('/discover');
+      await page.locator('[data-search-toggle]').click();
+      const input = page.locator('#header-q');
+      await page.keyboard.type('r');
+      await expect(page.locator('#header-suggest')).toBeHidden();
+      await expect(input).toHaveAttribute('aria-expanded', 'false');
+      await page.keyboard.type('ectan');
+      await expect(input).toHaveAttribute('aria-expanded', 'true');
+      await expect(page.locator(suggestion).first()).toHaveAttribute('href', '/app/rectangle');
+      const count = await page.locator(suggestion).count();
+      expect(count).toBeGreaterThan(1);
+      expect(count).toBeLessThanOrEqual(7);
+      await expect(page.locator(suggestion).last()).toHaveText('See all results for “rectan”');
+      // Fits the window: nothing scrolls sideways.
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+    });
+
+    test('arrows highlight, Enter opens the highlighted app', async ({ page }) => {
+      await page.goto('/discover');
+      await page.locator('[data-search-toggle]').click();
+      const input = page.locator('#header-q');
+      await page.keyboard.type('firefox');
+      await expect(page.locator(suggestion).first()).toHaveAttribute('href', '/app/firefox');
+      await expect(input).not.toHaveAttribute('aria-activedescendant');
+      await page.keyboard.press('ArrowDown');
+      await expect(input).toHaveAttribute('aria-activedescendant', 'header-suggest-0');
+      await expect(page.locator(suggestion).first()).toHaveAttribute('aria-selected', 'true');
+      await expect(input).toBeFocused();
+      await page.keyboard.press('Enter');
+      await page.waitForURL(/\/app\/firefox$/);
+    });
+  });
+}
+
+test('header suggestions: ArrowUp reaches "See all results"', async ({ page }) => {
+  await page.goto('/discover');
+  await page.locator('[data-search-toggle]').click();
+  await page.keyboard.type('window manager');
+  await expect(page.locator(suggestion).nth(1)).toBeAttached();
+  await page.keyboard.press('ArrowUp');
+  await expect(page.locator('#header-q')).toHaveAttribute(
+    'aria-activedescendant',
+    'header-suggest-all',
+  );
+  await page.keyboard.press('Enter');
+  await page.waitForURL(/\/search\?q=window\+manager$/);
+});
+
+test('header suggestions: a click opens the app', async ({ page }) => {
+  await page.goto('/discover');
+  await page.locator('[data-search-toggle]').click();
+  await page.keyboard.type('wget');
+  await page.locator(suggestion).first().click();
+  await page.waitForURL(/\/app\/wget$/);
+});
+
+test('header suggestions: Escape closes the list, a second Escape the search', async ({ page }) => {
+  await page.goto('/discover');
+  const toggle = page.locator('[data-search-toggle]');
+  await toggle.click();
+  await page.keyboard.type('docker');
+  await expect(page.locator('#header-suggest')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#header-suggest')).toBeHidden();
+  await expect(page.locator('#header-q')).toHaveValue('docker');
+  await expect(page.locator('#header-q')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('[data-search]')).toBeHidden();
+  await expect(toggle).toBeFocused();
+});
+
+test('header suggestions: nothing loads until the search is focused', async ({ page }) => {
+  const asked: string[] = [];
+  page.on('request', (request) => asked.push(new URL(request.url()).pathname));
+  await page.goto('/discover', { waitUntil: 'networkidle' });
+  expect(asked).not.toContain('/search-suggest.json');
+  await page.locator('[data-search-toggle]').click();
+  await expect.poll(() => asked).toContain('/search-suggest.json');
+});
+
+test('header suggestions: community packages carry their badge', async ({ page }) => {
+  await page.goto('/discover');
+  await page.locator('[data-search-toggle]').click();
+  await page.keyboard.type('aerospace');
+  const row = page.locator(`${suggestion}[href="/app/nikitabobko/tap/aerospace"]`);
+  await expect(row.locator('.badge')).toHaveText('Community');
+});

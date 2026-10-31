@@ -8,7 +8,7 @@ Calls made while the owner was away, where the docs said one thing and the const
 
 **Problem:** Cloudflare Pages' free plan allows 20,000 files per deployment (paid plans: 100,000 with `PAGES_WRANGLER_MAJOR_VERSION=4`). Brewhunt has about 15,000 package pages, and Pagefind writes one fragment file per indexed page plus index chunks: about 30,000 files. Pagefind also ranks by text relevance with no popularity signal, and its sort replaces relevance rather than blending with it, so typing "fire" wouldn't reliably put Firefox first.
 
-**Decision:** search runs on a compact JSON index generated at build time (one hashed file, loaded only by `/search`), with matching, scoring, filters and sorts in a small script. It needs no server, so the "plain files anywhere" rule still holds. The search page talks to it through one function (`search(query, filters, sort)`), so Pagefind can come back without touching the UI.
+**Decision:** search runs on a compact JSON index generated at build time (one file, loaded only by `/search`; the header's suggestions load a 3,000-package cut of it, about 80KB gzipped, on first focus), with matching, scoring, filters and sorts in a small script. It needs no server, so the "plain files anywhere" rule still holds. The search page talks to it through one function (`search(query, filters, sort)`), so Pagefind can come back without touching the UI.
 
 **To reverse:** upgrade Cloudflare to a paid plan (or host elsewhere), swap the search module for Pagefind.
 

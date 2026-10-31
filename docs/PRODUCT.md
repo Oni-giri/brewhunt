@@ -30,6 +30,9 @@ Sky-gradient hero with the frosted header, headline "Discover great Mac apps. Th
 ### Discover `/discover`
 Title + search, category chips, Editor's pick hero card + two collection cards, "Trending this week" (Mac apps / Command-line tools lists), "New this week" carousel, "Popular from independent developers" (community taps with 30-day installs), "Browse by what you need" category rows.
 
+### Header search
+The search button opens a search pill under the header. From 2 characters it suggests up to 6 packages (icon, name, Community badge where it applies, one line) from the 3,000 most installed listed ones, scored like `/search`, then "See all results for …". Arrows move through them, Enter opens the highlighted one or searches when none is, Escape closes the list and then the search.
+
 ### Search `/search?q=`
 Title "Results for ‘q’", count, search pill. Filters: Type (everything / Mac apps / CLI), Source (all / official / community), Updated (any / month / year), Category checkboxes. Active filter chips, sort (relevance, most installed, trending, newest, recently updated), results grid of app rows, empty state with "Clear filters", "Show more".
 

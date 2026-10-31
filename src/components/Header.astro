@@ -1,4 +1,6 @@
 ---
+import { getCatalog } from '../lib/catalog';
+import Badge from './Badge.astro';
 import Wordmark from './Wordmark.astro';
 import { isCurrent, mainNav } from './nav';
 
@@ -10,6 +12,8 @@ interface Props {
 const { variant = 'default' } = Astro.props;
 const landing = variant === 'landing';
 const { pathname } = Astro.url;
+// The suggestions file (src/pages/search-suggest.json.ts), fetched on first focus.
+const suggestUrl = `/search-suggest.json?v=${getCatalog().meta.generatedOn}`;
 ---
 
 <div class:list={['header-wrap', { landing }]}>
@@ -81,7 +85,15 @@ const { pathname } = Astro.url;
       ))}
     </nav>
 
-    <form id="header-search" class="search" action="/search" role="search" hidden data-search>
+    <form
+      id="header-search"
+      class="search"
+      action="/search"
+      role="search"
+      hidden
+      data-search
+      data-suggest-src={suggestUrl}
+    >
       <svg
         width="17"
         height="17"
@@ -98,13 +110,30 @@ const { pathname } = Astro.url;
       <label for="header-q" class="visually-hidden">
         Search apps
       </label>
-      <input id="header-q" name="q" type="search" placeholder="Search apps and tools" />
+      <input
+        id="header-q"
+        name="q"
+        type="search"
+        placeholder="Search apps and tools"
+        autocomplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls="header-suggest"
+      />
       <button type="submit">Search</button>
+      <div id="header-suggest" class="suggest" role="listbox" aria-label="Suggestions" hidden></div>
+      <template data-suggest-community>
+        <Badge variant="community">Community</Badge>
+      </template>
     </form>
   </header>
 </div>
 
 <script>
+  import { iconImage } from '../lib/icon-image';
+  import { tileFor } from '../lib/tiles';
+
   // Menu and search dropdowns: one open at a time, focus moves in on open,
   // Escape or a click outside closes and returns focus to the toggle.
   const header = document.querySelector<HTMLElement>('[data-header]');
@@ -129,6 +158,7 @@ const { pathname } = Astro.url;
     const setOpen = (name: Name, open: boolean) => {
       panels[name].panel.hidden = !open;
       panels[name].toggle.setAttribute('aria-expanded', String(open));
+      if (name === 'search' && !open) suggestions.hide();
     };
 
     const close = (name: Name, restoreFocus: boolean) => {
@@ -136,6 +166,8 @@ const { pathname } = Astro.url;
       setOpen(name, false);
       if (restoreFocus) panels[name].toggle.focus();
     };
+
+    const suggestions = suggest(panels.search.panel as HTMLFormElement);
 
     for (const name of Object.keys(panels) as Name[]) {
       panels[name].toggle.addEventListener('click', () => {
@@ -167,6 +199,157 @@ const { pathname } = Astro.url;
       if (header.contains(event.target as Node)) return;
       for (const name of Object.keys(panels) as Name[]) close(name, false);
     });
+  }
+
+  /**
+   * Suggestions under the header search (a WAI-ARIA combobox): from 2 characters, the 6 best
+   * matches among the most installed packages, scored by the same code as /search, then "See all
+   * results". Arrows move through them, Enter opens the highlighted one (or searches when none
+   * is), Escape closes the list. Nothing loads until the search is first focused.
+   */
+  function suggest(form: HTMLFormElement) {
+    const input = form.querySelector('input')!;
+    const list = form.querySelector<HTMLElement>('[role="listbox"]')!;
+    const community = form.querySelector<HTMLTemplateElement>('[data-suggest-community]')!.content
+      .firstElementChild!;
+    const SHOWN = 6;
+    type Lib = typeof import('../lib/search');
+    let lib: Lib | null = null;
+    let data: ReturnType<Lib['prepare']> | null = null;
+    let loading: Promise<void> | null = null;
+    let active = -1;
+
+    const options = () => [...list.querySelectorAll<HTMLAnchorElement>('[role="option"]')];
+
+    const load = () =>
+      (loading ??= Promise.all([
+        import('../lib/search'),
+        fetch(form.dataset.suggestSrc!).then((response) => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        }),
+      ])
+        .then(([module, index]) => {
+          lib = module;
+          data = module.prepare(index);
+          if (!list.hidden) render();
+        })
+        // Try again on the next focus; meanwhile "See all results" still works.
+        .catch(() => void (loading = null)));
+
+    const highlight = (next: number) => {
+      const all = options();
+      active = next;
+      all.forEach((option, i) => option.setAttribute('aria-selected', String(i === active)));
+      if (active < 0) input.removeAttribute('aria-activedescendant');
+      else {
+        input.setAttribute('aria-activedescendant', all[active].id);
+        all[active].scrollIntoView({ block: 'nearest' });
+      }
+    };
+
+    const hide = () => {
+      list.hidden = true;
+      list.replaceChildren();
+      input.setAttribute('aria-expanded', 'false');
+      highlight(-1);
+    };
+
+    function option(id: string, href: string): HTMLAnchorElement {
+      const a = document.createElement('a');
+      a.id = id;
+      a.href = href;
+      a.tabIndex = -1;
+      a.setAttribute('role', 'option');
+      a.setAttribute('aria-selected', 'false');
+      return a;
+    }
+
+    function row(item: ReturnType<Lib['prepare']>['items'][number], i: number) {
+      const a = option(`header-suggest-${i}`, `/app/${item.id}`);
+      const { tile, initials, mono } = tileFor({ ...item, commandLine: item.cliCask });
+      const icon = document.createElement('span');
+      icon.className = 'app-icon';
+      icon.classList.toggle('mono', mono);
+      icon.classList.toggle('has-icon', !!item.icon);
+      icon.dataset.tile = tile;
+      icon.setAttribute('aria-hidden', 'true');
+      icon.style.cssText = `--size:36px;--radius:8px;--font:${mono ? 12 : 14}px`;
+      icon.textContent = initials;
+      if (item.icon) icon.append(iconImage(item.icon, 36));
+
+      const text = document.createElement('span');
+      text.className = 'text';
+      const title = document.createElement('span');
+      title.className = 'title';
+      const name = document.createElement('span');
+      name.className = 'name';
+      name.textContent = item.name;
+      title.append(name);
+      // Official vs Community stays visible everywhere a package is listed.
+      if (item.source === 'community') title.append(community.cloneNode(true));
+      text.append(title);
+      if (item.line) {
+        const line = document.createElement('span');
+        line.className = 'line';
+        line.textContent = item.line;
+        text.append(line);
+      }
+      a.append(icon, text);
+      return a;
+    }
+
+    function render() {
+      const q = input.value.trim();
+      if (q.length < 2) return hide();
+      const found =
+        lib && data
+          ? lib.search(data, q, lib.DEFAULT_STATE, 'relevance').items.slice(0, SHOWN)
+          : [];
+      const all = option('header-suggest-all', `/search?${new URLSearchParams({ q })}`);
+      all.className = 'all';
+      all.textContent = `See all results for “${q}”`;
+      list.replaceChildren(...found.map(row), all);
+      list.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      highlight(-1);
+    }
+
+    input.addEventListener('focus', load);
+    input.addEventListener('input', () => {
+      load();
+      render();
+    });
+
+    input.addEventListener('keydown', (event) => {
+      const count = options().length;
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (list.hidden) return render();
+        const step = event.key === 'ArrowDown' ? 1 : -1;
+        // Wraps through "nothing highlighted", where Enter searches.
+        highlight(((active + 1 + step + count + 1) % (count + 1)) - 1);
+      } else if (event.key === 'Enter' && !list.hidden && active >= 0) {
+        event.preventDefault();
+        location.assign(options()[active].href);
+      } else if (event.key === 'Escape' && !list.hidden) {
+        // Only the list, keeping the text: a second Escape closes the search (the header's
+        // handler).
+        event.preventDefault();
+        event.stopPropagation();
+        hide();
+      }
+    });
+
+    // Keeps focus in the input while an option is pressed (Safari doesn't focus links on click,
+    // so the list would close under the pointer).
+    list.addEventListener('mousedown', (event) => event.preventDefault());
+    // Leaving the search for anything but an option closes the list.
+    form.addEventListener('focusout', (event) => {
+      if (!list.contains(event.relatedTarget as Node | null)) hide();
+    });
+
+    return { hide };
   }
 </script>
 
@@ -353,6 +536,80 @@ const { pathname } = Astro.url;
     font: inherit;
     font-weight: 600;
     cursor: pointer;
+  }
+
+  .suggest {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-dropdown);
+  }
+
+  .suggest[hidden] {
+    display: none;
+  }
+
+  .suggest :global([role='option']) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: var(--touch);
+    padding: 6px 10px;
+    border-radius: 12px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .suggest :global([role='option']:hover),
+  .suggest :global([aria-selected='true']) {
+    background: var(--chip);
+  }
+
+  .suggest :global(.text) {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .suggest :global(.title) {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .suggest :global(.name) {
+    overflow: hidden;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .suggest :global(.line) {
+    overflow: hidden;
+    /* Not --text-meta, which is too faint on the highlighted row's grey. */
+    color: var(--text-secondary);
+    font-size: 14px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .suggest :global(.all) {
+    padding-left: 14px;
+    font-weight: 600;
+  }
+
+  .suggest :global(.all:not(:first-child)) {
+    margin-top: 2px;
+    border-top: 1px solid var(--border);
+    border-radius: 0 0 12px 12px;
   }
 
   @media (max-width: 760px) {
