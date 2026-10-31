@@ -102,20 +102,13 @@ const chart = inCategory
   : amongKind
     ? { rank: amongKind.rank, of: amongKind.group[0].toUpperCase() + amongKind.group.slice(1) }
     : null;
-// The repository is a GitHub icon rather than its name, which can be long.
-const facts: {
-  label: string;
-  value: string;
-  note?: string;
-  repo?: { href: string; label: string };
-  star?: true;
-}[] = [
+// The repository itself is linked from Information, next to the website.
+const facts: { label: string; value: string; note?: string; star?: true }[] = [
   ...(github
     ? [
         {
           label: 'GitHub stars',
           value: compactNumber(github.stars),
-          repo: { href: github.url, label: `${github.name} on GitHub` },
           star: true as const,
         },
       ]
@@ -237,13 +230,6 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
               {f.value}
             </dd>
             {f.note && <dd class="fact-note">{f.note}</dd>}
-            {f.repo && (
-              <dd class="fact-note">
-                <a class="repo-link" href={f.repo.href} rel={externalRel} aria-label={f.repo.label}>
-                  <Icon name="github" size={20} />
-                </a>
-              </dd>
-            )}
           </div>
         ))}
       </dl>
@@ -642,19 +628,6 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
     font-size: 13px;
     color: var(--text-secondary);
     white-space: nowrap;
-  }
-  /* A 44px target around the 20px icon, without making the row taller. */
-  .repo-link {
-    display: grid;
-    place-items: center;
-    width: var(--touch);
-    height: var(--touch);
-    margin: -12px 0;
-    border-radius: 50%;
-    color: var(--ink);
-  }
-  .repo-link:hover {
-    color: var(--link);
   }
   .install {
     flex: 1 1 400px;

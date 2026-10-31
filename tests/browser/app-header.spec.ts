@@ -58,11 +58,13 @@ test('the facts strip lists what the package has', async ({ page }) => {
   expect(await page.locator('.badges .badge').count()).toBeLessThanOrEqual(3);
 });
 
-test('the repository is a labelled GitHub icon', async ({ page }) => {
+test('stars in the strip, the repository linked next to the website', async ({ page }) => {
   await page.goto('/app/nikitabobko/tap/aerospace');
-  const link = page.locator('[data-facts] .repo-link');
-  await expect(link).toHaveAccessibleName(/^nikitabobko\/AeroSpace on GitHub$/i);
-  await expect(link).toHaveAttribute('href', /^https:\/\/github\.com\//);
+  await expect(page.locator('[data-facts] dt').first()).toHaveText('GitHub stars');
+  await expect(page.locator('[data-facts] a')).toHaveCount(0);
+  await expect(
+    page.locator('.info .links a[href^="https://github.com/nikitabobko/AeroSpace"]').first(),
+  ).toBeVisible();
 });
 
 test('the facts strip fits at 1280 and scrolls, focusable, at 320', async ({ page }) => {
