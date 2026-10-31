@@ -58,6 +58,13 @@ test('the facts strip lists what the package has', async ({ page }) => {
   expect(await page.locator('.badges .badge').count()).toBeLessThanOrEqual(3);
 });
 
+test('the repository is a labelled GitHub icon', async ({ page }) => {
+  await page.goto('/app/nikitabobko/tap/aerospace');
+  const link = page.locator('[data-facts] .repo-link');
+  await expect(link).toHaveAccessibleName(/^nikitabobko\/AeroSpace on GitHub$/i);
+  await expect(link).toHaveAttribute('href', /^https:\/\/github\.com\//);
+});
+
 test('the facts strip fits at 1280 and scrolls, focusable, at 320', async ({ page }) => {
   await page.goto('/app/wget');
   const strip = page.locator('[data-facts]');
