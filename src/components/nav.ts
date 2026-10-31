@@ -12,7 +12,7 @@ export const mainNav: NavLink[] = [
   { label: 'Top charts', href: '/charts', match: '/charts' },
   { label: 'Categories', href: '/categories', match: '/category' },
   { label: 'New', href: '/new', match: '/new' },
-  { label: 'For developers', href: '/#developers', match: '/developers' },
+  { label: 'For developers', href: '/developers', match: '/developers' },
 ];
 
 /** Page path without the `.html` (build.format: 'file') or trailing slash, e.g. `/discover`. */

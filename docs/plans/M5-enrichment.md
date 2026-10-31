@@ -66,6 +66,7 @@ Codex review after A1–A2 and after A3–A4.
 - Get your app into Homebrew: your own tap vs homebrew-cask/core, with Homebrew's notability rules quoted from their docs and linked. Brewhunt lists the top 100 taps; how to ask to be added.
 - Claim your listing: "coming soon" (v2, with GitHub sign-in).
 - Sponsor Brewhunt: one labelled "Sponsored" slot on Discover, a category or search; never in charts, install numbers or rankings; founding-sponsor offer; Tally form.
+- Done 31 Oct 2026: `src/pages/developers.astro`, linked from the header, the footer's Developers column and the landing page's developers panel. Homebrew's notability thresholds are quoted from the Package Acceptance Policy (reviewed 18 Jul 2026). Waiting on the owner: the Tally link (`SPONSOR_FORM`; until then "The enquiry form opens soon") and what the founding-sponsor offer is (the page only says "We're starting with a few founding sponsors"). Asking to be added below the top 100 goes through a GitHub issue; there's no allow-list in the data job yet.
 
 Codex review after B.
 

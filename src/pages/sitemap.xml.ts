@@ -12,6 +12,7 @@ export function GET({ site }: APIContext) {
     ...PERIODS.map((p) => p.href),
     '/new',
     '/categories',
+    '/developers',
     ...categories.map((c) => `/category/${c.slug}`),
     ...taps.map((t) => tapUrl(t.id)).filter((url): url is string => url !== null),
     ...entries.filter((e) => e.hasPage).map((e) => e.url),

@@ -1,0 +1,304 @@
+---
+// For developers: how an app gets onto Brewhunt (through Homebrew), claiming a listing (later),
+// and sponsorship. The header's "For developers" comes here. See docs/PRODUCT.md › Developers.
+import Badge from '../components/Badge.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Command from '../components/Command.astro';
+import Base from '../layouts/Base.astro';
+import { getCatalog } from '../lib/catalog';
+import { fullNumber } from '../lib/format';
+
+/** The sponsorship enquiry form (Tally), once the owner has made it. */
+const SPONSOR_FORM: string | null = null;
+
+const POLICY = 'https://docs.brew.sh/Package-Acceptance-Policy';
+const ISSUES = 'https://github.com/Oni-giri/brewhunt/issues/new';
+const { taps } = getCatalog();
+// Taps are ranked by installs; the smallest one listed says what it takes to get in.
+const threshold = Math.min(...taps.map((t) => t.installs30d));
+---
+
+<Base
+  title="For developers"
+  description="How your app gets onto Brewhunt: Homebrew's official catalog or your own tap. Claiming listings and sponsorship are coming."
+>
+  <div class="container page">
+    <Breadcrumb items={[{ label: 'Discover', href: '/discover' }, { label: 'For developers' }]} />
+    <header class="intro">
+      <h1>For developers</h1>
+      <p>
+        Brewhunt lists what Homebrew installs. Get your app into Homebrew and it shows up here, with
+        the description and homepage from your formula or cask, rebuilt every day.
+      </p>
+      <nav class="jump" aria-label="On this page">
+        <a href="#homebrew">Get into Homebrew</a>
+        <a href="#claim">Claim your listing</a>
+        <a href="#sponsor">Sponsor Brewhunt</a>
+      </nav>
+    </header>
+
+    <section class="section" id="homebrew" aria-labelledby="homebrew-title">
+      <h2 id="homebrew-title">Get your app into Homebrew</h2>
+      <p class="lead">
+        There are two ways in. Both end up on Brewhunt, with a badge that says which one it was.
+      </p>
+      <div class="ways">
+        <article class="card" aria-labelledby="official-title">
+          <Badge variant="official" size="md">
+            Official
+          </Badge>
+          <h3 id="official-title">Homebrew's official catalog</h3>
+          <p>
+            Mac apps go in <a href="https://github.com/Homebrew/homebrew-cask">homebrew/cask</a>,
+            open-source command-line tools Homebrew can build in{' '}
+            <a href="https://github.com/Homebrew/homebrew-core">homebrew/core</a>. Homebrew's
+            maintainers review every change, and anyone can install it with{' '}
+            <code>brew install</code>.
+          </p>
+          <p>The catalog asks for public interest beyond the author:</p>
+          <blockquote cite={`${POLICY}#notability`}>
+            <p>
+              A GitHub project normally satisfies this requirement by meeting one of these
+              thresholds:
+            </p>
+            <ul>
+              <li>at least 30 forks, 30 watchers or 75 stars.</li>
+              <li>
+                at least 90 forks, 90 watchers or 225 stars for a self-submission by the repository
+                owner or by a commit author whose email address is at the package's{' '}
+                <code>homepage</code>, <code>url</code> or <code>head</code> domain.
+              </li>
+            </ul>
+          </blockquote>
+          <p class="cite">
+            From Homebrew's <a href={`${POLICY}#notability`}>Package Acceptance Policy</a>, which
+            also asks for a homepage, active maintenance, a way to detect new versions, and a
+            repository at least 30 days old.
+          </p>
+          <a class="button" href="https://docs.brew.sh/Adding-Software-to-Homebrew">
+            Homebrew's guide to adding software
+          </a>
+        </article>
+
+        <article class="card" aria-labelledby="tap-title">
+          <Badge variant="community" size="md">
+            Community
+          </Badge>
+          <h3 id="tap-title">Your own tap</h3>
+          <p>
+            A tap is a Git repository of formulae and casks you publish yourself: no review, no
+            thresholds. People install from it with your name in front, as in{' '}
+            <code>brew install you/tap/app</code>. Create one with:
+          </p>
+          <Command command="brew tap-new you/homebrew-tap" />
+          <p>
+            Brewhunt lists packages from the 100 community taps with the most installs over 30 days
+            in Homebrew's analytics: today, the 100th has {fullNumber(threshold)}. It picks them up
+            on its own, with a note that Homebrew didn't review them.
+          </p>
+          <p>
+            Think your tap should be on Brewhunt below that line? <a href={ISSUES}>Open an issue</a>{' '}
+            with its name and why.
+          </p>
+          <a class="button secondary" href="https://docs.brew.sh/How-to-Create-and-Maintain-a-Tap">
+            Homebrew's guide to taps
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="claim" aria-labelledby="claim-title">
+      <div class="title-row">
+        <h2 id="claim-title">Claim your listing</h2>
+        <Badge variant="info" size="md">
+          Coming soon
+        </Badge>
+      </div>
+      <p class="lead">
+        Sign in with GitHub to show you maintain the app, then add screenshots, your own description
+        and links to your listing. Until then, listings use what's in your formula or cask.
+      </p>
+    </section>
+
+    <section class="section" id="sponsor" aria-labelledby="sponsor-title">
+      <h2 id="sponsor-title">Sponsor Brewhunt</h2>
+      <p class="lead">
+        A sponsor's app gets one slot, on Discover, a category page or search results, always
+        labelled "Sponsored".
+      </p>
+      <ul class="rules">
+        <li>Never in the charts, install numbers or rankings: those only come from Homebrew.</li>
+        <li>We're starting with a few founding sponsors.</li>
+      </ul>
+      {SPONSOR_FORM ? (
+        <a class="button" href={SPONSOR_FORM}>
+          Ask about sponsoring
+        </a>
+      ) : (
+        <p class="soon">The enquiry form opens soon.</p>
+      )}
+    </section>
+  </div>
+</Base>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+    padding-top: 36px;
+    padding-bottom: 72px;
+  }
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 40px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .intro p,
+  .lead {
+    margin: 0;
+    max-width: 680px;
+    font-size: 17px;
+    color: var(--text-secondary);
+  }
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 20px;
+  }
+  .jump a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    font-weight: 600;
+  }
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scroll-margin-top: 24px;
+  }
+  h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .ways {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr));
+    gap: 16px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    min-width: 0;
+    padding: 28px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .card > :global(.command) {
+    flex: none;
+    align-self: stretch;
+  }
+  h3 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .card p {
+    margin: 0;
+    color: var(--text-body);
+  }
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    overflow-wrap: anywhere;
+  }
+  blockquote {
+    margin: 0;
+    padding: 4px 0 4px 16px;
+    border-left: 3px solid var(--official-border);
+    color: var(--text-body);
+  }
+  blockquote ul {
+    margin: 8px 0 0;
+    padding-left: 20px;
+  }
+  blockquote li + li {
+    margin-top: 6px;
+  }
+  .card .cite {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    margin-top: auto;
+    padding: 0 24px;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--surface);
+    text-align: center;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .button:hover {
+    background: #000;
+    color: var(--surface);
+  }
+  .button.secondary {
+    background: var(--chip);
+    color: var(--ink);
+  }
+  .button.secondary:hover {
+    background: #e2e4ea;
+    color: var(--ink);
+  }
+  .rules {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--text-body);
+  }
+  .rules li + li {
+    margin-top: 6px;
+  }
+  .section > .button {
+    align-self: flex-start;
+  }
+  .soon {
+    margin: 0;
+    font-weight: 600;
+  }
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 32px;
+    }
+    .card {
+      padding: 20px;
+    }
+  }
+</style>

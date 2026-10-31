@@ -18,6 +18,7 @@ A store front for the Homebrew catalogue: Mac apps (casks), command-line tools (
 | `/new` | New this week | `new.html` |
 | `/charts` | Top charts | `charts.html` |
 | `/categories` | Every category | none (built from `category.html`'s parts) |
+| `/developers` | For developers | none (built from the landing page's parts) |
 | `/category/[slug]` | Category | `category.html` |
 | `/tap/[owner]/[repo]` | Community tap | `tap.html` |
 
@@ -48,6 +49,9 @@ Period switch (30 days / 90 days / 1 year), tabs (Mac apps / CLI / Community tap
 
 ### Categories `/categories`
 The header's "Categories". Every category as a card: icon stack, name, count of apps and tools, description, and its 10 most installed as links.
+
+### Developers `/developers`
+The header's "For developers". Getting into Homebrew: the official catalog (Homebrew's notability rule quoted and linked) or your own tap (`brew tap-new`; Brewhunt lists the top 100 taps by 30-day installs and shows today's cut-off; "Open an issue" to ask). Claim your listing: coming soon, with GitHub sign-in. Sponsor Brewhunt: one labelled "Sponsored" slot on Discover, a category page or search, never in charts, install numbers or rankings; the enquiry form once the owner sends its link (`SPONSOR_FORM` in `src/pages/developers.astro`).
 
 ### Category `/category/[slug]`
 Breadcrumb, icon stack, title, description, sub-filter chips (e.g. Snapping / Tiling / Switching / Displays), sort, editor's pick card, app list, other categories. A category holds the editors' list plus the Mac apps CaskFlow files there (`content/README.md`); the page lists the 100 most installed, with "See all … in search" when there are more.

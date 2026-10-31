@@ -70,6 +70,7 @@ export const PAGES = [
   '/categories',
   '/category/windows-desktop',
   '/category/utilities',
+  '/developers',
   aTap(),
   '/app/firefox',
   '/app/wget',
