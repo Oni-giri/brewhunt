@@ -5,6 +5,7 @@ import AppIcon from '../../components/AppIcon.astro';
 import Badge from '../../components/Badge.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Command from '../../components/Command.astro';
+import Icon from '../../components/Icon.astro';
 import InstallsChart from '../../components/InstallsChart.astro';
 import SourceBadge from '../../components/SourceBadge.astro';
 import Base from '../../layouts/Base.astro';
@@ -94,6 +95,42 @@ const stats: { label: string; value: string; notes: string[] }[] = [
   return { label: `Installs · ${label}`, value: compactNumber(entry.installs[k]), notes };
 });
 
+// The facts strip under the header (App Store style). Only what this package has: Mac apps from
+// Homebrew have no license, many packages no repository or update date.
+const chart = inCategory
+  ? { rank: inCategory.rank, of: inCategory.category.name }
+  : amongKind
+    ? { rank: amongKind.rank, of: amongKind.group[0].toUpperCase() + amongKind.group.slice(1) }
+    : null;
+const facts: { label: string; value: string; note?: string; href?: string; star?: true }[] = [
+  ...(github
+    ? [
+        {
+          label: 'GitHub stars',
+          value: compactNumber(github.stars),
+          note: github.name,
+          href: github.url,
+          star: true as const,
+        },
+      ]
+    : []),
+  ...(chart ? [{ label: 'Chart', value: `#${fullNumber(chart.rank)}`, note: chart.of }] : []),
+  ...(version
+    ? [
+        entry.version === 'latest'
+          ? { label: 'Version', value: 'Latest', note: 'Updates itself' }
+          : {
+              label: 'Version',
+              value: version,
+              note: updated ? `Updated ${agoLabel(updated, today)}` : undefined,
+            },
+      ]
+    : []),
+  ...(license ? [{ label: 'License', value: license }] : []),
+  ...(entry.minMacos ? [{ label: 'Requires', value: `macOS ${entry.minMacos}+` }] : []),
+  { label: 'Installs', value: compactNumber(entry.installs.d30), note: '30 days' },
+];
+
 const trendBasis =
   entry.trend?.basis === 'previous-30-days'
     ? 'Share of installs vs. previous 30 days'
@@ -172,20 +209,10 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
           <h1 id="app-name">{entry.name}</h1>
           {entry.desc && <p class="desc">{entry.desc}</p>}
           <div class="badges">
-            <SourceBadge source={entry.source} size="md" />
+            <SourceBadge source={entry.source} size="md" explain />
             <Badge variant="info" size="md">
               {kind}
             </Badge>
-            {license && (
-              <Badge variant="info" size="md">
-                {license}
-              </Badge>
-            )}
-            {updated && (
-              <Badge variant="info" size="md">
-                Updated {agoLabel(updated, today)}
-              </Badge>
-            )}
             {entry.deprecated && (
               <Badge variant="warning" size="md">
                 Deprecated
@@ -194,6 +221,29 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
           </div>
         </div>
       </div>
+
+      <dl class="facts" aria-label="At a glance" data-facts>
+        {facts.map((f) => (
+          <div class="fact">
+            <dt>{f.label}</dt>
+            <dd class="fact-value">
+              {f.star && <Icon name="star" size={16} />}
+              {f.value}
+            </dd>
+            {f.note && (
+              <dd class="fact-note">
+                {f.href ? (
+                  <a href={f.href} rel={externalRel}>
+                    {f.note}
+                  </a>
+                ) : (
+                  f.note
+                )}
+              </dd>
+            )}
+          </div>
+        ))}
+      </dl>
 
       <div class="install" id="install">
         <h2 class="install-label">Install with Homebrew</h2>
@@ -389,16 +439,9 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
               </a>
             )}
             {github && (
-              <span class="repo">
-                <a href={github.url} rel={externalRel}>
-                  {githubLabel}
-                </a>
-                <span class="stars">
-                  <span aria-hidden="true">★</span>
-                  <span class="visually-hidden">GitHub stars:</span>
-                  {compactNumber(github.stars)}
-                </span>
-              </span>
+              <a href={github.url} rel={externalRel}>
+                {githubLabel}
+              </a>
             )}
             {issuesUrl && (
               <a href={issuesUrl} rel={externalRel}>
@@ -442,7 +485,8 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
             <span class="trust-text">
               <strong>From Homebrew's official catalog</strong>
               <span>
-                Every change to this listing is reviewed by Homebrew's maintainers before it ships.
+                The install definition is in Homebrew's official catalog; changes to it are reviewed
+                by Homebrew's maintainers.
               </span>
             </span>
           )}
@@ -465,6 +509,13 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
     )}
   </div>
 </Base>
+
+<script>
+  import { fadeEdges } from '../../lib/edges';
+
+  const facts = document.querySelector<HTMLElement>('[data-facts]');
+  if (facts) fadeEdges(facts, true);
+</script>
 
 <style>
   .page {
@@ -495,6 +546,8 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
     gap: 24px;
   }
   .titles {
+    /* The badge's note (SourceBadge) opens under this column. */
+    position: relative;
     min-width: 0;
     display: flex;
     flex-direction: column;
@@ -518,6 +571,82 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+  }
+  /* Facts strip: right under the name while the install card sits below it; under the whole
+     header once the two sit side by side (520 + 400 + 40px gap, plus the gutters). */
+  .facts {
+    flex: 1 1 100%;
+    min-width: 0;
+    display: flex;
+    margin: 0;
+    padding: 14px 0;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  @media (min-width: 1008px) {
+    .facts {
+      order: 1;
+    }
+  }
+  .fact {
+    flex: 1 0 128px;
+    max-width: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 16px;
+    text-align: center;
+  }
+  @media (min-width: 1008px) {
+    .fact {
+      max-width: none;
+    }
+  }
+  .fact + .fact {
+    border-left: 1px solid var(--divider);
+  }
+  .fact dt {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-meta);
+    white-space: nowrap;
+  }
+  .fact dd {
+    margin: 0;
+  }
+  .fact-value {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .fact-value :global(.icon) {
+    color: var(--text-secondary);
+  }
+  .fact-note {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .fact-note a {
+    display: inline-block;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    color: var(--link);
   }
   .install {
     flex: 1 1 400px;
@@ -743,10 +872,10 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
     font-size: 20px;
     font-weight: 600;
   }
-  dl {
+  .info dl {
     margin: 0;
   }
-  dl div {
+  .info dl div {
     display: flex;
     justify-content: space-between;
     gap: 12px;
@@ -754,11 +883,11 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
     border-top: 1px solid var(--divider);
     font-size: 15px;
   }
-  dt {
+  .info dt {
     flex: none;
     color: var(--text-secondary);
   }
-  dd {
+  .info dd {
     min-width: 0;
     margin: 0;
     text-align: right;
@@ -775,17 +904,6 @@ const jsonLd = JSON.stringify(structuredData).replaceAll('<', '\\u003c');
     display: inline-flex;
     align-items: center;
     min-height: var(--touch);
-  }
-  .repo {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .stars {
-    display: inline-flex;
-    gap: 3px;
-    color: var(--text-meta);
-    font-variant-numeric: tabular-nums;
   }
   .trust {
     display: flex;

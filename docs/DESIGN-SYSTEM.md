@@ -10,7 +10,7 @@ Extracted from the screens in `design/`. The static HTML is the source of truth;
 | `--surface` | `#FFFFFF` | Cards, panels, header pill, search pill |
 | `--border` | `#E6E8EE` | 1px edge on every white surface (cards would vanish on `--bg` otherwise) |
 | `--divider` | `#F0F0F3` | Row separators inside cards |
-| `--ink` | `#1D1D1F` | Primary text, primary buttons, "Official" badge |
+| `--ink` | `#1D1D1F` | Primary text, primary buttons |
 | `--text-body` | `#3A3A3C` | Long-form body copy |
 | `--text-secondary` | `#5E6068` | Subtitles, descriptions |
 | `--text-meta` | `#6E6E73` | Meta lines, ranks, captions |
@@ -63,7 +63,7 @@ App-icon placeholder tiles use 160° two-stop gradients per category (blue `#5AA
 | App row | Icon tile, name (+ badge), one-line description (clamped to 2 lines), meta line, "Get" button. | search, new, category, charts, similar apps |
 | Ranked row | Rank number, icon, name/description, category (hidden <760), installs + trend (hidden <480), Get. | charts, home |
 | Get / install sheet | Modal dialog: icon, name, the `brew install …` command in a navy code block, Copy button (shows "Copied ✓"), "View app page"; community packages add "not reviewed by Homebrew". Closes on Escape and backdrop click. | everywhere there's a Get |
-| Badges | "Official" solid ink pill; "Community" dashed outline; neutral info pills (white + border). Two sizes: 20px (lists) and 24px (page headers). | all |
+| Badges | "Official" amber pill with a beer stein (`--official-*` tokens, owner's call 31 Oct 2026); "Community" dashed outline; labels centred on cap height (`text-box`); on app pages the source badge has an ⓘ and opens a note on what Homebrew reviews; neutral info pills (white + border). Two sizes: 20px (lists) and 24px (page headers). | all |
 | Collection card | Coloured card with a stack of overlapping icon tiles, eyebrow, title, subtitle. | home |
 | Category row | Overlapping icon stack + title + example app names + chevron. | home, landing |
 | Stat card | Label, big Geist number, note. | app, tap |

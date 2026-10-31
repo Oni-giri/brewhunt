@@ -83,10 +83,10 @@ test('a tab bar wider than the screen fades the side that is scrolled away', asy
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/new');
   const list = page.locator('[data-controls] [role="tablist"]');
-  await expect(list).toHaveAttribute('data-more', 'end');
+  await expect(list).toHaveAttribute('data-overflow', 'end');
   await list.locator('[role="tab"]').first().focus();
   await page.keyboard.press('End');
-  await expect(list).toHaveAttribute('data-more', 'start');
+  await expect(list).toHaveAttribute('data-overflow', 'start');
 });
 
 test('turning bold does not move the tabs', async ({ page }) => {

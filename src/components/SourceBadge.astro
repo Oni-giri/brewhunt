@@ -1,20 +1,127 @@
 ---
+// The Official / Community badge. With `explain` (once per page, in the app header) it's a button
+// that says what Homebrew reviews: shown on hover, keyboard focus or a tap, hidden on Escape, a tap
+// elsewhere or a second tap. The note is placed under the nearest positioned ancestor (the app
+// header's text column) and is also the button's description for screen readers.
 import Badge from './Badge.astro';
 
 interface Props {
   source: 'official' | 'community';
   size?: 'sm' | 'md';
+  explain?: boolean;
 }
 
-const { source, size } = Astro.props;
+const { source, size, explain = false } = Astro.props;
+const official = source === 'official';
+const label = official ? 'Official' : 'Community';
 ---
 
-{source === 'official' ? (
-  <Badge variant="official" size={size}>
-    Official
-  </Badge>
+{explain ? (
+  <span class="explain" data-explain>
+    <button type="button" aria-describedby="source-note">
+      <Badge variant={source} size={size} info>
+        {label}
+      </Badge>
+    </button>
+    <span class="note" id="source-note" role="tooltip">
+      {official ? (
+        <>
+          <strong>In Homebrew's official catalog</strong> Changes to the install definition are
+          reviewed by Homebrew's maintainers. The software itself comes from its developer.
+        </>
+      ) : (
+        <>
+          <strong>From an independent developer's tap</strong> Not reviewed by Homebrew. Check the
+          tap before installing.
+        </>
+      )}
+    </span>
+  </span>
 ) : (
-  <Badge variant="community" size={size}>
-    Community
+  <Badge variant={source} size={size}>
+    {label}
   </Badge>
 )}
+
+<script>
+  for (const explain of document.querySelectorAll<HTMLElement>('[data-explain]')) {
+    const button = explain.querySelector('button')!;
+    const close = () => {
+      delete explain.dataset.open;
+      // Stays hidden while the pointer or focus that showed it is still there.
+      explain.dataset.dismissed = '';
+    };
+    button.addEventListener('click', () => {
+      if (explain.dataset.open === undefined) {
+        explain.dataset.open = '';
+        delete explain.dataset.dismissed;
+      } else close();
+    });
+    explain.addEventListener('pointerleave', () => delete explain.dataset.dismissed);
+    button.addEventListener('blur', () => delete explain.dataset.dismissed);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') close();
+    });
+    document.addEventListener('click', (event) => {
+      if (!explain.contains(event.target as Node)) delete explain.dataset.open;
+    });
+  }
+</script>
+
+<style>
+  .explain {
+    display: inline-flex;
+  }
+  button {
+    position: relative;
+    display: inline-flex;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: none;
+    font: inherit;
+    cursor: pointer;
+  }
+  /* A 44px-tall target around the 24px badge. */
+  button::before {
+    content: '';
+    position: absolute;
+    inset: -10px -4px;
+  }
+  .note {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 10;
+    box-sizing: border-box;
+    width: min(340px, 100%);
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--navy);
+    color: #fff;
+    box-shadow: var(--shadow-float);
+    font-size: 14px;
+    line-height: 1.45;
+    white-space: normal;
+  }
+  /* Bridges the gap to the badge, so the pointer can move onto the note. */
+  .note::before {
+    content: '';
+    position: absolute;
+    inset: -10px 0 100%;
+  }
+  .note strong {
+    display: block;
+    margin-bottom: 2px;
+  }
+  .explain[data-open] .note,
+  .explain:has(button:focus-visible):not([data-dismissed]) .note {
+    display: block;
+  }
+  @media (hover: hover) {
+    .explain:hover:not([data-dismissed]) .note {
+      display: block;
+    }
+  }
+</style>

@@ -26,6 +26,11 @@
   --filter-chip-bg: #e8f0ff;
   --filter-chip-text: #16449b;
   --trend-up: #1e7a46;
+  /* The Official badge: amber, like the liquid in the Brewhunt flask. */
+  --official-bg: #fff3d1;
+  --official-border: #f2b705;
+  --official-text: #5a3b00;
+  --official-icon: #c27c00;
   --sky: linear-gradient(
     180deg,
     #1a3fbf 0%,

@@ -1,17 +1,26 @@
 ---
-// Pills next to names. "Official" is solid ink, "Community" dashed: always shown so people know
-// whether Homebrew reviewed a package. `info` is a neutral white pill.
+// Pills next to names. "Official" is amber with a beer stein, "Community" dashed: always shown
+// so people know whether Homebrew reviewed a package. `info` is a neutral white pill.
+import Icon from './Icon.astro';
+
 interface Props {
   variant: 'official' | 'community' | 'info' | 'warning';
   /** `sm` (20px) in lists, `md` (24px) in page headers. */
   size?: 'sm' | 'md';
+  /** An ⓘ after the label, when the badge opens an explanation (SourceBadge). */
+  info?: boolean;
 }
 
-const { variant, size = 'sm' } = Astro.props;
+const { variant, size = 'sm', info = false } = Astro.props;
+const iconSize = size === 'sm' ? 12 : 15;
 ---
 
 <span class:list={['badge', variant, size]}>
-  <slot />
+  {variant === 'official' && <Icon name="beer" size={iconSize} class="lead" />}
+  <span class="label">
+    <slot />
+  </span>
+  {info && <Icon name="info" size={iconSize} class="more" />}
 </span>
 
 <style>
@@ -25,19 +34,42 @@ const { variant, size = 'sm' } = Astro.props;
     font-weight: 600;
     color: var(--ink);
   }
+  /* Centred on the letters, not on a line box that keeps room for descenders "Official" doesn't
+     have (browsers without text-box keep the old, slightly high position). */
+  .label {
+    text-box: trim-both cap alphabetic;
+  }
   .sm {
+    gap: 4px;
     height: 20px;
     padding: 0 8px;
     font-size: 12px;
   }
   .md {
+    gap: 6px;
     height: 24px;
     padding: 0 12px;
     font-size: 13px;
   }
+  .sm:has(:global(.lead)) {
+    padding-left: 6px;
+  }
+  .md:has(:global(.lead)) {
+    padding-left: 9px;
+  }
+  .md:has(:global(.more)) {
+    padding-right: 9px;
+  }
   .official {
-    background: var(--ink);
-    color: #fff;
+    background: var(--official-bg);
+    border: 1px solid var(--official-border);
+    color: var(--official-text);
+  }
+  .official :global(.lead) {
+    color: var(--official-icon);
+  }
+  .badge :global(.more) {
+    opacity: 0.75;
   }
   .community {
     border: 1px dashed var(--text-secondary);

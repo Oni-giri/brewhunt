@@ -110,14 +110,14 @@ pre {
     transform 0.2s ease-out,
     width 0.2s ease-out;
 }
-/* A list wider than the screen scrolls; the hidden side fades out. */
-.has-thumb[data-more='end'] {
+/* A row wider than the screen scrolls; the hidden side fades out (lib/edges.ts). */
+[data-overflow='end'] {
   mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent);
 }
-.has-thumb[data-more='start'] {
+[data-overflow='start'] {
   mask-image: linear-gradient(to left, #000 calc(100% - 48px), transparent);
 }
-.has-thumb[data-more='both'] {
+[data-overflow='both'] {
   mask-image: linear-gradient(
     to right,
     transparent,

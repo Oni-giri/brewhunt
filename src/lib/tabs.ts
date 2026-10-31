@@ -3,6 +3,8 @@
 // arrives, and the panel it shows fades in; nothing moves under reduced motion. A list too wide
 // for the screen scrolls, with its hidden end faded. The styles are in global.css.
 
+import { fadeEdges } from './edges';
+
 const FADE_MS = 150;
 
 const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -27,14 +29,6 @@ export function tabs(list: HTMLElement, onSelect?: (tab: HTMLButtonElement) => v
   // Each tab reserves its bold width, so turning bold doesn't move the tabs (global.css).
   for (const tab of all) tab.dataset.label = tab.textContent?.trim() ?? '';
 
-  // Fades the end (or ends) of the list that are scrolled out of sight.
-  const edges = () => {
-    const start = list.scrollLeft > 1;
-    const end = list.scrollLeft + list.clientWidth < list.scrollWidth - 1;
-    if (start || end) list.dataset.more = start && end ? 'both' : start ? 'start' : 'end';
-    else delete list.dataset.more;
-  };
-  list.addEventListener('scroll', edges, { passive: true });
   const place = () => {
     thumb.style.width = `${current.offsetWidth}px`;
     thumb.style.transform = `translateX(${current.offsetLeft}px)`;
@@ -43,6 +37,7 @@ export function tabs(list: HTMLElement, onSelect?: (tab: HTMLButtonElement) => v
   // Slides from then on, not into its first place.
   requestAnimationFrame(() => thumb.classList.add('ready'));
   // Widths change when the font loads, the page resizes or a hidden list appears.
+  const edges = fadeEdges(list);
   const observer = new ResizeObserver(() => {
     place();
     edges();

@@ -27,7 +27,7 @@ When the design and these docs disagree, ask. Placeholder values in the designs 
 
 - **Store-first, not installer-first.** Lead with discovery; the install command is the action, not the pitch.
 - **Honest data.** Install numbers come from Homebrew's public, opt-out analytics. Label periods ("Installs · 30 days") and say it's relative popularity. Never invent numbers.
-- **Official vs Community** is always visible: a solid "Official" badge for homebrew-core/cask, a dashed "Community" badge for third-party taps, plus a "not reviewed by Homebrew" note in the install sheet for community packages.
+- **Official vs Community** is always visible: a filled amber "Official" badge (beer stein icon) for homebrew-core/cask, a dashed "Community" badge for third-party taps, plus a "not reviewed by Homebrew" note in the install sheet for community packages.
 - **Not affiliated** with Homebrew or Apple. Keep the footer disclaimer. Don't use Homebrew's logo.
 - Real icons for official Mac apps come from CaskFlow (see `docs/DECISIONS.md`); everything else uses the initial-letter gradient tiles from the designs, which also stand in when an icon fails to load. No real screenshots until a developer claims a listing.
 
