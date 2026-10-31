@@ -38,6 +38,18 @@ test('landing: hero search goes to /search', async ({ page }) => {
   await page.waitForURL(/\/search\?q=firefox$/);
 });
 
+test('landing: a hero tile lifts on hover and opens its app', async ({ page }) => {
+  await page.goto('/');
+  const tile = page.locator('#hero-title .tile').first();
+  const href = await tile.getAttribute('href');
+  expect(href).toMatch(/^\/app\//);
+  await expect(tile).toHaveAttribute('tabindex', '-1');
+  await tile.hover();
+  await expect.poll(() => tile.evaluate((el) => getComputedStyle(el).scale)).toBe('1.06');
+  await tile.click();
+  await page.waitForURL(new RegExp(`${href}$`));
+});
+
 test('landing: the app wall moves, pauses on the button and on hover', async ({ page }) => {
   await page.goto('/');
   await page.mouse.move(5, 5);

@@ -87,11 +87,12 @@ const jsonLd = JSON.stringify({
         Discover great Mac apps.
         <br />
         Thousands{' '}
+        {/* A pointer shortcut to each app, kept out of the heading's name and the tab order. */}
         <span class="tiles" aria-hidden="true">
           {heroApps.map((entry) => (
-            <span class="tile">
+            <a class="tile" href={entry.url} tabindex="-1" title={entry.name}>
               <AppIcon pkg={entry} />
-            </span>
+            </a>
           ))}
         </span>{' '}
         of them.
@@ -406,6 +407,15 @@ const jsonLd = JSON.stringify({
     width: 0.74em;
     height: 0.74em;
     transform: rotate(-10deg);
+    transition:
+      translate 0.25s ease,
+      scale 0.25s ease;
+  }
+  /* Lifts on hover, over its neighbours; `translate` and `scale` leave each tile's tilt alone. */
+  .tile:hover {
+    z-index: 1;
+    translate: 0 -0.08em;
+    scale: 1.06;
   }
   .tile + .tile {
     margin-left: -0.22em;
@@ -430,6 +440,15 @@ const jsonLd = JSON.stringify({
     box-shadow:
       inset 0 0.1em 0 rgba(255, 255, 255, 0.55),
       0 0.4em 0.8em rgba(8, 25, 80, 0.35);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tile {
+      transition: none;
+    }
+    .tile:hover {
+      translate: none;
+      scale: none;
+    }
   }
   /* A real icon is its own shape: shadow the drawing, not the square around it. */
   .tile :global(.app-icon.has-icon) {
