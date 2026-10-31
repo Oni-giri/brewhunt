@@ -1,6 +1,7 @@
 ---
 // The landing page's "app wall": tilted rows of app chips sliding sideways in a loop, with a
-// Pause toggle. Pure CSS animation; the script only wires the toggle. Each row repeats its
+// Pause toggle that only shows with keyboard focus. Pure CSS animation; the script only wires
+// the toggle. Each row repeats its
 // chips once so the loop is seamless: the copies are hidden from assistive tech and skipped
 // by Tab. Rows pause on hover and keyboard focus, and stand still for reduced motion.
 import type { Entry } from '../lib/catalog';
@@ -97,8 +98,13 @@ const { rows, label } = Astro.props;
     mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
   }
 
+  /* Room above and below, taken back by the margins, so a chip lifted on hover isn't cut off.
+     Still `hidden` both ways, not `clip`: Tab to an off-screen chip has to scroll the row, not
+     the hero. */
   .row {
     overflow: hidden;
+    padding-block: 12px;
+    margin-block: -12px;
   }
 
   /* Two copies of the chips side by side; sliding by half the width lands the second copy
@@ -197,13 +203,17 @@ const { rows, label } = Astro.props;
     opacity: 0.75;
   }
 
-  /* landing.html lines the button up 24px outside the page column. */
+  /* The pause button only shows while it has keyboard focus (pointers pause the wall by
+     hovering it), over the wall's bottom-right corner so the page doesn't shift. */
   .controls {
+    position: absolute;
+    inset: auto 0 0;
     display: flex;
     justify-content: flex-end;
     max-width: calc(var(--content-max) + 2 * var(--gutter));
     margin: 0 auto;
     padding: 0 var(--gutter);
+    pointer-events: none;
   }
 
   .pause {
@@ -221,6 +231,9 @@ const { rows, label } = Astro.props;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
+  }
+  .pause:not(:focus-visible) {
+    opacity: 0;
   }
   .pause:hover {
     background: var(--surface);

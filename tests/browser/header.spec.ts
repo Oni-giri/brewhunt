@@ -50,10 +50,13 @@ test('landing: a hero tile lifts on hover and opens its app', async ({ page }) =
   await page.waitForURL(new RegExp(`${href}$`));
 });
 
-test('landing: the app wall moves, pauses on the button and on hover', async ({ page }) => {
+test('landing: the app wall moves, pauses on hover and on the keyboard-only button', async ({
+  page,
+}) => {
   await page.goto('/');
   await page.mouse.move(5, 5);
   const button = page.locator('[data-wall-pause]');
+  const opacity = () => button.evaluate((el) => getComputedStyle(el).opacity);
   const states = () =>
     page.evaluate(() =>
       [...document.querySelectorAll('.track')].map((t) => getComputedStyle(t).animationPlayState),
@@ -61,21 +64,32 @@ test('landing: the app wall moves, pauses on the button and on hover', async ({ 
   const position = () =>
     page.evaluate(() => getComputedStyle(document.querySelector('.track')!).transform);
 
-  await expect(button).toHaveAttribute('aria-pressed', 'false');
   expect(new Set(await states())).toEqual(new Set(['running']));
   const start = await position();
   await expect.poll(position).not.toBe(start);
 
-  await button.click();
-  await page.mouse.move(5, 5);
-  await expect(button).toHaveAttribute('aria-pressed', 'true');
-  expect(new Set(await states())).toEqual(new Set(['paused']));
-
-  await button.click();
-  await page.mouse.move(5, 5);
-  await expect(button).toHaveAttribute('aria-pressed', 'false');
+  // Hover pauses; the button stays out of sight.
   await page.locator('.wall .chip').nth(1).hover({ force: true });
   expect(new Set(await states())).toEqual(new Set(['paused']));
+  expect(await opacity()).toBe('0');
+  await page.mouse.move(5, 5);
+
+  // From the keyboard, it shows and toggles.
+  await button.focus();
+  expect(await opacity()).toBe('1');
+  await page.keyboard.press('Space');
+  await expect(button).toHaveAttribute('aria-pressed', 'true');
+  expect(new Set(await states())).toEqual(new Set(['paused']));
+  await page.keyboard.press('Space');
+  await expect(button).toHaveAttribute('aria-pressed', 'false');
+  expect(new Set(await states())).toEqual(new Set(['running']));
+
+  // Tab to a chip off the right edge scrolls its row, not the hero.
+  const heroX = () => page.locator('#hero-title').evaluate((el) => el.getBoundingClientRect().x);
+  const x = await heroX();
+  await page.keyboard.press('Shift+Tab');
+  await expect(page.locator('.wall .chip:focus')).toHaveCount(1);
+  expect(await heroX()).toBe(x);
 });
 
 test('landing: hidden copies on the app wall are skipped by Tab', async ({ page }) => {

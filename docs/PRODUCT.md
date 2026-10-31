@@ -27,7 +27,7 @@ SEO matters: the main traffic will come from app pages ranking for "‹app› ho
 ## Pages
 
 ### Landing `/`
-Sky-gradient hero with the frosted header, headline "Discover great Mac apps. Thousands [3 icon tiles] of them.", search pill, popular chips, a tilted "app wall" marquee (pause/play button, pauses on hover, respects reduced motion). Then: Top charts, New this week, Editor's picks, categories, a command-line tools section, the setup section (real Homebrew install command), a developers section, footer with newsletter.
+Sky-gradient hero with the frosted header, headline "Discover great Mac apps. Thousands [3 icon tiles] of them.", search pill, popular chips, a tilted "app wall" marquee (pauses on hover and keyboard focus; a Pause button shows only with keyboard focus; respects reduced motion). Then: Top charts, New this week, Editor's picks, categories, a command-line tools section, the setup section (real Homebrew install command), a developers section, footer with newsletter.
 
 ### Discover `/discover`
 Title + search, category chips, Editor's pick hero card + two collection cards, "Trending this week" (Mac apps / Command-line tools lists), "New this week" carousel, "Popular from independent developers" (community taps with 30-day installs), "Browse by what you need" category rows.
