@@ -43,6 +43,23 @@ test('the badge note shows on hover and keyboard focus', async ({ page }) => {
   await expect(page.locator(note)).toBeHidden();
 });
 
+test('the badge note opened with Enter closes when focus moves on, not on a tap on the note', async ({
+  page,
+}) => {
+  await page.goto('/app/wget');
+  await page.locator(badge).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator(note)).toBeVisible();
+  await page.keyboard.press('Tab');
+  await expect(page.locator(note)).toBeHidden();
+
+  await page.locator(badge).click();
+  await page.locator(note).click();
+  // Off the badge, so only the tap keeps it open, not hover.
+  await page.mouse.move(0, 0);
+  await expect(page.locator(note)).toBeVisible();
+});
+
 test('community packages say the tap is not reviewed', async ({ page }) => {
   await page.goto('/app/nikitabobko/tap/aerospace');
   await page.locator(badge).click();

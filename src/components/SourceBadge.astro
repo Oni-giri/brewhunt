@@ -58,7 +58,11 @@ const label = official ? 'Official' : 'Community';
       } else close();
     });
     explain.addEventListener('pointerleave', () => delete explain.dataset.dismissed);
-    button.addEventListener('blur', () => delete explain.dataset.dismissed);
+    button.addEventListener('blur', (event) => {
+      delete explain.dataset.dismissed;
+      // Tabbing away closes it; a tap on the note itself (no new focus target) doesn't.
+      if (event.relatedTarget) delete explain.dataset.open;
+    });
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') close();
     });
