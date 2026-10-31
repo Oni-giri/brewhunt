@@ -10,12 +10,14 @@ import { parseArgs } from 'node:util';
 import { buildCatalog, repoCandidates } from './build.ts';
 import { cloneRepo, readHistory, type RepoHistory } from './git.ts';
 import { checkHomebrew, fetchHomebrew } from './homebrew.ts';
+import { inspectContent } from '../content/schema.ts';
 import {
+  caskCategoriesSchema,
   fetchCaskCategories,
   updateCaskCategories,
   type CaskCategories,
 } from './categories.ts';
-import { fetchIcons, updateIcons, type IconSet } from './icons.ts';
+import { fetchIcons, iconSetSchema, updateIcons, type IconSet } from './icons.ts';
 import { addDays } from './metrics.ts';
 import { fetchRepos, type RepoLookup } from './repos.ts';
 import {
@@ -149,6 +151,7 @@ async function main() {
 
   const caskCategories = await updateCaskCategories(dataDir, () =>
     cachedCaskCategories(join(workDir, 'api'), args['cache-api']),
+    mappedCaskflowIds(),
   );
   log(
     `Cask categories: ${Object.keys(caskCategories.categories?.primary ?? {}).length} casks at ${caskCategories.categories?.release ?? '(none)'}`,
@@ -175,9 +178,9 @@ async function cachedIcons(cacheDir: string, cache: boolean): Promise<IconSet> {
   const file = join(cacheDir, 'caskflow-icons.json');
   if (cache) {
     try {
-      return JSON.parse(await readFile(file, 'utf8')) as IconSet;
+      return iconSetSchema.parse(JSON.parse(await readFile(file, 'utf8')));
     } catch {
-      // Not cached yet.
+      // Not cached yet, or not a file we'd write.
     }
   }
   const icons = await fetchIcons(process.env.GITHUB_TOKEN);
@@ -188,14 +191,21 @@ async function cachedIcons(cacheDir: string, cache: boolean): Promise<IconSet> {
   return icons;
 }
 
+/** The CaskFlow ids content/categories.yaml maps onto a category. */
+function mappedCaskflowIds(): Set<string> {
+  // Unreadable content maps nothing, so CaskFlow's file waits, with a warning, until it's fixed.
+  const { content } = inspectContent(join(import.meta.dirname, '..', '..', 'content'));
+  return new Set(content?.categories.flatMap((c) => c.caskflow) ?? []);
+}
+
 /** CaskFlow's categories, cached like its icon list. */
 async function cachedCaskCategories(cacheDir: string, cache: boolean): Promise<CaskCategories> {
   const file = join(cacheDir, 'caskflow-categories.json');
   if (cache) {
     try {
-      return JSON.parse(await readFile(file, 'utf8')) as CaskCategories;
+      return caskCategoriesSchema.parse(JSON.parse(await readFile(file, 'utf8')));
     } catch {
-      // Not cached yet.
+      // Not cached yet, or not a file we'd write.
     }
   }
   const categories = await fetchCaskCategories(process.env.GITHUB_TOKEN);

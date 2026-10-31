@@ -9,6 +9,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { z } from 'zod';
+import { caskCategoriesSchema, unmappedCategories } from '../data/categories.ts';
+import type { CaskCategories } from '../data/categories.ts';
 import type { Package } from '../data/types.ts';
 import { CONTENT_FILES, formatIssue, inspectContent } from './schema.ts';
 import type { Content, ContentFile, ContentIssue, IssuePath } from './schema.ts';
@@ -116,7 +118,7 @@ export function validateContent(
   content: Content,
   packages: readonly PackageInfo[] | null = null,
   /** CaskFlow's category names by id (data/site/caskflow-categories.json), when there. */
-  caskflowNames: Record<string, string> | null = null,
+  caskflow: CaskCategories | null = null,
 ): ValidationResult {
   const errors: ContentIssue[] = [];
   const warnings: ContentIssue[] = [];
@@ -178,26 +180,32 @@ export function validateContent(
     }
   }
 
-  if (caskflowNames) {
+  if (caskflow) {
     const mapped = new Set<string>();
     content.categories.forEach((category, c) => {
       category.caskflow.forEach((id, i) => {
         mapped.add(id);
-        if (!(id in caskflowNames)) {
+        if (!(id in caskflow.names)) {
           warnings.push({
             file: 'categories.yaml',
             path: [c, 'caskflow', i],
-            message: `CaskFlow has no category "${id}" (it has ${Object.keys(caskflowNames).join(', ')}).`,
+            message: `CaskFlow has no category "${id}" (it has ${Object.keys(caskflow.names).join(', ')}).`,
           });
         }
       });
     });
-    for (const [id, name] of Object.entries(caskflowNames)) {
+    // Apps filed under an unmapped id would quietly lose their category. The data job keeps
+    // yesterday's file when CaskFlow adds one, so this catches an edit that drops a mapping.
+    const unmapped = unmappedCategories(caskflow, mapped);
+    for (const [id, name] of Object.entries(caskflow.names)) {
       if (mapped.has(id)) continue;
-      warnings.push({
+      const casks = unmapped.get(id);
+      (casks ? errors : warnings).push({
         file: 'categories.yaml',
         path: [],
-        message: `CaskFlow's "${id}" (${name}) isn't in any category's caskflow list, so its apps have no category.`,
+        message: casks
+          ? `CaskFlow's "${id}" (${name}) files ${plural(casks, 'app')}: add it to a category's caskflow list.`
+          : `CaskFlow's "${id}" (${name}) isn't in any category's caskflow list (it files no apps yet).`,
       });
     }
   }
@@ -353,15 +361,20 @@ export function main(args: string[]): number {
 
   // CaskFlow's categories sit next to the package list (scripts/data/categories.ts).
   const caskflowFile = join(dirname(packagesFile), 'caskflow-categories.json');
-  let caskflowNames: Record<string, string> | null = null;
+  let caskflow: CaskCategories | null = null;
   if (existsSync(caskflowFile)) {
-    caskflowNames = (
-      JSON.parse(readFileSync(caskflowFile, 'utf8')) as { names: Record<string, string> }
-    ).names;
+    try {
+      caskflow = caskCategoriesSchema.parse(JSON.parse(readFileSync(caskflowFile, 'utf8')));
+    } catch (error) {
+      console.log(
+        `\nError: ${caskflowFile} isn't a CaskFlow categories file: ${(error as Error).message}`,
+      );
+      return 1;
+    }
     console.log(`CaskFlow categories: checked against ${caskflowFile}.`);
   }
 
-  const result = validateContent(content, packages, caskflowNames);
+  const result = validateContent(content, packages, caskflow);
   const withLines = (list: ContentIssue[]) =>
     list.map((issue) => ({ ...issue, line: locate(issue.file, issue.path) }));
   // Broken references between content files, then the package checks.

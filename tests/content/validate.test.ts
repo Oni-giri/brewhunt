@@ -130,6 +130,29 @@ describe('validateContent', () => {
     ]);
   });
 
+  it('rejects a CaskFlow id that files apps but no category maps', () => {
+    const { errors, warnings } = validateContent(
+      content((raw) => {
+        raw['categories.yaml'][1].caskflow = ['developerTools', 'renamed'];
+      }),
+      packages(),
+      {
+        release: 'caskflow-v1',
+        names: { developerTools: 'Developer Tools', games: 'Games', other: 'Other' },
+        primary: { iterm2: 'developerTools', steam: 'games', 'epic-games': 'games' },
+      },
+    );
+    expect(lines(errors)).toEqual([
+      'categories.yaml: CaskFlow\'s "games" (Games) files 2 apps: add it to a category\'s caskflow list.',
+    ]);
+    expect(lines(warnings)).toContain(
+      'categories.yaml [1].caskflow[1]: CaskFlow has no category "renamed" (it has developerTools, games, other).',
+    );
+    expect(lines(warnings)).toContain(
+      "categories.yaml: CaskFlow's \"other\" (Other) isn't in any category's caskflow list (it files no apps yet).",
+    );
+  });
+
   it('finds nothing wrong with the real content', () => {
     expect(validateContent(loadContent(contentDir), null)).toEqual({ errors: [], warnings: [] });
   });

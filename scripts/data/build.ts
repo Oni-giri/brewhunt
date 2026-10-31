@@ -21,6 +21,8 @@ import type {
 export const CORE_TAP = 'homebrew/core';
 /** Community packages need this many installs in a year (or a recent addition) to be listed. */
 export const COMMUNITY_MIN_INSTALLS = 10;
+/** …or were first seen this many days ago or less. */
+export const COMMUNITY_RECENT_DAYS = 30;
 export const CASK_TAP = 'homebrew/cask';
 
 export interface BuildInput {
@@ -442,7 +444,7 @@ export function buildCatalog(input: BuildInput): BuildOutput {
     // won't have its history in a later run's short git window.
     nextState.packages[pkg.id] = dates;
     // Community packages hardly anyone installed in a year are mostly old versions and stubs.
-    const recentlyAdded = !!dates.firstSeen && dates.firstSeen >= addDays(today, -30);
+    const recentlyAdded = !!dates.firstSeen && dates.firstSeen >= addDays(today, -COMMUNITY_RECENT_DAYS);
     if (pkg.source === 'community' && installs.d365 < COMMUNITY_MIN_INSTALLS && !recentlyAdded) {
       continue;
     }

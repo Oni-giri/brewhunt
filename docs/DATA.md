@@ -62,8 +62,8 @@ Homebrew only publishes rolling windows, so the installs-over-time chart comes f
 | `taps.json` | The top community taps: GitHub details, 30-day installs, listed packages. |
 | `history.json` | Snapshot dates and, per package, the 30-day counts on each date. |
 | `meta.json` | Analytics windows, tracking windows, counts, warnings from the run. |
-| `icons.json` | The CaskFlow commit and the cask tokens it has an icon for (`scripts/data/icons.ts`). Pages load the images from jsDelivr pinned to that commit; only official casks use them. If CaskFlow can't be reached or its list shrinks by half, the run keeps yesterday's file. |
-| `caskflow-categories.json` | CaskFlow's release tag, its category names, and each cask token's primary category (`scripts/data/categories.ts`). `content/categories.yaml` maps CaskFlow's categories onto ours. Same keep-yesterday rules as icons. |
+| `icons.json` | The CaskFlow commit and the cask tokens it has an icon for (`scripts/data/icons.ts`). Pages load the images from jsDelivr pinned to that commit; only official casks use them. If CaskFlow can't be reached, its list shrinks by half or the file isn't one we'd write, the run keeps yesterday's file. |
+| `caskflow-categories.json` | CaskFlow's release tag, its category names, and each cask token's primary category (`scripts/data/categories.ts`). `content/categories.yaml` maps CaskFlow's categories onto ours. Same keep-yesterday rules as icons, plus: a download over 16 MB, or a release that files casks under an id no category maps, keeps yesterday's file with a warning until the mapping is added (`npm run validate:content` fails on such an id). |
 
 Curation (`content/`: categories, picks, collections, overrides) is joined at build time, so editing it only needs a push.
 

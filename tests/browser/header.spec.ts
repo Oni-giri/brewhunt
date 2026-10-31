@@ -178,6 +178,21 @@ test('header suggestions: Escape closes the list, a second Escape the search', a
   await expect(toggle).toBeFocused();
 });
 
+test('header suggestions: one arrow reopens the list on an option', async ({ page }) => {
+  await page.goto('/discover');
+  await page.locator('[data-search-toggle]').click();
+  const input = page.locator('#header-q');
+  await page.keyboard.type('docker');
+  await expect(page.locator('#header-suggest')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('ArrowDown');
+  await expect(input).toHaveAttribute('aria-expanded', 'true');
+  await expect(input).toHaveAttribute('aria-activedescendant', 'header-suggest-0');
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('ArrowUp');
+  await expect(input).toHaveAttribute('aria-activedescendant', 'header-suggest-all');
+});
+
 test('header suggestions: nothing loads until the search is focused', async ({ page }) => {
   const asked: string[] = [];
   page.on('request', (request) => asked.push(new URL(request.url()).pathname));

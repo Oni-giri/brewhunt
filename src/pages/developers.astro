@@ -5,6 +5,7 @@ import Badge from '../components/Badge.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import Command from '../components/Command.astro';
 import Base from '../layouts/Base.astro';
+import { COMMUNITY_MIN_INSTALLS, COMMUNITY_RECENT_DAYS } from '../../scripts/data/build.ts';
 import { getCatalog } from '../lib/catalog';
 import { fullNumber } from '../lib/format';
 
@@ -27,8 +28,9 @@ const threshold = Math.min(...taps.map((t) => t.installs30d));
     <header class="intro">
       <h1>For developers</h1>
       <p>
-        Brewhunt lists what Homebrew installs. Get your app into Homebrew and it shows up here, with
-        the description and homepage from your formula or cask, rebuilt every day.
+        Brewhunt lists what Homebrew installs. Get your app into Homebrew's official catalog and it
+        shows up here, with the description and homepage from your formula or cask, rebuilt every
+        day. Apps from your own tap show up once enough people install them.
       </p>
       <nav class="jump" aria-label="On this page">
         <a href="#homebrew">Get into Homebrew</a>
@@ -40,7 +42,8 @@ const threshold = Math.min(...taps.map((t) => t.installs30d));
     <section class="section" id="homebrew" aria-labelledby="homebrew-title">
       <h2 id="homebrew-title">Get your app into Homebrew</h2>
       <p class="lead">
-        There are two ways in. Both end up on Brewhunt, with a badge that says which one it was.
+        There are two ways in. Official packages are always on Brewhunt; packages from a tap once
+        they have users. A badge says which way each one came in.
       </p>
       <div class="ways">
         <article class="card" aria-labelledby="official-title">
@@ -86,19 +89,21 @@ const threshold = Math.min(...taps.map((t) => t.installs30d));
           </Badge>
           <h3 id="tap-title">Your own tap</h3>
           <p>
-            A tap is a Git repository of formulae and casks you publish yourself: no review, no
-            thresholds. People install from it with your name in front, as in{' '}
+            A tap is a Git repository of formulae and casks you publish yourself: no review, none of
+            Homebrew's thresholds. People install from it with your name in front, as in{' '}
             <code>brew install you/tap/app</code>. Create one with:
           </p>
           <Command command="brew tap-new you/homebrew-tap" />
           <p>
-            Brewhunt lists packages from the 100 community taps with the most installs over 30 days
-            in Homebrew's analytics: today, the 100th has {fullNumber(threshold)}. It picks them up
-            on its own, with a note that Homebrew didn't review them.
+            Brewhunt reads the {fullNumber(taps.length)} community taps with the most installs over
+            30 days in Homebrew's analytics: today, the last of them has {fullNumber(threshold)}.
+            From those it lists every package with at least {COMMUNITY_MIN_INSTALLS} installs in the
+            past year, or added in the last {COMMUNITY_RECENT_DAYS} days, with a note that Homebrew
+            didn't review it.
           </p>
           <p>
-            Think your tap should be on Brewhunt below that line? <a href={ISSUES}>Open an issue</a>{' '}
-            with its name and why.
+            Below that line? <a href={ISSUES}>Open an issue</a> with your tap's name. Brewhunt can't
+            add taps by hand yet; requests tell us whether it should.
           </p>
           <a class="button secondary" href="https://docs.brew.sh/How-to-Create-and-Maintain-a-Tap">
             Homebrew's guide to taps

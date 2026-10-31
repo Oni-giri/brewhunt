@@ -29,9 +29,13 @@ test("quotes Homebrew's notability rule and links to it", async ({ page }) => {
   ).toBeVisible();
 });
 
-test('says how many installs the 100th tap has, and has the tap command', async ({ page }) => {
+test('says what it takes for a tap to be listed, and has the tap command', async ({ page }) => {
   await page.goto('/developers');
-  await expect(page.locator('#tap-title').locator('..')).toContainText(/the 100th has [\d,]+\./);
+  const card = page.locator('#tap-title').locator('..');
+  await expect(card).toContainText(/reads the \d+ community taps .* the last of them has [\d,]+\./);
+  await expect(card).toContainText(
+    'at least 10 installs in the past year, or added in the last 30 days',
+  );
   await expect(page.locator('[data-copy="brew tap-new you/homebrew-tap"]')).toBeVisible();
 });
 

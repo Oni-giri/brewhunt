@@ -25,6 +25,12 @@ export interface IconSet {
   tokens: string[];
 }
 
+/** What we store, checked again whenever it's read back. */
+export const iconSetSchema = z.strictObject({
+  commit: z.string().regex(SHA),
+  tokens: z.array(z.string().regex(TOKEN).refine((token) => !token.includes('..'))),
+});
+
 const manifestSchema = z.object({ hashes: z.record(z.string(), z.unknown()) });
 
 /** The tokens in CaskFlow's icons.json, keeping only ones that look like cask tokens. */
@@ -62,9 +68,10 @@ export async function fetchIcons(githubToken?: string): Promise<IconSet> {
   return { commit, tokens: parseIconManifest(manifest) };
 }
 
+/** Yesterday's set, or null if there's none or it isn't one we'd write. */
 export async function readIcons(dataDir: string): Promise<IconSet | null> {
   try {
-    return JSON.parse(await readFile(join(dataDir, 'site', 'icons.json'), 'utf8')) as IconSet;
+    return iconSetSchema.parse(JSON.parse(await readFile(join(dataDir, 'site', 'icons.json'), 'utf8')));
   } catch {
     return null;
   }
@@ -81,7 +88,7 @@ export async function updateIcons(
   const previous = await readIcons(dataDir);
   let next: IconSet;
   try {
-    next = await fetchSet();
+    next = iconSetSchema.parse(await fetchSet());
   } catch (error) {
     return { icons: previous, warning: `Couldn't fetch app icons, keeping the previous set: ${String(error)}` };
   }
