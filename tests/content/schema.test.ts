@@ -87,6 +87,27 @@ describe('parseContent', () => {
     ]);
   });
 
+  it('fills a category from CaskFlow ids, each mapped once', () => {
+    expect(
+      issues((raw) => {
+        raw['categories.yaml'][0].caskflow = ['utilities', 'other'];
+        raw['categories.yaml'][1].caskflow = ['other', 'not an id'];
+        raw['categories.yaml'][1].packages = [];
+      }),
+    ).toEqual([
+      'categories.yaml [1].caskflow[1]: Use a CaskFlow category id, like "developerTools".',
+      'categories.yaml [1].caskflow[0]: CaskFlow\'s "other" already fills "windows-desktop".',
+    ]);
+    // Without packages, it needs CaskFlow ids to fill it from.
+    expect(
+      issues((raw) => {
+        raw['categories.yaml'][1].packages = [];
+      }),
+    ).toEqual([
+      'categories.yaml [1].packages: List at least one package, or CaskFlow categories to fill it from.',
+    ]);
+  });
+
   it('wants one-sentence descriptions, short taglines and lowercase keywords', () => {
     expect(
       issues((raw) => {

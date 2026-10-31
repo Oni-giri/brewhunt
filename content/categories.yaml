@@ -5,6 +5,10 @@
 # few stand for the category in icon stacks and "Rectangle, AltTab, MonitorControl".
 # Ids are Homebrew names: formula name, cask token (often not the app name: Ice is
 # jordanbaird-ice) or owner/tap/name for community taps.
+#
+# `caskflow` fills a category with the Mac apps CaskFlow files under those of its categories
+# (data/site/caskflow-categories.json), most installed first, after the packages listed here.
+# A package listed in any category here keeps only the categories it's listed in.
 
 - slug: windows-desktop
   name: Windows & desktop
@@ -36,6 +40,7 @@
   name: Menu bar
   description: Calendars, system monitors and tools that tidy up a crowded menu bar.
   tile: purple
+  caskflow: [menuBar]
   packages:
     - { id: jordanbaird-ice } # Ice
     - { id: stats }
@@ -79,6 +84,7 @@
   name: Video & audio
   description: Play, edit and convert video and audio, and route sound between apps.
   tile: pink
+  caskflow: [videoMedia, audioMusic]
   subcategories:
     - { slug: players, name: Players }
     - { slug: music, name: Music }
@@ -115,6 +121,7 @@
   name: Productivity
   description: Launchers, clipboard history, to-do lists, calendars and automation.
   tile: yellow
+  caskflow: [productivity]
   packages:
     - { id: raycast }
     - { id: obsidian }
@@ -138,6 +145,7 @@
   name: Utilities
   description: Archivers, uninstallers, disk tools and other everyday helpers.
   tile: teal
+  caskflow: [utilities, other, screensaverWallpaper]
   packages:
     - { id: keka }
     - { id: appcleaner }
@@ -207,6 +215,7 @@
   name: Developer tools
   description: Code editors, Git clients, containers, and tools for APIs, databases and the cloud.
   tile: slate
+  caskflow: [developerTools]
   subcategories:
     - { slug: editors, name: Editors }
     - { slug: git, name: Git }
@@ -244,6 +253,7 @@
   name: AI tools
   description: Chat apps, local models, coding agents and dictation.
   tile: purple
+  caskflow: [ai]
   subcategories:
     - { slug: chat, name: Chat apps }
     - { slug: local, name: Local models }
@@ -279,6 +289,7 @@
   name: Browsers
   description: Web browsers, from the big names to privacy-focused alternatives.
   tile: orange
+  caskflow: [browsers]
   packages:
     - { id: google-chrome }
     - { id: firefox }
@@ -302,6 +313,7 @@
   name: Communication
   description: Messaging, email and video calls.
   tile: green
+  caskflow: [communication]
   packages:
     - { id: slack }
     - { id: discord }
@@ -324,7 +336,7 @@
 
 - slug: writing-notes
   name: Writing & notes
-  description: Note-taking apps, Markdown editors, office suites and research tools.
+  description: Note-taking apps, Markdown editors, and tools for writing and research.
   tile: yellow
   packages:
     - { id: obsidian }
@@ -339,9 +351,6 @@
     - { id: affine }
     - { id: siyuan }
     - { id: microsoft-onenote }
-    - { id: libreoffice }
-    - { id: onlyoffice }
-    - { id: microsoft-word }
     - { id: scrivener }
     - { id: zotero }
     - { id: calibre }
@@ -352,6 +361,7 @@
   name: Design
   description: Interface design, illustration, photo editing and 3D.
   tile: pink
+  caskflow: [designGraphics]
   packages:
     - { id: figma }
     - { id: affinity }
@@ -373,6 +383,7 @@
   name: Security & privacy
   description: Password managers, VPNs, firewalls and encryption tools.
   tile: teal
+  caskflow: [securityPrivacy]
   packages:
     - { id: 1password }
     - { id: bitwarden }
@@ -395,3 +406,39 @@
     - { id: age }
     - { id: yubico-authenticator }
     - { id: ente-auth }
+
+- slug: games
+  name: Games
+  description: Game stores, launchers, emulators and games.
+  tile: orange
+  caskflow: [games]
+
+- slug: finance-crypto
+  name: Finance & crypto
+  description: Budgeting, trading and crypto wallets.
+  tile: green
+  caskflow: [financeCrypto]
+
+- slug: science-education
+  name: Science & education
+  description: Maths, statistics, maps, research and learning.
+  tile: blue
+  caskflow: [scienceEducation]
+
+- slug: cloud-storage
+  name: Cloud & storage
+  description: Sync, share and back up files with cloud drives and your own servers.
+  tile: teal
+  caskflow: [cloudStorage]
+
+- slug: office
+  name: Office
+  description: Office suites, word processors, spreadsheets and presentations.
+  tile: slate
+  caskflow: [officeTools]
+  packages:
+    - { id: libreoffice }
+    - { id: microsoft-word }
+    - { id: microsoft-excel }
+    - { id: microsoft-powerpoint }
+    - { id: onlyoffice }

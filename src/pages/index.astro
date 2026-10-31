@@ -212,7 +212,13 @@ const jsonLd = JSON.stringify({
     )}
 
     <section class="section" aria-labelledby="categories-title">
-      <SectionHeading eyebrow="Categories" title="Browse by what you need" id="categories-title" />
+      <SectionHeading
+        eyebrow="Categories"
+        title="Browse by what you need"
+        id="categories-title"
+        href="/categories"
+        linkLabel="All categories"
+      />
       <ul class="category-grid">
         {categories.map((category) => (
           <CategoryRow

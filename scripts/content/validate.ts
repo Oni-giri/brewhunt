@@ -6,6 +6,7 @@
 // only the schema and the references between content files are checked.
 
 import { existsSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { z } from 'zod';
 import type { Package } from '../data/types.ts';
@@ -114,6 +115,8 @@ function unknownMessage(id: string, packages: readonly PackageInfo[]): string {
 export function validateContent(
   content: Content,
   packages: readonly PackageInfo[] | null = null,
+  /** CaskFlow's category names by id (data/site/caskflow-categories.json), when there. */
+  caskflowNames: Record<string, string> | null = null,
 ): ValidationResult {
   const errors: ContentIssue[] = [];
   const warnings: ContentIssue[] = [];
@@ -175,7 +178,33 @@ export function validateContent(
     }
   }
 
+  if (caskflowNames) {
+    const mapped = new Set<string>();
+    content.categories.forEach((category, c) => {
+      category.caskflow.forEach((id, i) => {
+        mapped.add(id);
+        if (!(id in caskflowNames)) {
+          warnings.push({
+            file: 'categories.yaml',
+            path: [c, 'caskflow', i],
+            message: `CaskFlow has no category "${id}" (it has ${Object.keys(caskflowNames).join(', ')}).`,
+          });
+        }
+      });
+    });
+    for (const [id, name] of Object.entries(caskflowNames)) {
+      if (mapped.has(id)) continue;
+      warnings.push({
+        file: 'categories.yaml',
+        path: [],
+        message: `CaskFlow's "${id}" (${name}) isn't in any category's caskflow list, so its apps have no category.`,
+      });
+    }
+  }
+
   content.categories.forEach((category, c) => {
+    // Filled from CaskFlow: the editorial list only leads it.
+    if (category.caskflow.length > 0) return checkSubcategories(category, c);
     const usable = category.packages.filter((p) => {
       if (hidden.has(p.id)) return false;
       if (!byId) return true;
@@ -189,6 +218,10 @@ export function validateContent(
         message: `"${category.slug}" lists ${usable.length} usable packages; aim for at least ${MIN_CATEGORY_SIZE}.`,
       });
     }
+    checkSubcategories(category, c);
+  });
+
+  function checkSubcategories(category: Content['categories'][number], c: number) {
     if (category.subcategories.length === 0) return;
     category.subcategories.forEach((sub, s) => {
       if (!category.packages.some((p) => p.sub === sub.slug)) {
@@ -208,7 +241,7 @@ export function validateContent(
         });
       }
     });
-  });
+  }
 
   return { errors, warnings };
 }
@@ -318,7 +351,17 @@ export function main(args: string[]): number {
     );
   }
 
-  const result = validateContent(content, packages);
+  // CaskFlow's categories sit next to the package list (scripts/data/categories.ts).
+  const caskflowFile = join(dirname(packagesFile), 'caskflow-categories.json');
+  let caskflowNames: Record<string, string> | null = null;
+  if (existsSync(caskflowFile)) {
+    caskflowNames = (
+      JSON.parse(readFileSync(caskflowFile, 'utf8')) as { names: Record<string, string> }
+    ).names;
+    console.log(`CaskFlow categories: checked against ${caskflowFile}.`);
+  }
+
+  const result = validateContent(content, packages, caskflowNames);
   const withLines = (list: ContentIssue[]) =>
     list.map((issue) => ({ ...issue, line: locate(issue.file, issue.path) }));
   // Broken references between content files, then the package checks.

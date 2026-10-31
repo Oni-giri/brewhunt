@@ -204,7 +204,13 @@ const d30End = shortDate(meta.analytics.d30.end);
     )}
 
     <section class="section" id="categories" aria-labelledby="categories-title">
-      <SectionHeading eyebrow="Categories" title="Browse by what you need" id="categories-title" />
+      <SectionHeading
+        eyebrow="Categories"
+        title="Browse by what you need"
+        id="categories-title"
+        href="/categories"
+        linkLabel="All categories"
+      />
       <ul class="category-grid">
         {categories.map((category) => (
           <CategoryRow category={category} entries={categoryLead(category)} />

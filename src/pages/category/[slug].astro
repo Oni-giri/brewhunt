@@ -1,5 +1,6 @@
 ---
-// A curated category (content/categories.yaml). See docs/PRODUCT.md › Category.
+// A category (content/categories.yaml): the editors' list plus the Mac apps CaskFlow files there.
+// See docs/PRODUCT.md › Category.
 import type { Category } from '../../../scripts/content/schema.ts';
 import AppCard from '../../components/AppCard.astro';
 import AppIcon from '../../components/AppIcon.astro';
@@ -33,10 +34,17 @@ const { categories, meta } = getCatalog();
 const entries = categoryEntries(category).sort(
   (a, b) => b.popularity.d30 - a.popularity.d30 || a.name.localeCompare(b.name),
 );
+// The biggest categories hold about a thousand apps: the page lists the most installed, and
+// search has them all (its category filter).
+const SHOWN = 100;
+const shown = entries.slice(0, SHOWN);
+const capped = entries.length > SHOWN;
 const subOf = new Map(category.packages.map((p) => [p.id, p.sub ?? '']));
-const subs = category.subcategories.filter((s) => entries.some((e) => subOf.get(e.id) === s.slug));
+const subs = category.subcategories.filter((s) => shown.some((e) => subOf.get(e.id) === s.slug));
 const pick = latestPick(category.slug);
 const count = `${fullNumber(entries.length)} ${entries.length === 1 ? 'app or tool' : 'apps and tools'}`;
+const listCount = capped ? `The ${SHOWN} most installed of ${count}` : count;
+const searchAll = `/search?${new URLSearchParams({ cat: category.slug })}`;
 const others = categories.filter((c) => c.slug !== category.slug);
 ---
 
@@ -48,7 +56,7 @@ const others = categories.filter((c) => c.slug !== category.slug);
     <Breadcrumb
       items={[
         { label: 'Discover', href: '/discover' },
-        { label: 'Categories', href: '/discover#categories' },
+        { label: 'Categories', href: '/categories' },
         { label: category.name },
       ]}
     />
@@ -124,11 +132,11 @@ const others = categories.filter((c) => c.slug !== category.slug);
           Most installed
         </h2>
         <span class="list-count" data-list-count aria-live="polite">
-          {count}
+          {listCount}
         </span>
       </div>
       <ul class="cards" data-list>
-        {entries.map((e, i) => (
+        {shown.map((e, i) => (
           <AppCard
             entry={e}
             meta={`${kindLabel(e)} · ${compactNumber(e.popularity.d30)} installs`}
@@ -144,6 +152,11 @@ const others = categories.filter((c) => c.slug !== category.slug);
           />
         ))}
       </ul>
+      {capped && (
+        <a class="see-all" href={searchAll}>
+          See all {count} in search&nbsp;→
+        </a>
+      )}
       <p class="source">
         Installs in the 30 days to {shortDate(meta.analytics.d30.end)}, from Homebrew's public,
         opt-out analytics. Command-line tools count installs people asked for, not ones pulled in as
@@ -167,6 +180,7 @@ const others = categories.filter((c) => c.slug !== category.slug);
     const items = [...list.children] as HTMLElement[];
     const title = document.querySelector('[data-list-title]')!;
     const count = document.querySelector('[data-list-count]')!;
+    const initialCount = count.textContent;
     const select = controls.querySelector<HTMLSelectElement>('[data-sort]')!;
     const buttons = [...controls.querySelectorAll<HTMLButtonElement>('[data-sub]')];
     let sub = '';
@@ -188,7 +202,10 @@ const others = categories.filter((c) => c.slug !== category.slug);
         .sort(compare[select.value]);
       list.replaceChildren(...shown);
       title.textContent = TITLES[select.value];
-      count.textContent = `${shown.length} ${shown.length === 1 ? 'app or tool' : 'apps and tools'}`;
+      // "The 100 most installed of 1,034 apps and tools" stays while nothing narrows it down.
+      if (sub)
+        count.textContent = `${shown.length} ${shown.length === 1 ? 'app or tool' : 'apps and tools'}`;
+      else count.textContent = initialCount;
     };
     for (const button of buttons) {
       button.addEventListener('click', () => {
@@ -395,6 +412,13 @@ const others = categories.filter((c) => c.slug !== category.slug);
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+  .see-all {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    font-weight: 600;
   }
   .source {
     margin: 0;

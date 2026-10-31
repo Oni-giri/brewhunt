@@ -16,6 +16,7 @@ All data is public. Docs: https://formulae.brew.sh/docs/api/ and https://docs.br
 | Tap description, stars | GitHub REST API `repos/{owner}/{repo}` |
 | Package GitHub repositories (link, stars, kind) | GitHub GraphQL `repository(owner, name)`, for the `github.com` repositories in homepages and download URLs (`scripts/data/repos.ts`; rules in `docs/DECISIONS.md`) |
 | Mac app icons | [CaskFlow](https://github.com/alielsokary/CaskFlow)'s `icons` branch: `icons.json` lists the cask tokens with a 256px PNG |
+| Mac app categories | CaskFlow's latest release: `categories.json` files each official cask under one primary category |
 
 Notes:
 - Analytics count **install events** from users who haven't opted out, on macOS and Linux. Show them as relative popularity, always labelled with the period ("Installs · 30 days"), and never as "Mac installs". `meta.json` has each window's exact dates.
@@ -62,6 +63,7 @@ Homebrew only publishes rolling windows, so the installs-over-time chart comes f
 | `history.json` | Snapshot dates and, per package, the 30-day counts on each date. |
 | `meta.json` | Analytics windows, tracking windows, counts, warnings from the run. |
 | `icons.json` | The CaskFlow commit and the cask tokens it has an icon for (`scripts/data/icons.ts`). Pages load the images from jsDelivr pinned to that commit; only official casks use them. If CaskFlow can't be reached or its list shrinks by half, the run keeps yesterday's file. |
+| `caskflow-categories.json` | CaskFlow's release tag, its category names, and each cask token's primary category (`scripts/data/categories.ts`). `content/categories.yaml` maps CaskFlow's categories onto ours. Same keep-yesterday rules as icons. |
 
 Curation (`content/`: categories, picks, collections, overrides) is joined at build time, so editing it only needs a push.
 

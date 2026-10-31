@@ -17,6 +17,7 @@ A store front for the Homebrew catalogue: Mac apps (casks), command-line tools (
 | `/app/[token]` | App page (cask or formula; tap packages use `owner/tap/name`) | `app.html` |
 | `/new` | New this week | `new.html` |
 | `/charts` | Top charts | `charts.html` |
+| `/categories` | Every category | none (built from `category.html`'s parts) |
 | `/category/[slug]` | Category | `category.html` |
 | `/tap/[owner]/[repo]` | Community tap | `tap.html` |
 
@@ -45,8 +46,11 @@ Title, RSS button, tabs (Everything / Mac apps / CLI / Community), toggle "Only 
 ### Charts `/charts`
 Period switch (30 days / 90 days / 1 year), tabs (Mac apps / CLI / Community taps), ranked list with category, installs and trend, "Show top 100". Side panel: "Climbing fast" movers and "How rankings work".
 
+### Categories `/categories`
+The header's "Categories". Every category as a card: icon stack, name, count of apps and tools, description, and its 10 most installed as links.
+
 ### Category `/category/[slug]`
-Breadcrumb, icon stack, title, description, sub-filter chips (e.g. Snapping / Tiling / Switching / Displays), sort, editor's pick card, app list, other categories.
+Breadcrumb, icon stack, title, description, sub-filter chips (e.g. Snapping / Tiling / Switching / Displays), sort, editor's pick card, app list, other categories. A category holds the editors' list plus the Mac apps CaskFlow files there (`content/README.md`); the page lists the 100 most installed, with "See all … in search" when there are more.
 
 ### Tap `/tap/[owner]/[repo]`
 Avatar initials, tap name, description, badges (Community tap, repo link, updated), "Add this tap" card (`brew tap …` + copy), safety notice, stats, package list, "Maintain this tap? Claim it" CTA.

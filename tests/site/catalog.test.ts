@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  caskflowCategory,
+  fillCategories,
   forgeOwner,
   iconFor,
   isCommandLine,
@@ -77,5 +79,60 @@ describe('iconFor', () => {
     expect(
       iconFor(null, tokens, { kind: 'cask', source: 'official', token: 'firefox' }),
     ).toBeNull();
+  });
+});
+
+describe('categories filled from CaskFlow', () => {
+  const caskflow = {
+    release: 'caskflow-v1',
+    names: { games: 'Games', other: 'Other' },
+    primary: { steam: 'games', moonlight: 'games', tool: 'other' },
+  };
+  const slugFor = new Map([['games', 'games']]);
+  const cask = (token: string, source: 'official' | 'community' = 'official') =>
+    ({ kind: 'cask', source, token }) as const;
+
+  it("map an official cask's primary category to ours", () => {
+    expect(caskflowCategory(cask('steam'), caskflow, slugFor)).toEqual(['games']);
+    // Someone else's app with the same name, an unmapped CaskFlow id, a formula, no file.
+    expect(caskflowCategory(cask('steam', 'community'), caskflow, slugFor)).toEqual([]);
+    expect(caskflowCategory(cask('tool'), caskflow, slugFor)).toEqual([]);
+    expect(
+      caskflowCategory({ kind: 'formula', source: 'official', token: 'steam' }, caskflow, slugFor),
+    ).toEqual([]);
+    expect(caskflowCategory(cask('steam'), null, slugFor)).toEqual([]);
+  });
+
+  it('follow the editors’ list, most installed first, listed packages only', () => {
+    const category = (slug: string, ids: string[]) => ({
+      slug,
+      name: slug,
+      description: `${slug}.`,
+      tile: 'blue' as const,
+      subcategories: [],
+      caskflow: [],
+      packages: ids.map((id) => ({ id })),
+    });
+    const entry = (id: string, d30: number, categories: string[], listed = true) => ({
+      id,
+      listed,
+      categories,
+      popularity: { d30, d90: 0, d365: 0 },
+    });
+    const filled = fillCategories(
+      [category('games', ['dolphin']), category('utilities', [])],
+      [
+        entry('dolphin', 10, ['games']),
+        entry('moonlight', 50, ['games']),
+        entry('steam', 900, ['games']),
+        entry('steam@beta', 5000, ['games'], false),
+        entry('keka', 70, ['utilities']),
+        entry('wget', 99999, []),
+      ],
+    );
+    expect(filled.map((c) => c.packages.map((p) => p.id))).toEqual([
+      ['dolphin', 'steam', 'moonlight'],
+      ['keka'],
+    ]);
   });
 });

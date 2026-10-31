@@ -48,6 +48,20 @@ A cask that installs only command-line programs (`binary`, no app, pkg or plugin
 
 **To reverse:** make `iconFor` in `src/lib/catalog.ts` return null, and every icon goes back to its tile.
 
+## Categories from CaskFlow (31 Oct 2026)
+
+**Plan (M5 B2):** one taxonomy: our 14 categories plus Games, Finance & crypto, Science & education, Cloud & storage and Office, filled with the Mac apps CaskFlow classifies.
+
+**Decision:** the data job keeps each official cask's primary category from CaskFlow's latest release (`data/site/caskflow-categories.json`; CaskFlow is MIT licensed, and the classification is a list of tokens and ids, credited in the footer). Each of our categories names the CaskFlow categories that fill it (`caskflow:` in `content/categories.yaml`): Audio & Music and Video & Media go to Video & audio; Other and Screensaver & Wallpaper to Utilities; AI & LLMs to AI tools (CaskFlow only uses it as a secondary category, so it adds nothing today). Secondary categories aren't used, and formulae keep their editorial categories until the crawler (phase C).
+
+- **The editors win.** A package listed anywhere in `categories.yaml` keeps only the categories it's listed in; CaskFlow's opinion is ignored for it. Otherwise curated placements get diluted (Ice would also land in Utilities). Every other official cask CaskFlow classifies has exactly one category, its primary.
+- **Fill order:** the editors' list first, in their order (it leads the icon stacks), then CaskFlow's listed apps, most installed first.
+- **Big pages:** Utilities holds about 960 apps and Developer tools about 780, so a category page lists its 100 most installed (about 160KB of HTML) and links to `/search?cat=<slug>`, whose filter covers them all. Its sort and sub-category chips work on those 100.
+- **Office:** LibreOffice, ONLYOFFICE and Word moved from Writing & notes to the new Office category (with Excel and PowerPoint), and Writing & notes no longer says "office suites". Owner can move them back.
+- A category with nothing in it (before the first data run with CaskFlow's file) stays off the site.
+
+**To reverse:** remove the `caskflow:` lists, and categories go back to the editors' lists.
+
 ## GitHub repositories from download URLs (30 Oct 2026)
 
 Homebrew gives a homepage, which is rarely the repository (gh's is cli.github.com). The data job also reads the formula `urls.stable`/`urls.head`, the cask `url` and community taps' `url`/`head` stanzas, keeps the `github.com/owner/repo` candidates and looks them up with GitHub GraphQL (`scripts/data/repos.ts`, about 8,100 repositories in about 165 queries of 50, one point each, one at a time: about 8 minutes).

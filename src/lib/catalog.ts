@@ -10,6 +10,7 @@ import {
   type Content,
   type EditorsPick,
 } from '../../scripts/content/schema.ts';
+import type { CaskCategories } from '../../scripts/data/categories.ts';
 import type { IconSet } from '../../scripts/data/icons.ts';
 import type { History, Meta, Package, Tap, WindowCounts } from '../../scripts/data/types.ts';
 import { iconBase, iconUrl } from './tiles.ts';
@@ -47,6 +48,10 @@ export interface Catalog {
   byId: Map<string, Entry>;
   taps: Tap[];
   tapById: Map<string, Tap>;
+  /**
+   * In display order. `packages` is the editorial list followed by the apps CaskFlow fills in
+   * (content/categories.yaml `caskflow`), most installed first.
+   */
   categories: Category[];
   categoryBySlug: Map<string, Category>;
   collections: Collection[];
@@ -102,6 +107,49 @@ export function iconFor(
     : null;
 }
 
+/**
+ * Our category for an official cask the editors haven't filed: CaskFlow's primary one, through
+ * the `caskflow` lists in content/categories.yaml (`slugFor`). CaskFlow covers homebrew/cask
+ * only, like icons: a community tap's `firefox` is someone else's app.
+ */
+export function caskflowCategory(
+  p: Pick<Package, 'kind' | 'source' | 'token'>,
+  caskflow: CaskCategories | null,
+  slugFor: ReadonlyMap<string, string>,
+): string[] {
+  if (p.kind !== 'cask' || p.source !== 'official') return [];
+  const id = caskflow?.primary[p.token];
+  const slug = id ? slugFor.get(id) : undefined;
+  return slug ? [slug] : [];
+}
+
+/**
+ * The editorial categories with the listed packages they don't name, but whose primary
+ * category they are (CaskFlow's), after their own: most installed first.
+ */
+export function fillCategories(
+  categories: Category[],
+  entries: Pick<Entry, 'id' | 'listed' | 'categories' | 'popularity'>[],
+): Category[] {
+  const named = new Set(categories.flatMap((c) => c.packages.map((p) => p.id)));
+  const filled = new Map<string, typeof entries>();
+  for (const e of entries) {
+    if (!e.listed || named.has(e.id) || e.categories.length === 0) continue;
+    const slug = e.categories[0];
+    if (!filled.has(slug)) filled.set(slug, []);
+    filled.get(slug)!.push(e);
+  }
+  return categories.map((c) => ({
+    ...c,
+    packages: [
+      ...c.packages,
+      ...(filled.get(c.slug) ?? [])
+        .sort((a, b) => b.popularity.d30 - a.popularity.d30 || a.id.localeCompare(b.id))
+        .map((e) => ({ id: e.id })),
+    ],
+  }));
+}
+
 function build(): Catalog {
   if (!existsSync(join(DATA_DIR, 'packages.json'))) {
     throw new Error(
@@ -118,6 +166,14 @@ function build(): Catalog {
   const icons = existsSync(join(DATA_DIR, 'icons.json')) ? readJson<IconSet>('icons.json') : null;
   const iconTokens = new Set(icons?.tokens);
   const iconsAt = icons ? iconBase(icons.commit) : null;
+
+  // Optional too: without it, categories hold their editorial lists only.
+  const caskflow = existsSync(join(DATA_DIR, 'caskflow-categories.json'))
+    ? readJson<CaskCategories>('caskflow-categories.json')
+    : null;
+  const slugForCaskflow = new Map(
+    content.categories.flatMap((c) => c.caskflow.map((id) => [id, c.slug] as const)),
+  );
 
   const categoriesOf = new Map<string, string[]>();
   const subOf = new Map<string, string>();
@@ -147,7 +203,7 @@ function build(): Catalog {
       line: editorial.tagline ?? p.desc,
       developer: editorial.developer ?? null,
       keywords: editorial.keywords ?? [],
-      categories: categoriesOf.get(p.id) ?? [],
+      categories: categoriesOf.get(p.id) ?? caskflowCategory(p, caskflow, slugForCaskflow),
       subcategory: subOf.get(p.id) ?? null,
       isLibrary,
       hasPage: page,
@@ -159,6 +215,11 @@ function build(): Catalog {
     };
   });
 
+  // A category CaskFlow fills on its own stays out until the data has CaskFlow's file.
+  const categories = fillCategories(content.categories, entries).filter(
+    (c) => c.packages.length > 0,
+  );
+
   const taps = readJson<Tap[]>('taps.json');
   return {
     meta: readJson<Meta>('meta.json'),
@@ -166,8 +227,8 @@ function build(): Catalog {
     byId: new Map(entries.map((e) => [e.id, e])),
     taps,
     tapById: new Map(taps.map((t) => [t.id, t])),
-    categories: content.categories,
-    categoryBySlug: new Map(content.categories.map((c) => [c.slug, c])),
+    categories,
+    categoryBySlug: new Map(categories.map((c) => [c.slug, c])),
     collections: content.collections,
     picks: content.picks,
     history: readJson<History>('history.json'),
@@ -239,13 +300,26 @@ export function collectionEntries(collection: Collection): Entry[] {
   return collection.packages.map((id) => byId.get(id)).filter((e): e is Entry => !!e && e.hasPage);
 }
 
+const rankedCache = new Map<Category, Entry[]>();
+/**
+ * A category's packages, most installed first. Every app page asks (rank, similar apps) and
+ * the biggest categories hold about a thousand, so it's sorted once per category.
+ */
+export function rankedEntries(category: Category): Entry[] {
+  let ranked = rankedCache.get(category);
+  if (!ranked) {
+    ranked = categoryEntries(category).sort(byPopularity);
+    rankedCache.set(category, ranked);
+  }
+  return ranked;
+}
+
 /** Position by 30-day popularity within the package's primary category (1-based). */
 export function categoryRank(entry: Entry): { rank: number; category: Category } | null {
   const slug = entry.categories[0];
   const category = slug ? getCatalog().categoryBySlug.get(slug) : undefined;
   if (!category) return null;
-  const ranked = categoryEntries(category).sort(byPopularity);
-  const rank = ranked.findIndex((e) => e.id === entry.id) + 1;
+  const rank = rankedEntries(category).findIndex((e) => e.id === entry.id) + 1;
   return rank > 0 ? { rank, category } : null;
 }
 
@@ -254,14 +328,11 @@ export function similar(entry: Entry, limit = 4): Entry[] {
   const slug = entry.categories[0];
   const category = slug ? getCatalog().categoryBySlug.get(slug) : undefined;
   if (!category) return [];
-  return categoryEntries(category)
-    .filter((e) => e.id !== entry.id)
-    .sort(
-      (a, b) =>
-        Number(b.subcategory === entry.subcategory) - Number(a.subcategory === entry.subcategory) ||
-        byPopularity(a, b),
-    )
-    .slice(0, limit);
+  const others = rankedEntries(category).filter((e) => e.id !== entry.id);
+  return [
+    ...others.filter((e) => e.subcategory === entry.subcategory),
+    ...others.filter((e) => e.subcategory !== entry.subcategory),
+  ].slice(0, limit);
 }
 
 /** The newest editor's pick, optionally for one category. */

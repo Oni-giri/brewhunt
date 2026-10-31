@@ -30,8 +30,9 @@ When a package is both in Homebrew's catalog and in its developer's tap (`bun` a
 - `tile`: icon colour, one of `blue`, `orange`, `green`, `purple`, `pink`, `yellow`, `teal`, `slate`, `terminal`.
 - `subcategories` (optional): the filter chips, `{ slug, name }`.
 - `packages`: `{ id, sub }`, where `sub` is one of the category's sub-category slugs. Put the best-known first: the first few stand for the category in icon stacks and example lists.
+- `caskflow` (optional): ids of [CaskFlow](https://github.com/alielsokary/CaskFlow)'s categories (`developerTools`, `games`; the names are in `data/site/caskflow-categories.json`) whose Mac apps fill the category after `packages`, most installed first. Each CaskFlow id goes in one category. A package listed in any category's `packages` keeps only those categories. A category with `caskflow` may leave `packages` empty.
 
-A package can be in several categories. Its first category in file order is its primary one: it's used for breadcrumbs and "Rank #n in …".
+A package can be in several categories. Its first category in file order is its primary one: it's used for breadcrumbs and "Rank #n in …". Apps that only CaskFlow files have one category.
 
 **collections.yaml**: `slug`, `title`, `subtitle` (a short phrase, no full stop), `tile`, and `packages`, a list of ids. The first four make the card's icon stack.
 

@@ -10,6 +10,11 @@ import { parseArgs } from 'node:util';
 import { buildCatalog, repoCandidates } from './build.ts';
 import { cloneRepo, readHistory, type RepoHistory } from './git.ts';
 import { checkHomebrew, fetchHomebrew } from './homebrew.ts';
+import {
+  fetchCaskCategories,
+  updateCaskCategories,
+  type CaskCategories,
+} from './categories.ts';
 import { fetchIcons, updateIcons, type IconSet } from './icons.ts';
 import { addDays } from './metrics.ts';
 import { fetchRepos, type RepoLookup } from './repos.ts';
@@ -142,6 +147,14 @@ async function main() {
   log(`App icons: ${icons.icons?.tokens.length ?? 0} at CaskFlow ${icons.icons?.commit.slice(0, 7) ?? '(none)'}`);
   if (icons.warning) output.meta.warnings.push(icons.warning);
 
+  const caskCategories = await updateCaskCategories(dataDir, () =>
+    cachedCaskCategories(join(workDir, 'api'), args['cache-api']),
+  );
+  log(
+    `Cask categories: ${Object.keys(caskCategories.categories?.primary ?? {}).length} casks at ${caskCategories.categories?.release ?? '(none)'}`,
+  );
+  if (caskCategories.warning) output.meta.warnings.push(caskCategories.warning);
+
   await writeSnapshot(dataDir, output.snapshotDate, output.snapshot);
   await writeState(dataDir, output.state);
   await writeJson(join(dataDir, 'site', 'packages.json'), output.packages);
@@ -173,6 +186,24 @@ async function cachedIcons(cacheDir: string, cache: boolean): Promise<IconSet> {
     await writeFile(file, JSON.stringify(icons));
   }
   return icons;
+}
+
+/** CaskFlow's categories, cached like its icon list. */
+async function cachedCaskCategories(cacheDir: string, cache: boolean): Promise<CaskCategories> {
+  const file = join(cacheDir, 'caskflow-categories.json');
+  if (cache) {
+    try {
+      return JSON.parse(await readFile(file, 'utf8')) as CaskCategories;
+    } catch {
+      // Not cached yet.
+    }
+  }
+  const categories = await fetchCaskCategories(process.env.GITHUB_TOKEN);
+  if (cache) {
+    await mkdir(cacheDir, { recursive: true });
+    await writeFile(file, JSON.stringify(categories));
+  }
+  return categories;
 }
 
 main().catch((error: unknown) => {

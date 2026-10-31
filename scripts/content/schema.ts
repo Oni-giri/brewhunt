@@ -121,9 +121,24 @@ export const categorySchema = z
     description: sentence(160),
     tile: tileSchema,
     subcategories: list(subcategorySchema),
-    packages: z.array(categoryPackageSchema).min(1, 'List at least one package.'),
+    /** Editorial members, in the editors' order. They lead the category. */
+    packages: list(categoryPackageSchema),
+    /**
+     * CaskFlow category ids (data/site/caskflow-categories.json) whose apps fill the category
+     * after the editorial members, most installed first.
+     */
+    caskflow: list(
+      z.string().regex(/^[a-zA-Z]+$/, 'Use a CaskFlow category id, like "developerTools".'),
+    ),
   })
   .superRefine((category, ctx) => {
+    if (category.packages.length === 0 && category.caskflow.length === 0) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['packages'],
+        message: 'List at least one package, or CaskFlow categories to fill it from.',
+      });
+    }
     unique(
       category.subcategories.map((s) => s.slug),
       ctx,
@@ -160,6 +175,21 @@ export const categoriesSchema = z
       (i) => [i, 'slug'],
       'category',
     );
+    // Each CaskFlow category maps to one of ours, so each app gets one primary category.
+    const mapped = new Map<string, string>();
+    categories.forEach((category, c) => {
+      category.caskflow.forEach((id, i) => {
+        const other = mapped.get(id);
+        if (other) {
+          ctx.addIssue({
+            code: 'custom',
+            path: [c, 'caskflow', i],
+            message: `CaskFlow's "${id}" already fills "${other}".`,
+          });
+        }
+        mapped.set(id, category.slug);
+      });
+    });
   });
 
 // --- collections.yaml ---

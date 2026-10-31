@@ -1,0 +1,193 @@
+---
+// Every category: its icons, how many apps and tools it holds, and its 10 most installed, each a
+// link. The header's "Categories" comes here. See docs/PRODUCT.md › Categories.
+import AppIcon from '../components/AppIcon.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import IconStack from '../components/IconStack.astro';
+import Base from '../layouts/Base.astro';
+import { categoryEntries, getCatalog, rankedEntries } from '../lib/catalog';
+import { categoryLead } from '../lib/discover';
+import { fullNumber } from '../lib/format';
+
+const TOP = 10;
+const { categories } = getCatalog();
+const rows = categories.map((category) => {
+  const count = categoryEntries(category).length;
+  return {
+    category,
+    lead: categoryLead(category),
+    count: `${fullNumber(count)} ${count === 1 ? 'app or tool' : 'apps and tools'}`,
+    top: rankedEntries(category).slice(0, TOP),
+  };
+});
+---
+
+<Base
+  title="Categories"
+  description={`${categories.length} categories of Mac apps and command-line tools you can install with Homebrew, each with its most installed.`}
+>
+  <div class="container page">
+    <Breadcrumb items={[{ label: 'Discover', href: '/discover' }, { label: 'Categories' }]} />
+    <header class="intro">
+      <h1>Categories</h1>
+      <p>
+        Mac apps and command-line tools by what they do, with the most installed in each over the
+        last 30 days.
+      </p>
+    </header>
+
+    <ul class="grid">
+      {rows.map(({ category, lead, count, top }) => (
+        <li class="card">
+          <a class="head" href={`/category/${category.slug}`}>
+            <IconStack pkgs={lead} size={44} overlap={14} ring="var(--surface)" class="icons" />
+            <span class="titles">
+              <h2 id={`cat-${category.slug}`}>{category.name}</h2>
+              <span class="count">{count}</span>
+            </span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--text-meta)"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+          </a>
+          <p class="description">{category.description}</p>
+          <ol class="top" aria-label={`Most installed in ${category.name}`}>
+            {top.map((e) => (
+              <li>
+                <a href={e.url}>
+                  <AppIcon pkg={e} size={28} />
+                  <span>{e.name}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-top: 36px;
+    padding-bottom: 64px;
+  }
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 36px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .intro p {
+    margin: 0;
+    max-width: 640px;
+    font-size: 17px;
+    color: var(--text-secondary);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(440px, 100%), 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    padding: 20px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .titles {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .head:hover h2 {
+    text-decoration: underline;
+  }
+  .count {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .head svg {
+    flex: none;
+  }
+  .description {
+    margin: 0;
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+  .top {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr));
+    gap: 0 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .top a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: var(--touch);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 15px;
+  }
+  .top a span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .top a:hover span {
+    text-decoration: underline;
+  }
+  @media (max-width: 480px) {
+    .card {
+      padding: 16px;
+    }
+    h1 {
+      font-size: 30px;
+    }
+  }
+</style>
