@@ -319,7 +319,13 @@ export type IconSource =
   | 'devicon'
   | 'dashboard-icons'
   | 'github-avatar'
-  | 'simple-icons';
+  | 'simple-icons'
+  // find-logos.ts, for the packages whose icon none of the above has:
+  | 'page-logo'
+  | 'page-svg'
+  | 'readme-logo'
+  | 'org-avatar'
+  | 'maker-site';
 
 export interface IconCandidate {
   source: IconSource;
@@ -552,20 +558,27 @@ function readmeUrl(src: string, repo: string): string | null {
  * What's left still goes to the screenshot classifier (lazygit's sponsors are named only by brand).
  */
 export function isBadge(url: string, alt: string): boolean {
+  return (
+    isBadgeOrAvatar(url) ||
+    new URL(url).pathname.toLowerCase().endsWith('.svg') ||
+    /\b(badge|avatar|sponsor(ed)?|logo)\b/i.test(alt)
+  );
+}
+
+/** A badge, chart or button by its host or path, or a GitHub user's avatar. */
+export function isBadgeOrAvatar(url: string): boolean {
   const parsed = new URL(url);
   const path = parsed.pathname.toLowerCase();
   return (
     BADGE_HOSTS.has(parsed.hostname) ||
-    path.endsWith('.svg') ||
     /\/(actions\/)?workflows\/[^/]+\/badge/.test(path) ||
     /badge/.test(path) ||
-    /\b(badge|avatar|sponsor(ed)?|logo)\b/i.test(alt) ||
     /^avatars\d*\.githubusercontent\.com$/.test(parsed.hostname)
   );
 }
 
-/** Screenshot candidates from a README (Markdown with inline HTML), badges dropped, in order. */
-export function readmeImages(markdown: string, repo: string): ReadmeImage[] {
+/** Every image in a README (Markdown with inline HTML), in document order, each address once. */
+export function readmeRefs(markdown: string, repo: string): ReadmeImage[] {
   const found: ReadmeImage[] = [];
   const references = new Map<string, string>();
   for (const m of markdown.matchAll(/^\s{0,3}\[([^\]]+)\]:\s*<?(\S+?)>?(?:\s+["'(].*)?$/gm)) {
@@ -574,8 +587,7 @@ export function readmeImages(markdown: string, repo: string): ReadmeImage[] {
   const add = (src: string | undefined, alt: string, width: number | null) => {
     if (!src) return;
     const url = readmeUrl(src, repo);
-    if (url && !isBadge(url, alt) && !found.some((f) => f.url === url))
-      found.push({ url, alt, width });
+    if (url && !found.some((f) => f.url === url)) found.push({ url, alt, width });
   };
   // Inline images and reference images, and HTML <img> tags, in document order.
   const pattern =
@@ -598,8 +610,15 @@ export function readmeImages(markdown: string, repo: string): ReadmeImage[] {
       );
     }
   }
+  return found;
+}
+
+/** Screenshot candidates from a README, badges dropped, in order. */
+export function readmeImages(markdown: string, repo: string): ReadmeImage[] {
   // An image the README itself shows small is a logo or an icon.
-  return found.filter((f) => f.width === null || f.width >= SCREENSHOT_MIN_WIDTH);
+  return readmeRefs(markdown, repo).filter(
+    (f) => !isBadge(f.url, f.alt) && (f.width === null || f.width >= SCREENSHOT_MIN_WIDTH),
+  );
 }
 
 // --- Image hashes ---

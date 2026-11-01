@@ -40,9 +40,10 @@ import {
   type ManifestIcon,
   type PageFacts,
 } from './extract.ts';
-import { FetchError, SafeFetcher, decodeText, type ImageFormat } from './fetch.ts';
+import { SafeFetcher, decodeText, type ImageFormat } from './fetch.ts';
 import { fetchDetails, type RepoDetails } from './github.ts';
 import { measure } from './images.ts';
+import { EXT, failure, pool, safeName } from './util.ts';
 
 const { values: args } = parseArgs({
   options: {
@@ -118,41 +119,11 @@ log(
   `${selected.length} packages, ${iconsOnly ? 'icons only' : 'icons, screenshots and text'} → ${OUT}`,
 );
 
-const safeName = (id: string) => id.replace(/\//g, '__').replace(/[^a-z0-9@+._-]/gi, '_');
 const filesDir = (id: string) => {
   const dir = join(OUT, 'files', safeName(id));
   mkdirSync(dir, { recursive: true });
   return dir;
 };
-const EXT: Record<ImageFormat, string> = {
-  png: 'png',
-  jpeg: 'jpg',
-  gif: 'gif',
-  webp: 'webp',
-  ico: 'ico',
-  svg: 'svg',
-};
-
-async function pool<T>(
-  items: readonly T[],
-  size: number,
-  work: (item: T, index: number) => Promise<void>,
-) {
-  let next = 0;
-  await Promise.all(
-    Array.from({ length: Math.min(size, items.length) }, async () => {
-      while (next < items.length) {
-        const i = next++;
-        await work(items[i], i);
-      }
-    }),
-  );
-}
-
-const failure = (error: unknown) =>
-  error instanceof FetchError
-    ? `${error.reason}: ${error.message}`
-    : `error: ${(error as Error).message}`;
 
 // --- Run ---
 

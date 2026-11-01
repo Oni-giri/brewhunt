@@ -376,7 +376,12 @@ describe('GitHub details', () => {
         nameWithOwner: 'A/B',
         isFork: false,
         homepageUrl: '',
-        owner: { __typename: 'Organization', login: 'A', avatarUrl: 'https://avatars.test/a' },
+        owner: {
+          __typename: 'Organization',
+          login: 'A',
+          avatarUrl: 'https://avatars.test/a',
+          websiteUrl: 'https://a.test',
+        },
         m0: null,
         m1: { text: '# readme' },
         m2: { text: '# other' },
@@ -387,7 +392,12 @@ describe('GitHub details', () => {
       nameWithOwner: 'A/B',
       isFork: false,
       homepageUrl: null,
-      owner: { login: 'A', isOrganization: true, avatarUrl: 'https://avatars.test/a' },
+      owner: {
+        login: 'A',
+        isOrganization: true,
+        avatarUrl: 'https://avatars.test/a',
+        websiteUrl: 'https://a.test',
+      },
       readme: '# readme',
     });
     expect(details.get('gone/x')).toBeNull();

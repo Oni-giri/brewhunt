@@ -9,6 +9,11 @@
 //
 //   node scripts/crawl/contact-sheet.ts --from <dir> --host 100.72.225.32 --port 4325
 //   node scripts/crawl/contact-sheet.ts --from <dir> --export tests/fixtures/answer-key/icons.json
+//   node scripts/crawl/contact-sheet.ts --from <find-logos dir> --update tests/fixtures/answer-key/icons.json
+//
+// --update is for the second round (find-logos.ts): each package the owner found an icon for (or
+// now says has none) replaces its "findable" entry, marked `findable: true` so the key still says
+// the first round's candidates didn't have it. Packages still "findable" are left as they were.
 //
 // Everything shown was fetched by the dry run and is served from its folder, so the owner's
 // browser never contacts the sites. Crawled files are untrusted: text is escaped, and images
@@ -27,11 +32,12 @@ const { values: args } = parseArgs({
     host: { type: 'string', default: '127.0.0.1' },
     port: { type: 'string', default: '4325' },
     export: { type: 'string' },
+    update: { type: 'string' },
   },
 });
 if (!args.from) {
   console.error(
-    'Usage: node scripts/crawl/contact-sheet.ts --from <dir> [--host H --port P | --export <file>]',
+    'Usage: node scripts/crawl/contact-sheet.ts --from <dir> [--host H --port P | --export <file> | --update <file>]',
   );
   process.exit(2);
 }
@@ -75,6 +81,34 @@ if (args.export) {
   mkdirSync(dirname(args.export), { recursive: true });
   writeFileSync(args.export, `${JSON.stringify(key, null, 2)}\n`);
   console.log(`${key.length} of ${packages.length} packages answered → ${args.export}`);
+  process.exit(0);
+}
+
+if (args.update) {
+  const answers = readAnswers();
+  const picks = readPicks();
+  const key = JSON.parse(readFileSync(args.update, 'utf8')) as {
+    id: string;
+    icon: string | null;
+    source: string;
+  }[];
+  let updated = 0;
+  const next = key.map((entry) => {
+    const answer = answers[entry.id];
+    if (entry.source !== 'findable' || !answer || answer.source === 'findable') return entry;
+    updated++;
+    const pick = picks[entry.id];
+    return {
+      ...entry,
+      icon: answer.icon,
+      source: answer.source,
+      findable: true,
+      ...(pick && { finderModel: { icon: pick.icon, source: pick.source } }),
+    };
+  });
+  writeFileSync(args.update, `${JSON.stringify(next, null, 2)}\n`);
+  const left = next.filter((e) => e.source === 'findable').length;
+  console.log(`${updated} findable entries updated in ${args.update}; ${left} still findable`);
   process.exit(0);
 }
 
@@ -139,7 +173,7 @@ ${
 }
 ${
   pick
-    ? `<p class="model-says"><b>Model</b> (${escape(pick.confidence)} confidence): ${escape(pick.reason)}${preset ? ` <button type="button" class="confirm">Confirm</button>` : ''}</p>`
+    ? `<p class="model-says"><b>Model</b> (${pick.kind ? `${pick.kind === 'maker' ? 'maker’s logo' : 'tool’s own logo'}, ` : ''}${escape(pick.confidence)} confidence): ${escape(pick.reason)}${preset ? ` <button type="button" class="confirm">Confirm</button>` : ''}</p>`
     : ''
 }
 <p class="saved" aria-live="polite"></p>

@@ -1,7 +1,8 @@
 // What the crawler asks GitHub about a repository: whether it's a fork, its homepage (to accept a
 // repository linked from a package's homepage), its owner (for the organisation's avatar) and its
 // README text (for screenshots and the summary). One GraphQL query per BATCH repositories, one at
-// a time, stopping before the hourly budget runs out. GitHub's API is a fixed endpoint, so this
+// a time, stopping before the hourly budget runs out. An organisation's website is where its
+// logo is when the tool has none of its own (find-logos.ts). GitHub's API is a fixed endpoint, so this
 // doesn't go through the SafeFetcher; the README's own links do.
 
 /** Repositories per query: smaller than repos.ts's 50, since each brings its README. */
@@ -15,7 +16,13 @@ export interface RepoDetails {
   nameWithOwner: string;
   isFork: boolean;
   homepageUrl: string | null;
-  owner: { login: string; isOrganization: boolean; avatarUrl: string | null };
+  owner: {
+    login: string;
+    isOrganization: boolean;
+    avatarUrl: string | null;
+    /** An organisation's website; null for a user. */
+    websiteUrl: string | null;
+  };
   readme: string | null;
 }
 
@@ -47,7 +54,7 @@ export function detailsQuery(keys: readonly string[]): {
 }
 fragment F on Repository {
   nameWithOwner isFork homepageUrl
-  owner { __typename login avatarUrl(size: 256) }
+  owner { __typename login avatarUrl(size: 256) ... on Organization { websiteUrl } }
   ${readmes}
 }`;
   return { query, variables };
@@ -57,7 +64,12 @@ interface Node {
   nameWithOwner: string;
   isFork: boolean;
   homepageUrl: string | null;
-  owner: { __typename: string; login: string; avatarUrl: string | null };
+  owner: {
+    __typename: string;
+    login: string;
+    avatarUrl: string | null;
+    websiteUrl?: string | null;
+  };
   [readme: `m${number}`]: { text?: string | null } | null;
 }
 
@@ -80,6 +92,7 @@ export function readDetails(
         login: node.owner.login,
         isOrganization: node.owner.__typename === 'Organization',
         avatarUrl: node.owner.avatarUrl,
+        websiteUrl: node.owner.websiteUrl || null,
       },
       readme: readme === null ? null : readme.slice(0, README_MAX_CHARS),
     });
