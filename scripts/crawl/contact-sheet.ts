@@ -11,9 +11,9 @@
 // browser never contacts the sites. Crawled files are untrusted: text is escaped, and images
 // (SVGs included) are served with a CSP that runs nothing.
 
-import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { extname, join, normalize, sep } from 'node:path';
+import { dirname, extname, join, normalize, sep } from 'node:path';
 import { parseArgs } from 'node:util';
 import type { PackageResult } from './dry-run.ts';
 
@@ -54,6 +54,7 @@ if (args.export) {
   const key = packages
     .filter((p) => answers[p.id])
     .map((p) => ({ id: p.id, icon: answers[p.id].icon, source: answers[p.id].source }));
+  mkdirSync(dirname(args.export), { recursive: true });
   writeFileSync(args.export, `${JSON.stringify(key, null, 2)}\n`);
   console.log(`${key.length} of ${packages.length} packages answered → ${args.export}`);
   process.exit(0);
