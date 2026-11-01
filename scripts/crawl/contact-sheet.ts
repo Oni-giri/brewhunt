@@ -1,6 +1,7 @@
 // The icon answer key's contact sheet (M5 C1): one row per package from a dry run
 // (`dry-run.ts --answer-key 300`), its icon candidates side by side, and a choice the owner makes
-// for each: one of the candidates, "none" (the letter tile is right), or another URL. Choices are
+// for each: one of the candidates, "none" (the letter tile is right), "findable" (none of these,
+// but the right icon exists and a cheap model with search should find it), or another URL. Choices are
 // saved to answers.json in the dry run's folder as they're made; --export turns them into
 // tests/fixtures/answer-key/icons.json.
 //
@@ -34,10 +35,13 @@ if (!args.from) {
 const DIR = args.from;
 const ANSWERS = join(DIR, 'answers.json');
 
-/** A candidate's URL, `none`, or another URL the owner typed. */
+/** A candidate's URL, another URL the owner typed, or null (`none` or `findable`). */
 interface Answer {
   icon: string | null;
-  /** Which candidate source it was, `other` for a typed URL, `none` for the tile. */
+  /**
+   * Which candidate source it was, `other` for a typed URL, `none` for the tile, `findable` when
+   * the right icon isn't here but should be easy to find.
+   */
   source: string;
   at: string;
 }
@@ -84,6 +88,7 @@ function row(p: PackageResult, answer: Answer | undefined, index: number): strin
     })
     .join('\n');
   const none = answer?.source === 'none' ? ' checked' : '';
+  const findable = answer?.source === 'findable' ? ' checked' : '';
   const other = answer?.source === 'other';
   const failed = p.icons.filter((i) => !i.file).length;
   return `<li class="pkg${answer ? ' answered' : ''}" data-id="${escape(p.id)}">
@@ -97,6 +102,7 @@ function row(p: PackageResult, answer: Answer | undefined, index: number): strin
 <div class="options">
 ${options}
 <label class="option none" for="${name}-none"><input type="radio" id="${name}-none" name="${name}" value="" data-source="none"${none}><span class="art tile">${escape(p.name.slice(0, 1).toUpperCase())}</span><span class="meta"><b>None of these</b><br>keep the letter tile</span></label>
+<label class="option findable" for="${name}-findable"><input type="radio" id="${name}-findable" name="${name}" value="" data-source="findable"${findable}><span class="art tile find" aria-hidden="true">?</span><span class="meta"><b>Not here, but findable</b><br>a model should find the right one</span></label>
 <label class="option other" for="${name}-other"><input type="radio" id="${name}-other" name="${name}" value="other" data-source="other"${other ? ' checked' : ''}><span class="meta"><b>Another URL</b><br><input type="url" class="other-url" aria-label="Icon URL for ${escape(p.name)}" placeholder="https://…" value="${other ? escape(answer?.icon) : ''}"></span></label>
 </div></fieldset>
 ${
@@ -140,6 +146,7 @@ fieldset { border: 0; margin: 10px 0 0; padding: 0; }
 .art { display: flex; align-items: end; gap: 6px; padding: 6px; border-radius: 10px; background: repeating-conic-gradient(#eceef3 0 25%, #fff 0 50%) 0 0 / 16px 16px; }
 .art img { display: block; object-fit: contain; }
 .tile { width: 108px; height: 108px; justify-content: center; align-items: center; font: 700 44px system-ui; color: #fff; background: linear-gradient(160deg, #6b7cff, #3046d8); }
+.tile.find { background: repeating-conic-gradient(#eceef3 0 25%, #fff 0 50%) 0 0 / 16px 16px; color: var(--muted); border: 2px dashed var(--line); }
 .meta em { color: var(--accent); font-style: normal; font-weight: 600; }
 .why { color: var(--bad); }
 .other-url { width: 128px; margin-top: 4px; font-size: 12px; }
@@ -152,7 +159,7 @@ button, .button { font: inherit; padding: 8px 14px; min-height: 44px; border-rad
 <label class="button"><input type="checkbox" id="hide"> Hide answered</label>
 <a class="button" href="/answers.json" download>Download answers</a></header>
 <main>
-<p>For each package, pick the icon Brewhunt should show, or “None of these” if the letter tile is right. Dimmed candidates were rejected by a rule (the reason is under them); pick one anyway if the rule is wrong. Choices save as you click.</p>
+<p>For each package, pick the icon Brewhunt should show, “None of these” if the letter tile is right, or “Not here, but findable” if the app has a real icon that none of these is and a quick search should turn it up. Dimmed candidates were rejected by a rule (the reason is under them); pick one anyway if the rule is wrong. Choices save as you click.</p>
 <ol>
 ${packages.map((p, i) => row(p, answers[p.id], i)).join('\n')}
 </ol></main>
@@ -236,7 +243,7 @@ const server = createServer((req, res) => {
         const answers = readAnswers();
         answers[pkg.id] = {
           icon: (icon as string | null) ?? null,
-          source: icon === null ? 'none' : source,
+          source: icon !== null ? source : source === 'findable' ? 'findable' : 'none',
           at: new Date().toISOString(),
         };
         writeFileSync(`${ANSWERS}.tmp`, JSON.stringify(answers, null, 1));
