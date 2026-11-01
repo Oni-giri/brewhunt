@@ -74,6 +74,8 @@ Codex review after B.
 
 ## Phase C · Enrichment crawler
 
+**Progress (1 Nov 2026), what didn't need the owner's keys:** the safe fetcher and robots.txt (step 2, `scripts/crawl/fetch.ts`, `robots.ts`), deterministic extraction (step 5, `extract.ts`, `github.ts`, `images.ts`), a local dry run (`dry-run.ts`) and the answer key's contact sheet (step 1, `contact-sheet.ts`; waiting for the owner's picks). Still to come: the GitHub budget and resumable cursor for the full run (step 3), the R2 cache (4), the AI step and checks (6–8), assets (9), the cost guard (10) and `crawl.yml`. See docs/DATA.md.
+
 **Pipeline shape.** Workflow `crawl.yml` (weekly + manual, `concurrency: crawl`), three jobs with the same separation the data job uses:
 1. `fetch`: no secrets, read-only token. Fetches sources, extracts text and candidates, uploads a bounded artifact.
 2. `enrich`: has `ANTHROPIC_API_KEY`, no write access, no network beyond the Anthropic API. Runs the AI step and checks on the artifact.
