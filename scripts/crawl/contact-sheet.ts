@@ -3,7 +3,9 @@
 // for each: one of the candidates, "none" (the letter tile is right), "findable" (none of these,
 // but the right icon exists and a cheap model with search should find it), or another URL. Choices are
 // saved to answers.json in the dry run's folder as they're made; --export turns them into
-// tests/fixtures/answer-key/icons.json.
+// tests/fixtures/answer-key/icons.json. When icon-check.ts has run, its picks are preset on the
+// packages the owner hasn't answered yet, for the owner to confirm or change; a preset isn't an
+// answer until it's confirmed.
 //
 //   node scripts/crawl/contact-sheet.ts --from <dir> --host 100.72.225.32 --port 4325
 //   node scripts/crawl/contact-sheet.ts --from <dir> --export tests/fixtures/answer-key/icons.json
@@ -17,6 +19,7 @@ import { createServer } from 'node:http';
 import { dirname, extname, join, normalize, sep } from 'node:path';
 import { parseArgs } from 'node:util';
 import type { PackageResult } from './dry-run.ts';
+import type { ModelPick, ModelPicks } from './icon-check.ts';
 
 const { values: args } = parseArgs({
   options: {
@@ -34,6 +37,7 @@ if (!args.from) {
 }
 const DIR = args.from;
 const ANSWERS = join(DIR, 'answers.json');
+const PICKS = join(DIR, 'model-picks.json');
 
 /** A candidate's URL, another URL the owner typed, or null (`none` or `findable`). */
 interface Answer {
@@ -52,12 +56,22 @@ const { packages } = JSON.parse(readFileSync(join(DIR, 'results.json'), 'utf8'))
 const byId = new Map(packages.map((p) => [p.id, p]));
 const readAnswers = (): Record<string, Answer> =>
   existsSync(ANSWERS) ? JSON.parse(readFileSync(ANSWERS, 'utf8')) : {};
+/** Read on every request, so picks show up while icon-check.ts is still running. */
+const readPicks = (): Record<string, ModelPick> =>
+  existsSync(PICKS) ? (JSON.parse(readFileSync(PICKS, 'utf8')) as ModelPicks).picks : {};
 
 if (args.export) {
   const answers = readAnswers();
+  const picks = readPicks();
   const key = packages
     .filter((p) => answers[p.id])
-    .map((p) => ({ id: p.id, icon: answers[p.id].icon, source: answers[p.id].source }));
+    .map((p) => ({
+      id: p.id,
+      icon: answers[p.id].icon,
+      source: answers[p.id].source,
+      // What the model had picked, to measure it against the owner.
+      ...(picks[p.id] && { model: { icon: picks[p.id].icon, source: picks[p.id].source } }),
+    }));
   mkdirSync(dirname(args.export), { recursive: true });
   writeFileSync(args.export, `${JSON.stringify(key, null, 2)}\n`);
   console.log(`${key.length} of ${packages.length} packages answered → ${args.export}`);
@@ -71,27 +85,37 @@ const escape = (s: string | null | undefined) =>
   );
 const safeUrl = (url: string | null) => (url && /^https?:\/\//i.test(url) ? escape(url) : '');
 
-function row(p: PackageResult, answer: Answer | undefined, index: number): string {
+function row(
+  p: PackageResult,
+  answer: Answer | undefined,
+  pick: ModelPick | undefined,
+  index: number,
+): string {
   const name = `pick-${index}`;
+  // The model's pick stands in for an answer until the owner confirms or changes it.
+  const chosen = answer ?? pick;
   const suggested = p.icons.find((i) => i.status === 'ok');
   const options = p.icons
     .filter((i) => i.file)
     .map((icon, n) => {
       const id = `${name}-${n}`;
-      const checked = answer?.icon === icon.url ? ' checked' : '';
+      const checked = chosen?.icon === icon.url ? ' checked' : '';
       const dims = icon.format === 'svg' ? 'SVG' : `${icon.width}×${icon.height}`;
       return `<label class="option${icon.status === 'ok' ? '' : ' rejected'}" for="${id}">
   <input type="radio" id="${id}" name="${name}" value="${escape(icon.url)}" data-source="${escape(icon.source)}"${checked}>
   <span class="art"><img src="/${escape(icon.file!)}" alt="" width="96" height="96" loading="lazy"><img class="small" src="/${escape(icon.file!)}" alt="" width="32" height="32" loading="lazy"></span>
-  <span class="meta"><b>${escape(icon.source)}</b>${icon === suggested ? ' <em>pipeline’s pick</em>' : ''}<br>${dims}${icon.reason ? `<br><span class="why">${escape(icon.reason)}</span>` : ''}</span>
+  <span class="meta"><b>${escape(icon.source)}</b>${icon === suggested ? ' <em>pipeline’s pick</em>' : ''}${pick?.icon === icon.url ? ' <em class="model">model’s pick</em>' : ''}<br>${dims}${icon.reason ? `<br><span class="why">${escape(icon.reason)}</span>` : ''}</span>
 </label>`;
     })
     .join('\n');
-  const none = answer?.source === 'none' ? ' checked' : '';
-  const findable = answer?.source === 'findable' ? ' checked' : '';
+  const none = chosen?.source === 'none' ? ' checked' : '';
+  const findable = chosen?.source === 'findable' ? ' checked' : '';
+  const modelMark = (source: string) =>
+    pick?.source === source ? ' <em class="model">model’s pick</em>' : '';
   const other = answer?.source === 'other';
   const failed = p.icons.filter((i) => !i.file).length;
-  return `<li class="pkg${answer ? ' answered' : ''}" data-id="${escape(p.id)}">
+  const preset = !answer && pick;
+  return `<li class="pkg${answer ? ' answered' : ''}${preset ? ' preset' : ''}" data-id="${escape(p.id)}">
 <div class="head">
   <h2>${index + 1}. ${escape(p.name)} <code>${escape(p.id)}</code></h2>
   <p>${escape(p.kind)} · ${escape(p.source)} · ${p.installs30.toLocaleString('en')} installs/30d${p.homepage ? ` · <a href="${safeUrl(p.homepage)}" target="_blank" rel="noopener noreferrer">${escape(p.homepage)}</a>` : ''}${p.repo ? ` · repo ${escape(p.repo.name)} (${p.repo.via})` : ''}</p>
@@ -101,8 +125,8 @@ function row(p: PackageResult, answer: Answer | undefined, index: number): strin
 <fieldset><legend class="visually-hidden">Icon for ${escape(p.name)}</legend>
 <div class="options">
 ${options}
-<label class="option none" for="${name}-none"><input type="radio" id="${name}-none" name="${name}" value="" data-source="none"${none}><span class="art tile">${escape(p.name.slice(0, 1).toUpperCase())}</span><span class="meta"><b>None of these</b><br>keep the letter tile</span></label>
-<label class="option findable" for="${name}-findable"><input type="radio" id="${name}-findable" name="${name}" value="" data-source="findable"${findable}><span class="art tile find" aria-hidden="true">?</span><span class="meta"><b>Not here, but findable</b><br>a model should find the right one</span></label>
+<label class="option none" for="${name}-none"><input type="radio" id="${name}-none" name="${name}" value="" data-source="none"${none}><span class="art tile">${escape(p.name.slice(0, 1).toUpperCase())}</span><span class="meta"><b>None of these</b>${modelMark('none')}<br>keep the letter tile</span></label>
+<label class="option findable" for="${name}-findable"><input type="radio" id="${name}-findable" name="${name}" value="" data-source="findable"${findable}><span class="art tile find" aria-hidden="true">?</span><span class="meta"><b>Not here, but findable</b>${modelMark('findable')}<br>a model should find the right one</span></label>
 <label class="option other" for="${name}-other"><input type="radio" id="${name}-other" name="${name}" value="other" data-source="other"${other ? ' checked' : ''}><span class="meta"><b>Another URL</b><br><input type="url" class="other-url" aria-label="Icon URL for ${escape(p.name)}" placeholder="https://…" value="${other ? escape(answer?.icon) : ''}"></span></label>
 </div></fieldset>
 ${
@@ -113,12 +137,18 @@ ${
         .join('')}</ul></details>`
     : ''
 }
+${
+  pick
+    ? `<p class="model-says"><b>Model</b> (${escape(pick.confidence)} confidence): ${escape(pick.reason)}${preset ? ` <button type="button" class="confirm">Confirm</button>` : ''}</p>`
+    : ''
+}
 <p class="saved" aria-live="polite"></p>
 </li>`;
 }
 
 function page(): string {
   const answers = readAnswers();
+  const picks = readPicks();
   const answered = packages.filter((p) => answers[p.id]).length;
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Icon answer key</title>
@@ -149,6 +179,11 @@ fieldset { border: 0; margin: 10px 0 0; padding: 0; }
 .tile.find { background: repeating-conic-gradient(#eceef3 0 25%, #fff 0 50%) 0 0 / 16px 16px; color: var(--muted); border: 2px dashed var(--line); }
 .meta em { color: var(--accent); font-style: normal; font-weight: 600; }
 .why { color: var(--bad); }
+.pkg.preset { border-style: dashed; border-color: #c9a227; }
+.meta em.model { color: #8a6d00; }
+.model-says { margin: 8px 0 0; font-size: 13px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.model-says .confirm { min-height: 44px; padding: 8px 18px; border-radius: 999px; border: 0; background: var(--accent); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+.model-says .confirm:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 .other-url { width: 128px; margin-top: 4px; font-size: 12px; }
 details { margin-top: 8px; font-size: 12px; color: var(--muted); } details li { overflow-wrap: anywhere; }
 .saved { margin: 6px 0 0; font-size: 12px; color: var(--accent); min-height: 1em; }
@@ -159,14 +194,15 @@ button, .button { font: inherit; padding: 8px 14px; min-height: 44px; border-rad
 <label class="button"><input type="checkbox" id="hide"> Hide answered</label>
 <a class="button" href="/answers.json" download>Download answers</a></header>
 <main>
-<p>For each package, pick the icon Brewhunt should show, “None of these” if the letter tile is right, or “Not here, but findable” if the app has a real icon that none of these is and a quick search should turn it up. Dimmed candidates were rejected by a rule (the reason is under them); pick one anyway if the rule is wrong. Choices save as you click.</p>
+<p>For each package, pick the icon Brewhunt should show, “None of these” if the letter tile is right, or “Not here, but findable” if the app has a real icon that none of these is and a quick search should turn it up. Dimmed candidates were rejected by a rule (the reason is under them); pick one anyway if the rule is wrong. Choices save as you click. A dashed yellow border means the choice is the model’s and isn’t saved yet: press Confirm if it’s right, or pick another one.</p>
 <ol>
-${packages.map((p, i) => row(p, answers[p.id], i)).join('\n')}
+${packages.map((p, i) => row(p, answers[p.id], picks[p.id], i)).join('\n')}
 </ol></main>
 <script>
 const count = document.getElementById('count');
 document.getElementById('hide').addEventListener('change', (e) => document.body.classList.toggle('hide-answered', e.target.checked));
 async function save(li, icon, source) {
+  const confirm = li.querySelector('.confirm');
   const status = li.querySelector('.saved');
   try {
     const res = await fetch('/answer', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: li.dataset.id, icon, source }) });
@@ -174,11 +210,28 @@ async function save(li, icon, source) {
     const body = await res.json();
     count.textContent = body.answered;
     li.classList.add('answered');
+    li.classList.remove('preset');
+    if (confirm) confirm.remove();
     status.textContent = 'Saved';
+    return true;
   } catch (error) {
     status.textContent = 'Not saved: ' + error.message;
+    return false;
   }
 }
+// Confirming moves on to the next package still waiting for one, so a run of right picks is a
+// run of Enter presses.
+document.addEventListener('click', async (e) => {
+  if (!e.target.classList.contains('confirm')) return;
+  const li = e.target.closest('.pkg');
+  const input = li.querySelector('input[type=radio]:checked');
+  if (!input || !(await save(li, input.value || null, input.dataset.source))) return;
+  let next = li.nextElementSibling;
+  while (next && !next.querySelector('.confirm')) next = next.nextElementSibling;
+  const button = next ? next.querySelector('.confirm') : li.querySelector('input[type=radio]:checked');
+  button.focus({ preventScroll: true });
+  (next || li).scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+});
 document.addEventListener('change', (e) => {
   const input = e.target;
   const li = input.closest('.pkg');
