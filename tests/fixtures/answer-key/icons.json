@@ -782,20 +782,30 @@
   },
   {
     "id": "protobuf",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/26310541?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/26310541?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
     "id": "microsoft/git/microsoft-git",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/6154722?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/6154722?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -836,20 +846,30 @@
   },
   {
     "id": "llama.cpp",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://llama.app/#svg-1",
+    "source": "page-svg",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://llama.app/#svg-1",
+      "source": "page-svg"
     }
   },
   {
     "id": "kustomize",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/36015203?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/36015203?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -872,20 +892,30 @@
   },
   {
     "id": "whisper.cpp",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://user-images.githubusercontent.com/1991296/235238348-05d0f6a4-da44-4900-a1de-d0707e75b763.jpeg",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "none"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://user-images.githubusercontent.com/1991296/235238348-05d0f6a4-da44-4900-a1de-d0707e75b763.jpeg",
+      "source": "readme-logo"
     }
   },
   {
     "id": "chezmoi",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://www.chezmoi.io/logo.svg",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://www.chezmoi.io/logo.svg",
+      "source": "page-logo"
     }
   },
   {
