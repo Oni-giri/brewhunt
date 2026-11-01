@@ -1,0 +1,2702 @@
+[
+  {
+    "id": "gh",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "node",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": "https://nodejs.org/apple-touch-icon.png",
+      "source": "touch-icon-default"
+    }
+  },
+  {
+    "id": "codex",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/codex/codex-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "uv",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/uv/uv-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/uv/uv-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "awscli",
+    "icon": "https://a0.awsstatic.com/libra-css/images/site/touch-icon-ipad-144-smile.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://a0.awsstatic.com/libra-css/images/site/touch-icon-ipad-144-smile.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "ffmpeg",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/ffmpeg.svg",
+    "source": "simple-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/ffmpeg.svg",
+      "source": "simple-icons"
+    }
+  },
+  {
+    "id": "git",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/git/git-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/git/git-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "pkgconf",
+    "icon": "https://avatars.githubusercontent.com/u/2036410?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/2036410?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "cmake",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/cmake/cmake-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/cmake/cmake-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "pipx",
+    "icon": "https://pipx.pypa.io/stable/_static/logo.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://pipx.pypa.io/stable/_static/logo.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "go",
+    "icon": "https://go.dev/images/favicon-gopher-plain.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://go.dev/images/favicon-gopher-plain.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "mise",
+    "icon": "https://mise.jdx.dev/apple-touch-icon.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://mise.jdx.dev/android-chrome-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "pyenv",
+    "icon": "https://avatars.githubusercontent.com/u/16530698?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/16530698?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "yt-dlp",
+    "icon": "https://avatars.githubusercontent.com/u/79589310?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/79589310?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "docker",
+    "icon": "https://www.docker.com/app/uploads/2024/02/cropped-docker-logo-favicon-192x192.png",
+    "source": "page-icon",
+    "model": {
+      "icon": "https://www.docker.com/app/uploads/2024/02/cropped-docker-logo-favicon-192x192.png",
+      "source": "page-icon"
+    }
+  },
+  {
+    "id": "ollama",
+    "icon": "https://ollama.com/public/apple-touch-icon.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://ollama.com/public/apple-touch-icon.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "mole",
+    "icon": "https://mole.fit/img/favicon-mole-192-ba32c29d.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://mole.fit/img/favicon-mole-192-ba32c29d.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "tmux",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/tmux/tmux-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/tmux/tmux-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "claude-code",
+    "icon": "https://claude.com/apple-touch-icon.png",
+    "source": "touch-icon-default",
+    "model": {
+      "icon": "https://claude.com/apple-touch-icon.png",
+      "source": "touch-icon-default"
+    }
+  },
+  {
+    "id": "jq",
+    "icon": "https://jqlang.org/icon.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://jqlang.org/icon.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "gcloud-cli",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "poppler",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "azure-cli",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/azure/azure-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/azure/azure-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "imagemagick",
+    "icon": "https://imagemagick.org/image/wand.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://imagemagick.org/image/wand.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "coreutils",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "fzf",
+    "icon": "https://junegunn.github.io/apple-touch-icon.png",
+    "source": "touch-icon-default",
+    "model": {
+      "icon": "https://junegunn.github.io/apple-touch-icon.png",
+      "source": "touch-icon-default"
+    }
+  },
+  {
+    "id": "yq",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "pnpm",
+    "icon": "https://avatars.githubusercontent.com/u/21320719?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/21320719?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "pandoc",
+    "icon": "https://pandoc.org/pandoc-icon.svg?v=20261007184000",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://pandoc.org/pandoc-icon.svg?v=20261007184000",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "cloudflared",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "nmap",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "anomalyco/tap/opencode-v2",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "glab",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "opencode",
+    "icon": "https://opencode.ai/apple-touch-icon-v3.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://opencode.ai/apple-touch-icon-v3.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "neovim",
+    "icon": "https://avatars.githubusercontent.com/u/6471485?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/6471485?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "helm",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/helm/helm-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/helm/helm-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "lazygit",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "rust",
+    "icon": "https://rust-lang.org/static/images/android-chrome-512x512.png?v=ngJW8jGAmR",
+    "source": "manifest",
+    "model": {
+      "icon": "https://rust-lang.org/static/images/android-chrome-512x512.png?v=ngJW8jGAmR",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "anomalyco/tap/opencode",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/opencode.svg",
+    "source": "simple-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/opencode.svg",
+      "source": "simple-icons"
+    }
+  },
+  {
+    "id": "gnupg",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "ccache",
+    "icon": "https://avatars.githubusercontent.com/u/16579254?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/16579254?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "wget",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "ripgrep",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "just",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/just.svg",
+    "source": "simple-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/just.svg",
+      "source": "simple-icons"
+    }
+  },
+  {
+    "id": "xcbeautify",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "kubernetes-cli",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/kubernetes.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/kubernetes.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "git-lfs",
+    "icon": "https://avatars.githubusercontent.com/u/20246716?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/20246716?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "shellcheck",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "curl",
+    "icon": "https://curl.se/logo/curl-symbol.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://curl.se/logo/curl-symbol.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "starship",
+    "icon": "https://avatars.githubusercontent.com/u/49654870?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/49654870?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "docker-compose",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/png/docker-compose.png",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://docs.docker.com/apple-touch-icon.png",
+      "source": "touch-icon-default"
+    }
+  },
+  {
+    "id": "bash",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/bash/bash-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "kubeconform",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "llvm",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/llvm/llvm-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/llvm/llvm-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "xcodegen",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "hello",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "ninja",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "can1357/tap/omp",
+    "icon": "https://omp.sh/favicon-512x512.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://omp.sh/favicon-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "openjdk",
+    "icon": "https://avatars.githubusercontent.com/u/41768318?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/41768318?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "gnu-tar",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "zsh",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/zsh/zsh-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/zsh/zsh-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "direnv",
+    "icon": "https://avatars.githubusercontent.com/u/13077327?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/13077327?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "actionlint",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "redis",
+    "icon": "https://redis.io/icon.png?icon.3r8p6nysrg-mh.png",
+    "source": "page-icon",
+    "model": {
+      "icon": "https://redis.io/icon.png?icon.3r8p6nysrg-mh.png",
+      "source": "page-icon"
+    }
+  },
+  {
+    "id": "php",
+    "icon": "https://www.php.net/favicon.svg?v=2",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/25158?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "ruby",
+    "icon": "https://www.ruby-lang.org/images/icon-192.png",
+    "source": "page-icon",
+    "model": {
+      "icon": "https://www.ruby-lang.org/images/icon-192.png",
+      "source": "page-icon"
+    }
+  },
+  {
+    "id": "herdr",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "nvm",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/nvm.svg",
+    "source": "simple-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/nvm.svg",
+      "source": "simple-icons"
+    }
+  },
+  {
+    "id": "hashicorp/tap/terraform",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/terraform.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/terraform.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "cocoapods",
+    "icon": "https://avatars.githubusercontent.com/u/1189714?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/1189714?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "1password-cli",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/1password.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://www.1password.dev/mintlify-assets/_mintlify/favicons/ab-634991b8/cic7o6CrHhA6877e/_generated/favicon/apple-touch-icon.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "maven",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/maven/maven-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/maven/maven-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "tesseract",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "sevenzip",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "graphviz",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "rtk",
+    "icon": "https://www.rtk-ai.app/brand/favicon/favicon-192.png",
+    "source": "page-icon",
+    "model": {
+      "icon": "https://www.rtk-ai.app/brand/favicon/favicon-192.png",
+      "source": "page-icon"
+    }
+  },
+  {
+    "id": "fd",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "powershell",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/powershell/powershell-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/11524380?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "atuin",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/atuin.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/atuin.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "protobuf",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "microsoft/git/microsoft-git",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "ansible",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/ansible.svg",
+    "source": "simple-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/ansible.svg",
+      "source": "simple-icons"
+    }
+  },
+  {
+    "id": "pre-commit",
+    "icon": "https://avatars.githubusercontent.com/u/6943086?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/6943086?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "aria2",
+    "icon": "https://avatars.githubusercontent.com/u/13545224?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/13545224?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "rclone",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/rclone.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/24937341?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "llama.cpp",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "kustomize",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "qemu",
+    "icon": "https://www.qemu.org/assets/favicons/android-chrome-512x512.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://www.qemu.org/assets/favicons/android-chrome-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "gcc",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/gcc/gcc-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/gcc/gcc-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "whisper.cpp",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "chezmoi",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "copilot-cli",
+    "icon": "https://docs.github.com/assets/cb-27314/images/site/apple-touch-icon-512x512.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://docs.github.com/assets/cb-27314/images/site/apple-touch-icon-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "watchman",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "git-delta",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "rustup",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "gradle",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/gradle/gradle-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://gradle.org/assets/icon/apple-touch-icon.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "gitleaks",
+    "icon": "https://avatars.githubusercontent.com/u/90395851?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/90395851?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "btop",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "bat",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/bat.svg",
+    "source": "simple-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/bat.svg",
+      "source": "simple-icons"
+    }
+  },
+  {
+    "id": "colima",
+    "icon": "https://colima.run/favicon.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://colima.run/favicon-dark.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "mysql",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/mysql/mysql-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/mysql/mysql-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "bats-core",
+    "icon": "https://avatars.githubusercontent.com/u/32112113?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/32112113?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "swiftlint",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "tailscale",
+    "icon": "https://tailscale.com/favicon.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/48932923?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "mkcert",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "docker-buildx",
+    "icon": "https://docs.docker.com/apple-touch-icon.png",
+    "source": "touch-icon-default",
+    "model": {
+      "icon": "https://docs.docker.com/apple-touch-icon.png",
+      "source": "touch-icon-default"
+    }
+  },
+  {
+    "id": "oras",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "flyctl",
+    "icon": "https://fly.io/phx/ui/images/favicon/android-chrome-512x512.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://fly.io/phx/ui/images/favicon/android-chrome-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "trivy",
+    "icon": "https://trivy.dev/assets/images/favicon_192x192.png",
+    "source": "page-icon",
+    "model": {
+      "icon": "https://trivy.dev/assets/images/favicon_192x192.png",
+      "source": "page-icon"
+    }
+  },
+  {
+    "id": "lua",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/lua/lua-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/lua/lua-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "automake",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "ngrok",
+    "icon": "https://ngrok.com/apple-touch-icon.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://ngrok.com/apple-touch-icon.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "golangci-lint",
+    "icon": "https://golangci-lint.run/apple-touch-icon.png",
+    "source": "touch-icon-default",
+    "model": {
+      "icon": "https://golangci-lint.run/apple-touch-icon.png",
+      "source": "touch-icon-default"
+    }
+  },
+  {
+    "id": "zoxide",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "jsonnet",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "eza",
+    "icon": "https://eza.rocks/icon-192.png",
+    "source": "page-icon",
+    "model": {
+      "icon": "https://eza.rocks/icon-192.png",
+      "source": "page-icon"
+    }
+  },
+  {
+    "id": "tree",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "ruff",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/ruff.svg",
+    "source": "simple-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/ruff.svg",
+      "source": "simple-icons"
+    }
+  },
+  {
+    "id": "vim",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/vim/vim-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/11618545?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "fastfetch",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "dotnet",
+    "icon": "https://dotnet.microsoft.com/apple-touch-icon.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://dotnet.microsoft.com/apple-touch-icon.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "ghostscript",
+    "icon": "https://www.ghostscript.com/images/favicon.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://www.ghostscript.com/images/favicon.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "rsync",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "argocd",
+    "icon": "https://argoproj.github.io/icons/icon-512x512.png?v=48b38c857977860245a12be5b6e591b1",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://argoproj.github.io/icons/icon-512x512.png?v=48b38c857977860245a12be5b6e591b1",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "pi-coding-agent",
+    "icon": "https://pi.dev/favicon.svg?v=b84e31d9-cda9-4256-a07e-0257c6e7989f",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://pi.dev/favicon.svg?v=b84e31d9-cda9-4256-a07e-0257c6e7989f",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "ast-grep",
+    "icon": "https://avatars.githubusercontent.com/u/114017360?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/114017360?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "scrcpy",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/scrcpy.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/scrcpy.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "k9s",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "pipenv",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "htop",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/htop.svg",
+    "source": "simple-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/htop.svg",
+      "source": "simple-icons"
+    }
+  },
+  {
+    "id": "libimobiledevice",
+    "icon": "https://avatars.githubusercontent.com/u/3584568?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/3584568?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "gobject-introspection",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "opentofu",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/opentofu.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/opentofu.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "podman",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/podman/podman-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/podman/podman-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "shfmt",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "hugo",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/hugo/hugo-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://gohugo.io/apple-touch-icon.png",
+      "source": "touch-icon-default"
+    }
+  },
+  {
+    "id": "oven-sh/bun/bun",
+    "icon": "https://bun.sh/logo.svg",
+    "source": "manifest",
+    "model": {
+      "icon": "https://bun.sh/logo@1024x.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "bun",
+    "icon": "https://bun.com/logo@1024x.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://bun.com/logo@1024x.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "swiftformat",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "sqlite",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/sqlite/sqlite-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/sqlite/sqlite-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "license-eye",
+    "icon": "https://skywalking.apache.org/favicons/apple-touch-icon.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://skywalking.apache.org/favicons/apple-touch-icon.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "xcodes",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "mysql-client",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "fluxcd/tap/flux",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/flux.svg",
+    "source": "simple-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/flux.svg",
+      "source": "simple-icons"
+    }
+  },
+  {
+    "id": "fastlane",
+    "icon": "https://avatars.githubusercontent.com/u/11098337?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/11098337?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "mitmproxy",
+    "icon": "https://avatars.githubusercontent.com/u/4652787?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/4652787?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "ddev/ddev/ddev",
+    "icon": "https://avatars.githubusercontent.com/u/595986?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/595986?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "virtualenv",
+    "icon": "https://virtualenv.pypa.io/en/latest/_static/virtualenv.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://virtualenv.pypa.io/en/latest/_static/virtualenv.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "age",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "boost",
+    "icon": "https://www.boost.org/static/img/favicon.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://www.boost.org/static/img/favicon.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "ruby-build",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "hf",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "supabase/tap/supabase",
+    "icon": "https://supabase.com/favicon/android-icon-512x512.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://supabase.com/favicon/android-icon-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "python-yq",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "xcresultparser",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "caddy",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/caddy.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/caddy.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "httpie",
+    "icon": "https://httpie.io/Brand/Favicons/Black/apple-icon-180x180.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://httpie.io/Brand/Favicons/Black/apple-icon-180x180.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "tilt",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "xclogparser",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "k3d",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "tree-sitter-cli",
+    "icon": "https://avatars.githubusercontent.com/u/17203512?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/17203512?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "antigravity-cli",
+    "icon": "https://antigravity.google/assets/image/antigravity-logo.png",
+    "source": "page-icon",
+    "model": {
+      "icon": "https://antigravity.google/assets/image/antigravity-logo.png",
+      "source": "page-icon"
+    }
+  },
+  {
+    "id": "duckdb",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/duckdb/duckdb-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://www.duckdb.org/images/favicon/android-chrome-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "trufflehog",
+    "icon": "https://framerusercontent.com/images/mBYTE4QIu1EiDhJqzvX1cUdRE.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://framerusercontent.com/images/mBYTE4QIu1EiDhJqzvX1cUdRE.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "iperf3",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "nginx",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/nginx.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/nginx.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "qpdf",
+    "icon": "https://avatars.githubusercontent.com/u/1812112?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/1812112?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "bats-core/bats-core/bats-support",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "bats-core/bats-core/bats-assert",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "composer",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/composer/composer-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/composer/composer-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "asdf",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "bats-core/bats-core/bats-file",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "tcl-tk",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "deno",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/deno.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://deno.com/images/icons/icon-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "p7zip",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "gentleman-programming/tap/engram",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "aws-sam-cli",
+    "icon": "https://a0.awsstatic.com/libra-css/images/site/touch-icon-ipad-144-smile.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://a0.awsstatic.com/libra-css/images/site/touch-icon-ipad-144-smile.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "exiftool",
+    "icon": "https://exiftool.org/android-chrome-512x512.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://exiftool.org/android-chrome-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "mint",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "go-task",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": "https://taskfile.dev/img/logo.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "semgrep",
+    "icon": "https://avatars.githubusercontent.com/u/29760937?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/29760937?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "rjyo/moshi/moshi-hook",
+    "icon": "https://getmoshi.app/icon.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://getmoshi.app/icon.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "yamllint",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "stripe/stripe-cli/stripe",
+    "icon": "https://avatars.githubusercontent.com/u/856813?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/856813?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "wix/brew/applesimutils",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "git-filter-repo",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "mpv",
+    "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/mpv.svg",
+    "source": "simple-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/mpv.svg",
+      "source": "simple-icons"
+    }
+  },
+  {
+    "id": "zizmor",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "ffmpeg-full",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "openssh",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "unar",
+    "icon": "https://theunarchiver.com/images/the-unarchiver-144x144.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://theunarchiver.com/images/the-unarchiver-144x144.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "hyperfine",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "stablyai/orca/orca",
+    "icon": "https://www.onorca.dev/icon.png?icon.0ga.kvqer~1c5.png",
+    "source": "page-icon",
+    "model": {
+      "icon": "https://www.onorca.dev/icon.png?icon.0ga.kvqer~1c5.png",
+      "source": "page-icon"
+    }
+  },
+  {
+    "id": "mongosh",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "zig",
+    "icon": "https://ziglang.org/favicon.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://ziglang.org/favicon.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "ghidra",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/ghidra/ghidra-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/ghidra/ghidra-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "fish",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/fish/fish-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/fish/fish-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "doctl",
+    "icon": "https://docs.digitalocean.com/apple-touch-icon.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://docs.digitalocean.com/apple-touch-icon.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "subversion",
+    "icon": "https://subversion.apache.org/icon512.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://subversion.apache.org/icon512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "lld",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "topgrade",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "agent-browser",
+    "icon": "https://agent-browser.dev/favicon.ico?favicon.3fpu2ql9ns1a0.ico",
+    "source": "page-icon",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "jupyterlab",
+    "icon": "https://jupyter.org/favicon.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://jupyter.org/favicon.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "vale",
+    "icon": "https://vale.sh/apple-touch-icon.png",
+    "source": "touch-icon-default",
+    "model": {
+      "icon": "https://vale.sh/apple-touch-icon.png",
+      "source": "touch-icon-default"
+    }
+  },
+  {
+    "id": "fnm",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "clang-format",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "hashicorp/tap/vault",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/vault/vault-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/vault/vault-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "bitwarden-cli",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/bitwarden.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://bitwarden.com/icons/icon-512x512.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "lima",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "tfenv",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "sikarugir-app/sikarugir/sikarugir",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "sccache",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "mas",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "poetry",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/poetry/poetry-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/poetry/poetry-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "railway",
+    "icon": "https://railway.com/android-chrome-512x512.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://railway.com/android-chrome-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "summarize",
+    "icon": "https://summarize.sh/favicon.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://summarize.sh/favicon.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "docker-credential-helper",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "glow",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "cameroncooke/axe/axe",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "jfrog-cli",
+    "icon": "https://avatars.githubusercontent.com/u/499942?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/499942?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "wimlib",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "bazelisk",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "gentleman-programming/tap/gentle-ai",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "vmware-tanzu/carvel/vendir",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "vips",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "yazi",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/png/yazi.png",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/png/yazi.png",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "syncthing",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/syncthing.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/syncthing.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "zsh-autosuggestions",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "tealdeer",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "ctlptl",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "databricks/tap/databricks",
+    "icon": "https://avatars.githubusercontent.com/u/4998052?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/4998052?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "httpd",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "cloudflare-wrangler",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "betterleaks",
+    "icon": "https://betterleaks.com/logo-512.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://betterleaks.com/logo-512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "dysk",
+    "icon": "https://dystroy.org/apple-touch-icon.png",
+    "source": "touch-icon-default",
+    "model": {
+      "icon": "https://dystroy.org/apple-touch-icon.png",
+      "source": "touch-icon-default"
+    }
+  },
+  {
+    "id": "gnu-sed",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "docker/tap/sbx",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "telnet",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "zsh-syntax-highlighting",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "nushell",
+    "icon": "https://avatars.githubusercontent.com/u/50749515?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/50749515?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "openai-whisper",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "cue",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "grafana-alloy",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "guile",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "aws-vault",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "nikitabobko/tap/aerospace",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "supabase",
+    "icon": "https://avatars.githubusercontent.com/u/54469796?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/54469796?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "azure/kubelogin/kubelogin",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "watch",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "xctesthtmlreport",
+    "icon": "https://avatars.githubusercontent.com/u/90536595?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/90536595?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "systeminit/tap/swamp",
+    "icon": "https://swamp-club.com/apple-touch-icon.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://swamp-club.com/apple-touch-icon.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "cosign",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/cosign.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/cosign.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "terraform-linters/tap/tflint",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "circleci",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/circleci/circleci-plain.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/circleci/circleci-plain.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "terragrunt",
+    "icon": "https://terragrunt.com/favicon.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": "https://terragrunt.com/favicon.svg",
+      "source": "svg-icon"
+    }
+  },
+  {
+    "id": "qt",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/qt/qt-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/qt/qt-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "sops",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "syft",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "terraform-docs",
+    "icon": "https://avatars.githubusercontent.com/u/63984590?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/63984590?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "oh-my-posh",
+    "icon": "https://ohmyposh.dev/img/favicons.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "azcopy",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "smartmontools",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "ansible-lint",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "firebase-cli",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/firebase.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/firebase.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "pyenv-virtualenv",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "potrace",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "gauche",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "jadx",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "gogcli",
+    "icon": "https://gogcli.sh/favicon.svg",
+    "source": "svg-icon",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "k6",
+    "icon": "https://k6.io/icons/icon-512x512.png?v=b39a6f3e0dc925c8ec4f77e0a65490e9",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://k6.io/icons/icon-512x512.png?v=b39a6f3e0dc925c8ec4f77e0a65490e9",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "mosh",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "r",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "trash-cli",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "cliproxyapi",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "container",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "kind",
+    "icon": "https://kind.sigs.k8s.io/apple-touch-icon.png",
+    "source": "apple-touch-icon",
+    "model": {
+      "icon": "https://kind.sigs.k8s.io/apple-touch-icon.png",
+      "source": "apple-touch-icon"
+    }
+  },
+  {
+    "id": "openvpn",
+    "icon": "https://avatars.githubusercontent.com/u/1569141?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/1569141?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "act",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/act.svg",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/act.svg",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "glslang",
+    "icon": "https://www.khronos.org/android-chrome-384x384.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://www.khronos.org/android-chrome-384x384.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "chibi-scheme",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "qwen-code",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "sshpass",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "osv-scanner",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "freerdp",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "norwoodj/tap/helm-docs",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "facebook/fb/idb-companion",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "socat",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "llmfit",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "cliclick",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "grype",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/png/grype.png",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/png/grype.png",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "sqlcmd",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "pgvector",
+    "icon": "https://avatars.githubusercontent.com/u/98363230?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/98363230?s=256&v=4",
+      "source": "github-avatar"
+    }
+  },
+  {
+    "id": "ideviceinstaller",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "parallel",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "tectonic",
+    "icon": null,
+    "source": "none",
+    "model": {
+      "icon": null,
+      "source": "none"
+    }
+  },
+  {
+    "id": "rust-analyzer",
+    "icon": "https://rust-analyzer.github.io/assets/fav/android-chrome-512x512.png",
+    "source": "manifest",
+    "model": {
+      "icon": "https://rust-analyzer.github.io/assets/fav/android-chrome-512x512.png",
+      "source": "manifest"
+    }
+  },
+  {
+    "id": "sentry-cli",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/sentry/sentry-original.svg",
+    "source": "devicon",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/sentry/sentry-original.svg",
+      "source": "devicon"
+    }
+  },
+  {
+    "id": "zellij",
+    "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/png/zellij.png",
+    "source": "dashboard-icons",
+    "model": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/png/zellij.png",
+      "source": "dashboard-icons"
+    }
+  },
+  {
+    "id": "oci-cli",
+    "icon": null,
+    "source": "findable",
+    "model": {
+      "icon": null,
+      "source": "findable"
+    }
+  },
+  {
+    "id": "helmfile",
+    "icon": "https://avatars.githubusercontent.com/u/83191469?s=256&v=4",
+    "source": "github-avatar",
+    "model": {
+      "icon": "https://avatars.githubusercontent.com/u/83191469?s=256&v=4",
+      "source": "github-avatar"
+    }
+  }
+]
