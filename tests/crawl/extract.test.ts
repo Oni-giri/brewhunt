@@ -304,6 +304,9 @@ describe('readmeImages', () => {
     expect(isBadge('https://img.shields.io/x', '')).toBe(true);
     expect(isBadge('https://example.com/badges/ci.png', '')).toBe(true);
     expect(isBadge('https://example.com/a.png', 'Coverage badge')).toBe(true);
+    expect(isBadge('https://example.com/a.png', 'User avatar: Dean')).toBe(true);
+    expect(isBadge('https://example.com/a.png', 'Sponsored by Warp')).toBe(true);
+    expect(isBadge('https://avatars.githubusercontent.com/u/1?v=4', '')).toBe(true);
     expect(isBadge('https://example.com/a.png', 'Screenshot')).toBe(false);
   });
 });

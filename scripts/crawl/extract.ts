@@ -547,6 +547,10 @@ function readmeUrl(src: string, repo: string): string | null {
   return parsed.href;
 }
 
+/**
+ * Not a screenshot by its address or its alt text: badges, avatars, sponsors' and projects' logos.
+ * What's left still goes to the screenshot classifier (lazygit's sponsors are named only by brand).
+ */
 export function isBadge(url: string, alt: string): boolean {
   const parsed = new URL(url);
   const path = parsed.pathname.toLowerCase();
@@ -555,7 +559,8 @@ export function isBadge(url: string, alt: string): boolean {
     path.endsWith('.svg') ||
     /\/(actions\/)?workflows\/[^/]+\/badge/.test(path) ||
     /badge/.test(path) ||
-    /\bbadge\b/i.test(alt)
+    /\b(badge|avatar|sponsor(ed)?|logo)\b/i.test(alt) ||
+    /^avatars\d*\.githubusercontent\.com$/.test(parsed.hostname)
   );
 }
 
