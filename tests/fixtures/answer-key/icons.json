@@ -1,20 +1,30 @@
 [
   {
     "id": "gh",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://cli.github.com/#svg-3",
+    "source": "page-svg",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://cli.github.com/#svg-3",
+      "source": "page-svg"
     }
   },
   {
     "id": "node",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://nodejs.org/en#svg-1",
+    "source": "page-svg",
     "model": {
       "icon": "https://nodejs.org/apple-touch-icon.png",
       "source": "touch-icon-default"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://nodejs.org/en#svg-1",
+      "source": "page-svg"
     }
   },
   {
@@ -181,11 +191,16 @@
   },
   {
     "id": "gcloud-cli",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://upload.wikimedia.org/wikipedia/commons/1/14/Google_Cloud_icon_%282026%29.svg",
+    "source": "web-search",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://upload.wikimedia.org/wikipedia/commons/1/14/Google_Cloud_icon_%282026%29.svg",
+      "source": "web-search"
     }
   },
   {
@@ -217,11 +232,16 @@
   },
   {
     "id": "coreutils",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://upload.wikimedia.org/wikipedia/commons/2/22/Heckert_GNU_white.svg",
+    "source": "web-search",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://upload.wikimedia.org/wikipedia/commons/2/22/Heckert_GNU_white.svg",
+      "source": "web-search"
     }
   },
   {
@@ -235,11 +255,16 @@
   },
   {
     "id": "yq",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://mikefarah.gitbook.io/yq/~gitbook/icon?size=large&theme=light",
+    "source": "web-search",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://mikefarah.gitbook.io/yq/~gitbook/icon?size=large&theme=light",
+      "source": "web-search"
     }
   },
   {
@@ -262,38 +287,58 @@
   },
   {
     "id": "cloudflared",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://developers.cloudflare.com/_astro/logo.te5VL_aD.svg",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://developers.cloudflare.com/_astro/logo.te5VL_aD.svg",
+      "source": "page-logo"
     }
   },
   {
     "id": "nmap",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://nmap.org/images/sitelogo.png",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://nmap.org/images/sitelogo.png",
+      "source": "page-logo"
     }
   },
   {
     "id": "anomalyco/tap/opencode-v2",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://raw.githubusercontent.com/anomalyco/opencode/HEAD/packages/console/app/src/asset/logo-ornate-light.svg",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://raw.githubusercontent.com/anomalyco/opencode/HEAD/packages/console/app/src/asset/logo-ornate-light.svg",
+      "source": "readme-logo"
     }
   },
   {
     "id": "glab",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://gitlab.com/uploads/-/system/project/avatar/34675721/cli-logo.png?v=1793566227",
+    "source": "web-search",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://gitlab.com/uploads/-/system/project/avatar/34675721/cli-logo.png?v=1793566227",
+      "source": "web-search"
     }
   },
   {
@@ -352,11 +397,16 @@
   },
   {
     "id": "gnupg",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://gnupg.org/share/logo-gnupg-light-purple-bg.png",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://gnupg.org/share/logo-gnupg-light-purple-bg.png",
+      "source": "page-logo"
     }
   },
   {
@@ -595,11 +645,16 @@
   },
   {
     "id": "herdr",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://herdr.dev/live/icons/herdr.png",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "none"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://herdr.dev/live/icons/herdr.png",
+      "source": "page-logo"
     }
   },
   {
@@ -649,29 +704,44 @@
   },
   {
     "id": "tesseract",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/8401422?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/8401422?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
     "id": "sevenzip",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://upload.wikimedia.org/wikipedia/commons/3/32/7-Zip_Icon.svg",
+    "source": "web-search",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://upload.wikimedia.org/wikipedia/commons/3/32/7-Zip_Icon.svg",
+      "source": "web-search"
     }
   },
   {
     "id": "graphviz",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://graphviz.org/Resources/app.png",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://graphviz.org/Resources/app.png",
+      "source": "page-logo"
     }
   },
   {
@@ -829,11 +899,16 @@
   },
   {
     "id": "watchman",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://raw.githubusercontent.com/meta/watchman/HEAD/website/static/img/logo.png",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://raw.githubusercontent.com/meta/watchman/HEAD/website/static/img/logo.png",
+      "source": "readme-logo"
     }
   },
   {
@@ -847,11 +922,16 @@
   },
   {
     "id": "rustup",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/5430905?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/5430905?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -919,11 +999,16 @@
   },
   {
     "id": "swiftlint",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/7575099?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/7575099?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -955,11 +1040,16 @@
   },
   {
     "id": "oras",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://oras.land/img/oras.svg",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://oras.land/img/oras.svg",
+      "source": "page-logo"
     }
   },
   {
@@ -1018,11 +1108,16 @@
   },
   {
     "id": "zoxide",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://raw.githubusercontent.com/ajeetdsouza/zoxide/HEAD/contrib/logo-light.svg",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://raw.githubusercontent.com/ajeetdsouza/zoxide/HEAD/contrib/logo-light.svg",
+      "source": "readme-logo"
     }
   },
   {
@@ -1072,11 +1167,16 @@
   },
   {
     "id": "fastfetch",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/136235211?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/136235211?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -1144,20 +1244,30 @@
   },
   {
     "id": "k9s",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://k9scli.io/assets/imhotep_logo.png",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://k9scli.io/assets/imhotep_logo.png",
+      "source": "page-logo"
     }
   },
   {
     "id": "pipenv",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/647025?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "none"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/647025?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -1270,20 +1380,30 @@
   },
   {
     "id": "xcodes",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/96437613?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "none"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/96437613?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
     "id": "mysql-client",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/2452804?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/2452804?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -1333,11 +1453,16 @@
   },
   {
     "id": "age",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://raw.githubusercontent.com/FiloSottile/age/main/logo/logo.svg",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://raw.githubusercontent.com/FiloSottile/age/main/logo/logo.svg",
+      "source": "readme-logo"
     }
   },
   {
@@ -1351,20 +1476,30 @@
   },
   {
     "id": "ruby-build",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/10675212?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "none"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/10675212?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
     "id": "hf",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
+      "source": "page-logo"
     }
   },
   {
@@ -1414,11 +1549,16 @@
   },
   {
     "id": "tilt",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://tilt.dev/#svg-1",
+    "source": "page-svg",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://tilt.dev/#svg-1",
+      "source": "page-svg"
     }
   },
   {
@@ -1432,11 +1572,16 @@
   },
   {
     "id": "k3d",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://k3d.io/stable/static/img/k3d_logo_black_blue.svg",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://k3d.io/stable/static/img/k3d_logo_black_blue.svg",
+      "source": "page-logo"
     }
   },
   {
@@ -1504,11 +1649,16 @@
   },
   {
     "id": "bats-core/bats-core/bats-support",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/32112113?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/32112113?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -1531,11 +1681,16 @@
   },
   {
     "id": "asdf",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/17869024?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/17869024?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -1549,11 +1704,16 @@
   },
   {
     "id": "tcl-tk",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://www.tcl-lang.org/images/logo.png",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://www.tcl-lang.org/images/logo.png",
+      "source": "page-logo"
     }
   },
   {
@@ -1612,11 +1772,16 @@
   },
   {
     "id": "go-task",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://taskfile.dev/img/logo.svg",
+    "source": "page-logo",
     "model": {
       "icon": "https://taskfile.dev/img/logo.png",
       "source": "apple-touch-icon"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://taskfile.dev/img/logo.svg",
+      "source": "page-logo"
     }
   },
   {
@@ -1684,20 +1849,30 @@
   },
   {
     "id": "zizmor",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://docs.zizmor.sh/assets/rainbow.svg",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://docs.zizmor.sh/assets/rainbow.svg",
+      "source": "page-logo"
     }
   },
   {
     "id": "ffmpeg-full",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/729418?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/729418?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -1721,10 +1896,15 @@
   {
     "id": "hyperfine",
     "icon": null,
-    "source": "findable",
+    "source": "none",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://github.com/user-attachments/assets/9a5a45d3-df3f-4e0e-8cc9-5d8153f39e48",
+      "source": "readme-logo"
     }
   },
   {
@@ -1738,11 +1918,16 @@
   },
   {
     "id": "mongosh",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://webimages.mongodb.com/_com_assets/icons/atlas_new.svg",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://webimages.mongodb.com/_com_assets/icons/atlas_new.svg",
+      "source": "page-logo"
     }
   },
   {
@@ -1792,11 +1977,16 @@
   },
   {
     "id": "lld",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/17149993?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/17149993?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -1846,11 +2036,16 @@
   },
   {
     "id": "clang-format",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/17149993?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/17149993?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -1873,11 +2068,16 @@
   },
   {
     "id": "lima",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://lima-vm.io/#svg-1",
+    "source": "page-svg",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://lima-vm.io/#svg-1",
+      "source": "page-svg"
     }
   },
   {
@@ -1945,20 +2145,30 @@
   },
   {
     "id": "docker-credential-helper",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://www.docker.com/app/uploads/2024/02/cropped-docker-logo-favicon-192x192.png",
+    "source": "maker-site",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://www.docker.com/app/uploads/2024/02/cropped-docker-logo-favicon-192x192.png",
+      "source": "maker-site"
     }
   },
   {
     "id": "glow",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/57376114?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/57376114?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -1990,11 +2200,16 @@
   },
   {
     "id": "bazelisk",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/11684617?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/11684617?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -2008,11 +2223,16 @@
   },
   {
     "id": "vmware-tanzu/carvel/vendir",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/116381947?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/116381947?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -2080,20 +2300,30 @@
   },
   {
     "id": "httpd",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://apache.org/favicons/apple-touch-icon-180x180.png",
+    "source": "maker-site",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://httpd.apache.org/images/httpd_logo_wide_new.png",
+      "source": "page-logo"
     }
   },
   {
     "id": "cloudflare-wrangler",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://developers.cloudflare.com/_astro/logo.te5VL_aD.svg",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://developers.cloudflare.com/_astro/logo.te5VL_aD.svg",
+      "source": "page-logo"
     }
   },
   {
@@ -2116,20 +2346,30 @@
   },
   {
     "id": "gnu-sed",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://upload.wikimedia.org/wikipedia/commons/2/22/Heckert_GNU_white.svg",
+    "source": "web-search",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://upload.wikimedia.org/wikipedia/commons/2/22/Heckert_GNU_white.svg",
+      "source": "web-search"
     }
   },
   {
     "id": "docker/tap/sbx",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/5429470?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://www.docker.com/app/uploads/2024/02/cropped-docker-logo-favicon-192x192.png",
+      "source": "maker-site"
     }
   },
   {
@@ -2161,56 +2401,86 @@
   },
   {
     "id": "openai-whisper",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/14957082?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/14957082?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
     "id": "cue",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/62243907?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/62243907?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
     "id": "grafana-alloy",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://raw.githubusercontent.com/grafana/alloy/HEAD/docs/sources/assets/logo_alloy_dark.svg#gh-light-mode-only",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://raw.githubusercontent.com/grafana/alloy/HEAD/docs/sources/assets/logo_alloy_dark.svg#gh-light-mode-only",
+      "source": "readme-logo"
     }
   },
   {
     "id": "guile",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://upload.wikimedia.org/wikipedia/commons/b/b3/GNU-Guile-logo.svg",
+    "source": "web-search",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://upload.wikimedia.org/wikipedia/commons/b/b3/GNU-Guile-logo.svg",
+      "source": "web-search"
     }
   },
   {
     "id": "aws-vault",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://raw.githubusercontent.com/ByteNess/aws-vault/HEAD/docs/static/images/aws-vault-lockup-light.svg",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "none"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://raw.githubusercontent.com/ByteNess/aws-vault/HEAD/docs/static/images/aws-vault-lockup-light.svg",
+      "source": "readme-logo"
     }
   },
   {
     "id": "nikitabobko/tap/aerospace",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://raw.githubusercontent.com/nikitabobko/AeroSpace/HEAD/resources/Assets.xcassets/AppIcon.appiconset/icon.png",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://raw.githubusercontent.com/nikitabobko/AeroSpace/HEAD/resources/Assets.xcassets/AppIcon.appiconset/icon.png",
+      "source": "readme-logo"
     }
   },
   {
@@ -2224,11 +2494,16 @@
   },
   {
     "id": "azure/kubelogin/kubelogin",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/6844498?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/6844498?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -2269,11 +2544,16 @@
   },
   {
     "id": "terraform-linters/tap/tflint",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/54197850?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/54197850?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -2305,20 +2585,30 @@
   },
   {
     "id": "sops",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://getsops.io/#svg-1",
+    "source": "page-svg",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://getsops.io/#svg-1",
+      "source": "page-svg"
     }
   },
   {
     "id": "syft",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://user-images.githubusercontent.com/5199289/136844524-1527b09f-c5cb-4aa9-be54-5aa92a6086c1.png",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://user-images.githubusercontent.com/5199289/136844524-1527b09f-c5cb-4aa9-be54-5aa92a6086c1.png",
+      "source": "readme-logo"
     }
   },
   {
@@ -2341,11 +2631,16 @@
   },
   {
     "id": "azcopy",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/6844498?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/6844498?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -2359,11 +2654,16 @@
   },
   {
     "id": "ansible-lint",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://docs.ansible.com/projects/lint/#svg-1",
+    "source": "page-svg",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://docs.ansible.com/projects/lint/#svg-1",
+      "source": "page-svg"
     }
   },
   {
@@ -2377,38 +2677,58 @@
   },
   {
     "id": "pyenv-virtualenv",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/16530698?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "none"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/16530698?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
     "id": "potrace",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Potrace_logo.svg",
+    "source": "web-search",
     "model": {
       "icon": null,
       "source": "none"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Potrace_logo.svg",
+      "source": "web-search"
     }
   },
   {
     "id": "gauche",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://raw.githubusercontent.com/shirok/Gauche/master/icons/gauche_logo-1000.png",
+    "source": "web-search",
     "model": {
       "icon": null,
       "source": "none"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://raw.githubusercontent.com/shirok/Gauche/master/icons/gauche_logo-1000.png",
+      "source": "web-search"
     }
   },
   {
     "id": "jadx",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://raw.githubusercontent.com/skylot/jadx/master/jadx-gui/src/main/resources/logos/jadx-logo.png",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://raw.githubusercontent.com/skylot/jadx/master/jadx-gui/src/main/resources/logos/jadx-logo.png",
+      "source": "readme-logo"
     }
   },
   {
@@ -2440,11 +2760,16 @@
   },
   {
     "id": "r",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://www.r-project.org/Rlogo.png",
+    "source": "page-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://www.r-project.org/Rlogo.png",
+      "source": "page-logo"
     }
   },
   {
@@ -2467,11 +2792,16 @@
   },
   {
     "id": "container",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://raw.githubusercontent.com/apple/container/HEAD/assets/Containerization-Logo.png",
+    "source": "readme-logo",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://raw.githubusercontent.com/apple/container/HEAD/assets/Containerization-Logo.png",
+      "source": "readme-logo"
     }
   },
   {
@@ -2521,11 +2851,16 @@
   },
   {
     "id": "qwen-code",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/141221163?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/141221163?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -2539,11 +2874,16 @@
   },
   {
     "id": "osv-scanner",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://opensource.google/_pwa/opensource/icons/icon-512x512.png",
+    "source": "maker-site",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://opensource.google/_pwa/opensource/icons/icon-512x512.png",
+      "source": "maker-site"
     }
   },
   {
@@ -2611,11 +2951,16 @@
   },
   {
     "id": "sqlcmd",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/6154722?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/6154722?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
@@ -2683,11 +3028,16 @@
   },
   {
     "id": "oci-cli",
-    "icon": null,
-    "source": "findable",
+    "icon": "https://avatars.githubusercontent.com/u/4430336?s=256&v=4",
+    "source": "org-avatar",
     "model": {
       "icon": null,
       "source": "findable"
+    },
+    "findable": true,
+    "finderModel": {
+      "icon": "https://avatars.githubusercontent.com/u/4430336?s=256&v=4",
+      "source": "org-avatar"
     }
   },
   {
