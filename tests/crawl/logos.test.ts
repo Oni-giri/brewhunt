@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { makerSite, pageLogos, readmeLogos } from '../../scripts/crawl/logos.ts';
+import { makerSite, pageLogos, rawGitHub, readmeLogos } from '../../scripts/crawl/logos.ts';
 
 describe('pageLogos', () => {
   const page = 'https://tool.test/docs/';
@@ -74,5 +74,22 @@ describe('makerSite', () => {
     [null, null],
   ])('%s → %s', (homepage, expected) => {
     expect(makerSite(homepage)).toBe(expected);
+  });
+});
+
+describe('rawGitHub', () => {
+  it.each([
+    [
+      'https://github.com/shirok/Gauche/raw/refs/heads/master/icons/gauche_logo.svg',
+      'https://raw.githubusercontent.com/shirok/Gauche/master/icons/gauche_logo.svg',
+    ],
+    [
+      'https://github.com/a/b/blob/main/logo.png?raw=true',
+      'https://raw.githubusercontent.com/a/b/main/logo.png',
+    ],
+    ['https://github.com/a/b', 'https://github.com/a/b'],
+    ['https://example.com/a/b/raw/main/x.png', 'https://example.com/a/b/raw/main/x.png'],
+  ])('%s → %s', (url, expected) => {
+    expect(rawGitHub(url)).toBe(expected);
   });
 });

@@ -6,9 +6,13 @@
 //   node scripts/crawl/find-logos.ts --from <answer-key dir> --key tests/fixtures/answer-key/icons.json --out <dir>
 //
 // Candidates that look like one the owner already turned down are kept, dimmed, with that reason.
+//
+// --suggested <file> adds image URLs a search agent proposed ({ "<id>": [{ "url": … }] }), first,
+// for those packages only, and merges them into the folder's results.json. The agent is only a
+// lead: its URLs are fetched, measured and checked like every other candidate.
 
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { repoKey } from '../data/repos.ts';
@@ -28,7 +32,7 @@ import {
 import { SafeFetcher, decodeText } from './fetch.ts';
 import { fetchDetails } from './github.ts';
 import { measure } from './images.ts';
-import { makerSite, pageLogos, readmeLogos } from './logos.ts';
+import { makerSite, pageLogos, rawGitHub, readmeLogos } from './logos.ts';
 import { EXT, failure, pool, safeName } from './util.ts';
 
 /** Icons kept from each maker site: its best few are enough. */
@@ -39,6 +43,7 @@ const { values: args } = parseArgs({
     from: { type: 'string' },
     key: { type: 'string' },
     out: { type: 'string' },
+    suggested: { type: 'string' },
     concurrency: { type: 'string', default: '6' },
   },
 });
@@ -57,7 +62,12 @@ const findable = new Set(key.filter((k) => k.source === 'findable').map((k) => k
 const { packages: all } = JSON.parse(readFileSync(join(args.from, 'results.json'), 'utf8')) as {
   packages: PackageResult[];
 };
-const packages = all.filter((p) => findable.has(p.id));
+const suggested: Record<string, { url: string }[]> = args.suggested
+  ? JSON.parse(readFileSync(args.suggested, 'utf8'))
+  : {};
+const packages = all.filter(
+  (p) => findable.has(p.id) && (!args.suggested || Object.hasOwn(suggested, p.id)),
+);
 log(`${packages.length} findable packages → ${OUT}`);
 
 const fetcher = new SafeFetcher();
@@ -104,6 +114,10 @@ await pool(packages, Number(args.concurrency), async (p) => {
   const repoKeyOf = repoOf(p);
   const repo = repoKeyOf ? (details.get(repoKeyOf) ?? null) : null;
   const candidates: (IconCandidate & { svg?: string })[] = [];
+  for (const { url } of suggested[p.id] ?? []) {
+    if (URL.canParse(url) && /^https?:$/.test(new URL(url).protocol))
+      candidates.push({ source: 'web-search', url: rawGitHub(url), declared: null });
+  }
 
   // The tool's own: its homepage's logo, then its README's.
   let pageError: string | null = null;
@@ -183,13 +197,25 @@ await pool(packages, Number(args.concurrency), async (p) => {
 
 const order = new Map(packages.map((p, i) => [p.id, i]));
 results.sort((a, b) => order.get(a.id)! - order.get(b.id)!);
+// With --suggested, the other packages of an earlier run are kept as they were.
+const earlier: PackageResult[] =
+  args.suggested && existsSync(join(OUT, 'results.json'))
+    ? JSON.parse(readFileSync(join(OUT, 'results.json'), 'utf8')).packages
+    : [];
+const fresh = new Map(results.map((r) => [r.id, r]));
+const merged = earlier.length
+  ? [
+      ...earlier.map((r) => fresh.get(r.id) ?? r),
+      ...results.filter((r) => !earlier.some((e) => e.id === r.id)),
+    ]
+  : results;
 writeFileSync(
   join(OUT, 'results.json'),
-  `${JSON.stringify({ generatedAt: new Date().toISOString(), iconsOnly: true, packages: results }, null, 1)}\n`,
+  `${JSON.stringify({ generatedAt: new Date().toISOString(), iconsOnly: true, packages: merged }, null, 1)}\n`,
 );
 const count = (f: (r: PackageResult) => boolean) => results.filter(f).length;
 const by = (source: string) =>
   count((r) => r.icons.some((i) => i.status === 'ok' && i.source === source));
 log(
-  `Done. At least one new candidate: ${count((r) => r.icons.some((i) => i.status === 'ok'))}/${results.length}; page logo ${by('page-logo') + by('page-svg')}, README ${by('readme-logo')}, organisation avatar ${by('org-avatar')}, maker site ${by('maker-site')}`,
+  `Done. At least one new candidate: ${count((r) => r.icons.some((i) => i.status === 'ok'))}/${results.length}; web search ${by('web-search')}, page logo ${by('page-logo') + by('page-svg')}, README ${by('readme-logo')}, organisation avatar ${by('org-avatar')}, maker site ${by('maker-site')}`,
 );

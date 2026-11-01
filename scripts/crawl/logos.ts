@@ -152,3 +152,11 @@ export function makerSite(homepage: string | null): string | null {
   if (root === host || PLATFORMS.has(root)) return null;
   return `https://${root}/`;
 }
+
+/** github.com's /raw/ and /blob/ links, which its robots.txt disallows, as raw.githubusercontent.com's. */
+export function rawGitHub(url: string): string {
+  const m = url.match(
+    /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/(?:raw|blob)\/(?:refs\/heads\/)?([^?#]+?)(?:\?raw=true)?$/,
+  );
+  return m ? `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}` : url;
+}

@@ -7,11 +7,11 @@
 //
 //   set -a; . ~/.env; set +a   # INCO_AI_API_KEY
 //   node scripts/crawl/icon-check.ts --from <dir> [--model glm-5.3-flash] [--concurrency 4]
-//   node scripts/crawl/icon-check.ts --from <find-logos dir> --findable
+//   node scripts/crawl/icon-check.ts --from <find-logos dir> --findable [--ids a,b]
 //
 // --findable is the second round, over find-logos.ts's candidates for the packages the owner
 // marked findable: the tool's own logo first, its maker's when it has none (owner's rule), and
-// "findable" again when nothing here is right.
+// "findable" again when nothing here is right. --ids picks these packages again, keeping the rest.
 //
 // Crawled text and images are untrusted: the text goes in a fenced data block, and the answer is
 // only ever one of the listed choices, checked here before it's saved.
@@ -39,6 +39,8 @@ const { values: args } = parseArgs({
     /** Only the first N packages not yet picked: for a quick look before a full run. */
     limit: { type: 'string' },
     findable: { type: 'boolean', default: false },
+    /** Comma-separated package ids to pick again (after find-logos.ts --suggested). */
+    ids: { type: 'string' },
   },
 });
 const key = process.env.INCO_AI_API_KEY;
@@ -88,7 +90,8 @@ const SYSTEM_FINDABLE = `You pick the icon an app store shows for a Homebrew pac
 - page-logo, page-svg: images and inline SVGs the tool's homepage marks as its logo or shows in its header;
 - readme-logo: images at the top of the tool's README, or named as its logo;
 - org-avatar: the avatar of the GitHub organisation that owns the repository;
-- maker-site: icons of the maker's main site (cli.github.com's maker is github.com).
+- maker-site: icons of the maker's main site (cli.github.com's maker is github.com);
+- web-search: images a search agent found on the tool's or its maker's pages.
 
 Rules, from the owner:
 - The tool's own logo is best. Use the maker's logo (organisation avatar, maker site) only when the tool has no logo of its own.
@@ -230,8 +233,9 @@ if (saved.model !== args.model) {
   console.error(`model-picks.json is from ${saved.model}; pass --redo to start over`);
   process.exit(2);
 }
+const again = new Set(args.ids?.split(',') ?? []);
 const todo = packages
-  .filter((p) => !saved.picks[p.id])
+  .filter((p) => (args.ids ? again.has(p.id) : !saved.picks[p.id]))
   .slice(0, args.limit ? Number(args.limit) : undefined);
 const usage = { input: 0, output: 0 };
 let done = 0;

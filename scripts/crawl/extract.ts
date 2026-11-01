@@ -325,7 +325,9 @@ export type IconSource =
   | 'page-svg'
   | 'readme-logo'
   | 'org-avatar'
-  | 'maker-site';
+  | 'maker-site'
+  // and images a search agent found on the web (find-logos.ts --suggested):
+  | 'web-search';
 
 export interface IconCandidate {
   source: IconSource;
