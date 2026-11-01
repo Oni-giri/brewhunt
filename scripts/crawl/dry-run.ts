@@ -22,6 +22,7 @@ import {
   MAX_SCREENSHOTS,
   ICON_MIN_SIZE,
   ICON_REJECT_BELOW,
+  SCREENSHOT_MAX_BYTES,
   SCREENSHOT_MIN_WIDTH,
   homepageIcons,
   libraryIcons,
@@ -180,8 +181,13 @@ let done = 0;
 await pool(selected, concurrency, async (entry) => {
   if (entry.homepage) {
     try {
-      const page = await fetcher.get(entry.homepage, 'html');
-      const facts = readPage(decodeText(page), page.url);
+      let page = await fetcher.get(entry.homepage, 'html');
+      let facts = readPage(decodeText(page), page.url);
+      // A page that only forwards (tmux.github.io → its GitHub wiki): one more hop.
+      if (facts.refresh) {
+        page = await fetcher.get(facts.refresh, 'html');
+        facts = readPage(decodeText(page), page.url);
+      }
       pages.set(entry.id, { facts, url: page.url });
       if (facts.manifest) {
         try {
@@ -289,7 +295,7 @@ await pool(selected, concurrency, async (entry) => {
       const result: ShotResult = { url: image.url, alt: image.alt, status: 'rejected' };
       screenshots.push(result);
       try {
-        const fetched = await fetcher.get(image.url, 'image');
+        const fetched = await fetcher.get(image.url, 'image', SCREENSHOT_MAX_BYTES);
         if (fetched.format === 'svg' || fetched.format === 'ico') {
           result.reason = `${fetched.format}, not a screenshot`;
           continue;

@@ -21,6 +21,11 @@ export const ICON_MIN_SIZE = 128;
 /** Screenshots narrower than this are refused. */
 export const SCREENSHOT_MIN_WIDTH = 400;
 export const MAX_SCREENSHOTS = 6;
+/**
+ * Download cap for a README image. Larger than the fetcher's 2 MB: animated terminal demos often
+ * are, and every screenshot is re-encoded to a WebP of 1600px at most before it's stored.
+ */
+export const SCREENSHOT_MAX_BYTES = 8_000_000;
 /** Repositories linked from a homepage that are worth asking GitHub about. */
 export const MAX_PAGE_REPOS = 5;
 
@@ -63,13 +68,18 @@ export interface PageFacts {
   description: string | null;
   icons: IconLink[];
   manifest: string | null;
+  /** Where `<meta http-equiv="refresh">` sends the reader at once (5 s or less), if anywhere. */
+  refresh: string | null;
   /** GitHub repositories the page links to, in page order (lowercase `owner/name`). */
   repoKeys: string[];
   /** Visible text, whitespace collapsed, at most TEXT_MAX_BYTES. */
   text: string;
 }
 
-/** Elements whose text isn't the page's content. */
+/**
+ * Elements whose text isn't the page's content. Not `head`: with `<HEAD>` in capitals (nmap.org)
+ * the parser nests the whole body inside it.
+ */
 const SKIP_TEXT = new Set([
   'script',
   'style',
@@ -78,7 +88,7 @@ const SKIP_TEXT = new Set([
   'svg',
   'nav',
   'footer',
-  'head',
+  'title',
   'iframe',
 ]);
 
@@ -117,6 +127,7 @@ export function readPage(html: string, pageUrl: string): PageFacts {
   let title: string | null = null;
   let description: string | null = null;
   let manifest: string | null = null;
+  let refresh: string | null = null;
   const icons: IconLink[] = [];
   const repoKeys: string[] = [];
   const text: string[] = [];
@@ -149,6 +160,12 @@ export function readPage(html: string, pageUrl: string): PageFacts {
         .join('');
       title = decodeEntities(value).replace(/\s+/g, ' ').trim() || null;
     } else if (name === 'meta') {
+      if ((attrs['http-equiv'] ?? '').toLowerCase() === 'refresh' && refresh === null) {
+        const m = /^\s*(\d+)\s*[;,]\s*url\s*=\s*['"]?([^'"]+)/i.exec(
+          decodeEntities(attrs.content ?? ''),
+        );
+        if (m && Number(m[1]) <= 5) refresh = absolute(m[2], base);
+      }
       const key = (attrs.name ?? attrs.property ?? '').toLowerCase();
       if (
         (key === 'description' || key === 'og:description') &&
@@ -184,6 +201,7 @@ export function readPage(html: string, pageUrl: string): PageFacts {
     description,
     icons,
     manifest,
+    refresh,
     repoKeys,
     text: capBytes(text.join(' ').replace(/\s+/g, ' ').trim()),
   };

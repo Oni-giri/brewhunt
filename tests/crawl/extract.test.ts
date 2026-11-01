@@ -68,6 +68,24 @@ describe('readPage', () => {
     expect(page.repoKeys).toEqual(['rxhanson/rectangle', 'other/thing']);
   });
 
+  it('reads text when the head is in capitals, and an immediate meta refresh', () => {
+    const shouting = readPage(
+      '<HEAD><TITLE>Nmap</TITLE></HEAD><body><p>Port scanner</p></body>',
+      'https://nmap.test/',
+    );
+    expect(shouting.title).toBe('Nmap');
+    expect(shouting.text).toBe('Port scanner');
+    const forward = readPage(
+      '<meta http-equiv="refresh" content="0; url=https://github.com/tmux/tmux/wiki"/>',
+      'https://tmux.test/',
+    );
+    expect(forward.refresh).toBe('https://github.com/tmux/tmux/wiki');
+    expect(
+      readPage('<meta http-equiv="refresh" content="300">', 'https://x.test/').refresh,
+    ).toBeNull();
+    expect(page.refresh).toBeNull();
+  });
+
   it('ignores javascript: and data: links', () => {
     const odd = readPage(
       '<link rel="icon" href="javascript:alert(1)"><link rel="icon" href="data:image/png;base64,AA">',

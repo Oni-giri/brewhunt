@@ -93,6 +93,37 @@ describe('URLs and addresses the default policy refuses', () => {
     expect(await reason(fetcher.get(url, 'html'))).toBe(expected);
   });
 
+  it('tries IPv4 first, and the next address when one doesn’t connect', async () => {
+    const seen: string[] = [];
+    const server = createServer((req, res) => {
+      seen.push(req.socket.localAddress ?? '');
+      res.writeHead(200, { 'content-type': 'text/html' });
+      res.end('ok');
+    });
+    await new Promise<void>((done) => server.listen(0, '127.0.0.1', done));
+    const { port } = server.address() as AddressInfo;
+    const make = (addresses: { address: string; family: 4 | 6 }[]) =>
+      new SafeFetcher({
+        robots: false,
+        resolve: async () => addresses,
+        allowAddress: () => true,
+        allowPort: () => true,
+        connectTimeoutMs: 300,
+      });
+    // IPv6 listed first, IPv4 used.
+    await make([
+      { address: '::1', family: 6 },
+      { address: '127.0.0.1', family: 4 },
+    ]).get(`http://dual.test:${port}/`, 'html');
+    // An address that refuses the connection (nothing listens on 127.0.0.2), then one that works.
+    await make([
+      { address: '127.0.0.2', family: 4 },
+      { address: '127.0.0.1', family: 4 },
+    ]).get(`http://dual.test:${port}/`, 'html');
+    server.close();
+    expect(seen).toEqual(['127.0.0.1', '127.0.0.1']);
+  });
+
   it('refuses a host if any of its addresses is private', async () => {
     const mixed = new SafeFetcher({
       robots: false,

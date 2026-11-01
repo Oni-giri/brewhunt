@@ -22,6 +22,10 @@ export const USER_AGENT = 'brewhunt-crawler (+https://github.com/Oni-giri/brewhu
 export const MAX_BYTES = 2_000_000;
 export const TIMEOUT_MS = 15_000;
 export const MAX_REDIRECTS = 3;
+/** Time for one address to take the connection before the next is tried. */
+export const CONNECT_TIMEOUT_MS = 5_000;
+/** Addresses tried per request. */
+const MAX_ADDRESSES = 3;
 /** Least time between two requests to the same host. */
 export const HOST_INTERVAL_MS = 1_000;
 /** RFC 9309 asks crawlers to read at least 500 KiB of robots.txt. */
@@ -169,6 +173,7 @@ export interface FetcherOptions {
   robots?: boolean;
   hostIntervalMs?: number;
   timeoutMs?: number;
+  connectTimeoutMs?: number;
   maxBytes?: number;
 }
 
@@ -184,6 +189,7 @@ export class SafeFetcher {
   readonly #robots: boolean;
   readonly #interval: number;
   readonly #timeout: number;
+  readonly #connectTimeout: number;
   readonly #maxBytes: number;
   /** Host → earliest time the next request may start. */
   readonly #nextSlot = new Map<string, number>();
@@ -197,6 +203,7 @@ export class SafeFetcher {
     this.#robots = options.robots ?? true;
     this.#interval = options.hostIntervalMs ?? HOST_INTERVAL_MS;
     this.#timeout = options.timeoutMs ?? TIMEOUT_MS;
+    this.#connectTimeout = options.connectTimeoutMs ?? CONNECT_TIMEOUT_MS;
     this.#maxBytes = options.maxBytes ?? MAX_BYTES;
   }
 
@@ -238,8 +245,11 @@ export class SafeFetcher {
     return url;
   }
 
-  /** The one address to connect to: every address the host has must be allowed. */
-  async #pick(url: URL): Promise<ResolvedAddress> {
+  /**
+   * The addresses to try, IPv4 first (GitHub's runners have no IPv6 route); every address the
+   * host has must be allowed, whichever ends up used.
+   */
+  async #addresses(url: URL): Promise<ResolvedAddress[]> {
     const host = bareHost(url);
     const literal = isIP(host);
     let addresses: ResolvedAddress[];
@@ -257,7 +267,10 @@ export class SafeFetcher {
     if (addresses.length === 0) throw new FetchError('dns', `${host}: no address`);
     const refused = addresses.find((a) => !this.#allowAddress(a.address));
     if (refused) throw new FetchError('address', `${host} resolves to ${refused.address}`);
-    return addresses[0];
+    return [
+      ...addresses.filter((a) => a.family === 4),
+      ...addresses.filter((a) => a.family === 6),
+    ].slice(0, MAX_ADDRESSES);
   }
 
   async #slot(host: string): Promise<void> {
@@ -304,13 +317,41 @@ export class SafeFetcher {
   }
 
   async #request(url: URL, kind: Kind, maxBytes: number): Promise<RawResponse> {
-    const pinned = await this.#pick(url);
-    const host = bareHost(url);
-    await this.#slot(host);
+    const addresses = await this.#addresses(url);
+    await this.#slot(bareHost(url));
     const signal = AbortSignal.timeout(this.#timeout);
+    // A host can be reachable on one of its addresses only: try the next when one doesn't connect.
+    for (const [i, address] of addresses.entries()) {
+      try {
+        return await this.#attempt(url, address, kind, maxBytes, signal);
+      } catch (error) {
+        if (!(error instanceof NoConnection)) throw error;
+        if (i === addresses.length - 1 || signal.aborted) {
+          throw new FetchError(
+            signal.aborted ? 'timeout' : 'network',
+            `${url.href}: ${error.message}`,
+          );
+        }
+      }
+    }
+    throw new FetchError('network', `${url.href}: no address`);
+  }
+
+  #attempt(
+    url: URL,
+    pinned: ResolvedAddress,
+    kind: Kind,
+    maxBytes: number,
+    signal: AbortSignal,
+  ): Promise<RawResponse> {
+    const host = bareHost(url);
     return new Promise<RawResponse>((resolve, reject) => {
+      let connected = false;
       const fail = (error: unknown) => {
-        if (error instanceof FetchError) return reject(error);
+        if (error instanceof FetchError || error instanceof NoConnection) return reject(error);
+        if (!connected && !signal.aborted) {
+          return reject(new NoConnection(`${pinned.address}: ${(error as Error).message}`));
+        }
         if (signal.aborted)
           return reject(new FetchError('timeout', `${url.href}: no answer in ${this.#timeout} ms`));
         reject(new FetchError('network', `${url.href}: ${(error as Error).message}`));
@@ -355,11 +396,28 @@ export class SafeFetcher {
           );
         },
       );
+      req.on('socket', (socket) => {
+        const timer = setTimeout(
+          () =>
+            req.destroy(
+              new NoConnection(`${pinned.address}: no connection in ${this.#connectTimeout} ms`),
+            ),
+          this.#connectTimeout,
+        );
+        socket.once('connect', () => {
+          connected = true;
+          clearTimeout(timer);
+        });
+        socket.once('close', () => clearTimeout(timer));
+      });
       req.on('error', fail);
       req.end();
     });
   }
 }
+
+/** One address didn't take the connection; the next may. */
+class NoConnection extends Error {}
 
 interface RawResponse {
   status: number;
