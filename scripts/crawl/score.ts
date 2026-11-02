@@ -7,9 +7,13 @@
 //
 // Each answered package lands in one bucket:
 // - exact: the owner's file; same file: a perceptual hash within SAME_FILE bits of it.
-// - other file: an icon, but another file. It may be the same logo drawn again (hashes can't tell:
-//   such files differ by up to 44 of 64 bits) or a wrong one; --list shows them to look at.
-// - icon for tile: an icon where the owner wants the letter tile. Wrong.
+// - also fine: an image the owner accepted in a later review (`accepted` in the key).
+// - wrong: an image the owner rejected in a review (`rejected`), or an icon where the owner chose
+//   the letter tile after seeing that image.
+// - passed over: another image the owner saw and didn't choose. The same logo from a worse source,
+//   or a wrong one: hashes can't tell (one logo drawn again differs by up to 44 of 64 bits).
+// - never shown: an image the owner never saw, where the owner has an icon; unreviewed icon: one
+//   where the owner chose the tile without seeing it. Neither is scored until the owner looks.
 // - missed: the tile where the owner has an icon. Not wrong, but no icon.
 // - tile: the tile, as the owner wants.
 // Packages the owner left "findable" aren't scored.
@@ -30,9 +34,25 @@ export interface KeyEntry {
   icon: string | null;
   source: string;
   hash?: string;
+  /** Hashes of every image the owner was shown for the package. */
+  seen?: string[];
+  /** Hashes of other images the owner accepted, or rejected, in a later review. */
+  accepted?: string[];
+  rejected?: string[];
 }
 
-export type Bucket = 'exact' | 'same file' | 'other file' | 'icon for tile' | 'missed' | 'tile';
+export const BUCKETS = [
+  'exact',
+  'same file',
+  'also fine',
+  'passed over',
+  'never shown',
+  'unreviewed icon',
+  'wrong',
+  'missed',
+  'tile',
+] as const;
+export type Bucket = (typeof BUCKETS)[number];
 
 /** Where one pick lands against the owner's answer; null when the owner left it findable. */
 export function bucket(
@@ -40,11 +60,16 @@ export function bucket(
   pick: { icon: string | null; hash?: string | null },
 ): Bucket | null {
   if (answer.source === 'findable') return null;
-  if (answer.icon === null) return pick.icon === null ? 'tile' : 'icon for tile';
-  if (pick.icon === null) return 'missed';
+  if (pick.icon === null) return answer.icon === null ? 'tile' : 'missed';
   if (pick.icon === answer.icon) return 'exact';
-  if (answer.hash && pick.hash && hamming(answer.hash, pick.hash) <= SAME_FILE) return 'same file';
-  return 'other file';
+  const near = (hashes: string[] | undefined) =>
+    !!pick.hash && (hashes ?? []).some((h) => hamming(h, pick.hash!) <= SAME_FILE);
+  if (answer.hash && near([answer.hash])) return 'same file';
+  if (near(answer.rejected)) return 'wrong';
+  if (near(answer.accepted)) return 'also fine';
+  const seen = near(answer.seen);
+  if (answer.icon === null) return seen ? 'wrong' : 'unreviewed icon';
+  return seen ? 'passed over' : 'never shown';
 }
 
 if (import.meta.main) {
@@ -84,9 +109,12 @@ if (import.meta.main) {
     const b = bucket(answer, { icon: pick.icon, hash });
     if (!b) continue;
     counts.set(b, (counts.get(b) ?? 0) + 1);
-    if (b === 'other file' || b === 'icon for tile' || (args.list && b === 'missed'))
+    if (
+      !['exact', 'same file', 'also fine', 'tile', 'missed'].includes(b) ||
+      (args.list && b === 'missed')
+    )
       listed.push(
-        `${b.padEnd(13)} ${answer.id}: ${pick.source} ${pick.icon} (owner: ${answer.source} ${answer.icon ?? ''})`,
+        `${b.padEnd(15)} ${answer.id}: ${pick.source} ${pick.icon} (owner: ${answer.source} ${answer.icon ?? ''})`,
       );
   }
   const scored = [...counts].filter(([b]) => b !== 'not in run').reduce((n, [, c]) => n + c, 0);
@@ -95,10 +123,11 @@ if (import.meta.main) {
   console.log(
     `${scored} packages scored${counts.get('not in run') ? `, ${counts.get('not in run')} not in this run` : ''}`,
   );
-  for (const b of ['exact', 'same file', 'other file', 'icon for tile', 'missed', 'tile'] as const)
-    console.log(`  ${b.padEnd(13)} ${String(n(b)).padStart(4)}  ${pct(n(b))}`);
+  for (const b of BUCKETS)
+    console.log(`  ${b.padEnd(15)} ${String(n(b)).padStart(4)}  ${pct(n(b))}`);
+  const unknown = n('never shown') + n('unreviewed icon');
   console.log(
-    `Wrong for sure (icon for tile): ${pct(n('icon for tile'))}; at most, counting every other file as wrong: ${pct(n('icon for tile') + n('other file'))}`,
+    `Wrong: ${pct(n('wrong'))}; up to ${pct(n('wrong') + n('passed over'))} if every passed-over image is a wrong logo, not a worse file of the right one${unknown ? `; ${unknown} picks the owner hasn't seen` : ''}`,
   );
   if (args.list || listed.length <= 40) for (const line of listed) console.log(line);
 }

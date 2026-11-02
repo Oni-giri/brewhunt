@@ -59,19 +59,34 @@ describe('bucket', () => {
     icon: 'https://a.test/logo.svg',
     source: 'svg-icon',
     hash: '00ff00ff00ff00ff',
+    seen: ['00ff00ff00ff00ff', '0f0f0f0f0f0f0f0f'],
   };
+  const other = 'https://b.test/l.png';
   it('sorts a pick against the owner’s answer', () => {
     expect(bucket(owner, { icon: owner.icon })).toBe('exact');
-    expect(bucket(owner, { icon: 'https://b.test/l.png', hash: '00ff00ff00ff00f0' })).toBe(
-      'same file',
-    );
-    expect(bucket(owner, { icon: 'https://b.test/l.png', hash: 'ff00ff00ff00ff00' })).toBe(
-      'other file',
-    );
+    expect(bucket(owner, { icon: other, hash: '00ff00ff00ff00f0' })).toBe('same file');
+    expect(bucket(owner, { icon: other, hash: '0f0f0f0f0f0f0f0f' })).toBe('passed over');
+    expect(bucket(owner, { icon: other, hash: 'ff00ff00ff00ff00' })).toBe('never shown');
     expect(bucket(owner, { icon: null })).toBe('missed');
-    const tile = { id: 'y', icon: null, source: 'none' };
+    expect(
+      bucket(
+        { ...owner, accepted: ['ff00ff00ff00ff00'] },
+        { icon: other, hash: 'ff00ff00ff00ff00' },
+      ),
+    ).toBe('also fine');
+    expect(
+      bucket(
+        { ...owner, rejected: ['0f0f0f0f0f0f0f0f'] },
+        { icon: other, hash: '0f0f0f0f0f0f0f0f' },
+      ),
+    ).toBe('wrong');
+  });
+
+  it('counts an icon where the owner chose the tile as wrong only if the owner saw it', () => {
+    const tile = { id: 'y', icon: null, source: 'none', seen: ['0f0f0f0f0f0f0f0f'] };
     expect(bucket(tile, { icon: null })).toBe('tile');
-    expect(bucket(tile, { icon: 'https://b.test/l.png' })).toBe('icon for tile');
+    expect(bucket(tile, { icon: other, hash: '0f0f0f0f0f0f0f0f' })).toBe('wrong');
+    expect(bucket(tile, { icon: other, hash: 'ff00ff00ff00ff00' })).toBe('unreviewed icon');
     expect(bucket({ id: 'z', icon: null, source: 'findable' }, { icon: null })).toBeNull();
   });
 });

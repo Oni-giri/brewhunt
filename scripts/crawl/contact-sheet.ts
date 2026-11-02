@@ -17,7 +17,9 @@
 // Both record the chosen image's perceptual hash (`hash`), and --update adds it to entries that lack
 // one when this folder has their image: the URL of an inline SVG (`page#svg-n`) or an avatar can
 // change between crawls, the image less so. A hash only shows the same file, not the same logo:
-// re-drawn files of one logo differ by up to 44 of its 64 bits.
+// re-drawn files of one logo differ by up to 44 of its 64 bits. They also record `seen`: the hashes of
+// every image the owner was shown for the package, so score.ts can tell a pick the owner passed over
+// from one the owner never saw.
 //
 // Everything shown was fetched by the dry run and is served from its folder, so the owner's
 // browser never contacts the sites. Crawled files are untrusted: text is escaped, and images
@@ -67,6 +69,9 @@ const byId = new Map(packages.map((p) => [p.id, p]));
 /** The perceptual hash of a package's candidate, when it was measured. */
 const hashOf = (id: string, url: string | null) =>
   (url && byId.get(id)?.icons.find((i) => i.url === url)?.hash) || undefined;
+/** The hashes of the images a package's row showed. */
+const shownHashes = (id: string) =>
+  (byId.get(id)?.icons ?? []).map((i) => i.hash).filter((h): h is string => !!h);
 const readAnswers = (): Record<string, Answer> =>
   existsSync(ANSWERS) ? JSON.parse(readFileSync(ANSWERS, 'utf8')) : {};
 /** Read on every request, so picks show up while icon-check.ts is still running. */
@@ -83,6 +88,7 @@ if (args.export) {
       icon: answers[p.id].icon,
       source: answers[p.id].source,
       hash: hashOf(p.id, answers[p.id].icon),
+      seen: [...new Set(shownHashes(p.id))],
       // What the model had picked, to measure it against the owner.
       ...(picks[p.id] && { model: { icon: picks[p.id].icon, source: picks[p.id].source } }),
     }));
@@ -100,11 +106,16 @@ if (args.update) {
     icon: string | null;
     source: string;
     hash?: string;
+    seen?: string[];
   }[];
   let updated = 0;
   const next = key.map((known) => {
-    const entry = known.hash ? known : { ...known, hash: hashOf(known.id, known.icon) };
-    const answer = answers[entry.id];
+    const answer = answers[known.id];
+    const entry = {
+      ...known,
+      hash: known.hash ?? hashOf(known.id, known.icon),
+      seen: [...new Set([...(known.seen ?? []), ...(answer ? shownHashes(known.id) : [])])],
+    };
     if (entry.source !== 'findable' || !answer || answer.source === 'findable') return entry;
     updated++;
     const pick = picks[entry.id];

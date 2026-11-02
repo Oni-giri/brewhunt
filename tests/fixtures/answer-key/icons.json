@@ -12,7 +12,15 @@
       "icon": "https://cli.github.com/#svg-3",
       "source": "page-svg"
     },
-    "hash": "f0a88e0f968e8ccc"
+    "hash": "f0a88e0f968e8ccc",
+    "seen": [
+      "30e84cd4969217c8",
+      "0824301818302408",
+      "f0a88e0f968e8ccc",
+      "a0a969516c36a680",
+      "c2c2e2aaae8eaec0",
+      "4d0f696969333396"
+    ]
   },
   {
     "id": "node",
@@ -27,7 +35,15 @@
       "icon": "https://nodejs.org/en#svg-1",
       "source": "page-svg"
     },
-    "hash": "000042cacfcececa"
+    "hash": "000042cacfcececa",
+    "seen": [
+      "71f8bebe9e9ec871",
+      "000042cacfcececa",
+      "00c0c0c0c0c0c000",
+      "68740eda26ca90a2",
+      "60d88ca48cdc6682",
+      "e8e0d268ec94b662"
+    ]
   },
   {
     "id": "codex",
@@ -37,7 +53,11 @@
       "icon": null,
       "source": "findable"
     },
-    "hash": "60dca638b6a6ccf8"
+    "hash": "60dca638b6a6ccf8",
+    "seen": [
+      "60dca638b6a6ccf8",
+      "f0f0ccd4d4ccf0f0"
+    ]
   },
   {
     "id": "uv",
@@ -47,7 +67,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/uv/uv-original.svg",
       "source": "devicon"
     },
-    "hash": "c808080888881289"
+    "hash": "c808080888881289",
+    "seen": [
+      "c0d4d4cccccccccc",
+      "c808080888881289",
+      "c808888888888089"
+    ]
   },
   {
     "id": "awscli",
@@ -57,7 +82,11 @@
       "icon": "https://a0.awsstatic.com/libra-css/images/site/touch-icon-ipad-144-smile.png",
       "source": "apple-touch-icon"
     },
-    "hash": "12443b0b3b1fcc13"
+    "hash": "12443b0b3b1fcc13",
+    "seen": [
+      "12443b0b3b1fcc13",
+      "224c332f3b0f4c32"
+    ]
   },
   {
     "id": "ffmpeg",
@@ -67,7 +96,11 @@
       "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/ffmpeg.svg",
       "source": "simple-icons"
     },
-    "hash": "de94a892acdac6ee"
+    "hash": "de94a892acdac6ee",
+    "seen": [
+      "6e6cd8f2acd2c6ee",
+      "de94a892acdac6ee"
+    ]
   },
   {
     "id": "git",
@@ -77,7 +110,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/git/git-original.svg",
       "source": "devicon"
     },
-    "hash": "30f8ccaaaacc6830"
+    "hash": "30f8ccaaaacc6830",
+    "seen": [
+      "30f8ccaaaacc6830",
+      "31f8ccaaaacce831",
+      "b279cc828acc69b2"
+    ]
   },
   {
     "id": "pkgconf",
@@ -87,7 +125,10 @@
       "icon": "https://avatars.githubusercontent.com/u/2036410?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "ccccb2694d929292"
+    "hash": "ccccb2694d929292",
+    "seen": [
+      "ccccb2694d929292"
+    ]
   },
   {
     "id": "cmake",
@@ -97,7 +138,11 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/cmake/cmake-original.svg",
       "source": "devicon"
     },
-    "hash": "7030e868cc8c8ee0"
+    "hash": "7030e868cc8c8ee0",
+    "seen": [
+      "7030e868cc8c8ee0",
+      "7030e868ccd4e6c0"
+    ]
   },
   {
     "id": "pipx",
@@ -107,7 +152,11 @@
       "icon": "https://pipx.pypa.io/stable/_static/logo.svg",
       "source": "svg-icon"
     },
-    "hash": "07375fd636363c9e"
+    "hash": "07375fd636363c9e",
+    "seen": [
+      "07375fd636363c9e",
+      "2858587024705818"
+    ]
   },
   {
     "id": "go",
@@ -117,7 +166,14 @@
       "icon": "https://go.dev/images/favicon-gopher-plain.png",
       "source": "apple-touch-icon"
     },
-    "hash": "e8172432aaa2aaaa"
+    "hash": "e8172432aaa2aaaa",
+    "seen": [
+      "e8172432aaa2aaaa",
+      "f127253333172b03",
+      "f0d4f0c4d0e4c454",
+      "b676ed59d9696666",
+      "ad00b6f1f5668061"
+    ]
   },
   {
     "id": "mise",
@@ -127,7 +183,12 @@
       "icon": "https://mise.jdx.dev/android-chrome-512x512.png",
       "source": "manifest"
     },
-    "hash": "a870d4acfc24b818"
+    "hash": "a870d4acfc24b818",
+    "seen": [
+      "a870d4acfc24b818",
+      "70d2c61cdaea6e7c",
+      "7cd2465e9a6c687c"
+    ]
   },
   {
     "id": "pyenv",
@@ -137,7 +198,10 @@
       "icon": "https://avatars.githubusercontent.com/u/16530698?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "a2591d251d13679a"
+    "hash": "a2591d251d13679a",
+    "seen": [
+      "a2591d251d13679a"
+    ]
   },
   {
     "id": "yt-dlp",
@@ -147,7 +211,11 @@
       "icon": "https://avatars.githubusercontent.com/u/79589310?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "8239c66f2bb24d82"
+    "hash": "8239c66f2bb24d82",
+    "seen": [
+      "583d37b32b32d616",
+      "8239c66f2bb24d82"
+    ]
   },
   {
     "id": "docker",
@@ -157,7 +225,15 @@
       "icon": "https://www.docker.com/app/uploads/2024/02/cropped-docker-logo-favicon-192x192.png",
       "source": "page-icon"
     },
-    "hash": "32f4c41ac498e1e0"
+    "hash": "32f4c41ac498e1e0",
+    "seen": [
+      "32f4c43ac498e1e0",
+      "32f4c41ac498e1e0",
+      "429072e28cf07002",
+      "30d4d6b28488a1c2",
+      "47324c8e9e4d720f",
+      "1170f2b2c480e1e2"
+    ]
   },
   {
     "id": "ollama",
@@ -167,7 +243,14 @@
       "icon": "https://ollama.com/public/apple-touch-icon.png",
       "source": "apple-touch-icon"
     },
-    "hash": "4d69ccd4f096d4d4"
+    "hash": "4d69ccd4f096d4d4",
+    "seen": [
+      "4d69ccd4f096d4d4",
+      "cce8ccb2aab286a2",
+      "d48e8e55712b0323",
+      "306969ccd4d4d4d4",
+      "cce8ccb2aab286b2"
+    ]
   },
   {
     "id": "mole",
@@ -177,7 +260,10 @@
       "icon": "https://mole.fit/img/favicon-mole-192-ba32c29d.png",
       "source": "apple-touch-icon"
     },
-    "hash": "18e6e1f8e4e4e800"
+    "hash": "18e6e1f8e4e4e800",
+    "seen": [
+      "18e6e1f8e4e4e800"
+    ]
   },
   {
     "id": "tmux",
@@ -187,7 +273,15 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/tmux/tmux-original.svg",
       "source": "devicon"
     },
-    "hash": "8809080808080988"
+    "hash": "8809080808080988",
+    "seen": [
+      "4d8e2b696933964d",
+      "8e17696969713396",
+      "f0aaaa07138e8ccc",
+      "8809080808080988",
+      "8e4dcc0c4ccc4d8e",
+      "8808880808080809"
+    ]
   },
   {
     "id": "claude-code",
@@ -197,7 +291,14 @@
       "icon": "https://claude.com/apple-touch-icon.png",
       "source": "touch-icon-default"
     },
-    "hash": "a497160f0f178a48"
+    "hash": "a497160f0f178a48",
+    "seen": [
+      "4aececf8f0f8d4d4",
+      "4aecacf8f0a8d454",
+      "a497160f0f178a48",
+      "00c4a2aad4cccc00",
+      "00c4a2aac0cccc00"
+    ]
   },
   {
     "id": "jq",
@@ -207,7 +308,11 @@
       "icon": "https://jqlang.org/icon.svg",
       "source": "svg-icon"
     },
-    "hash": "56087a5949533146"
+    "hash": "56087a5949533146",
+    "seen": [
+      "46587a5ada93330a",
+      "56087a5949533146"
+    ]
   },
   {
     "id": "gcloud-cli",
@@ -222,7 +327,12 @@
       "icon": "https://upload.wikimedia.org/wikipedia/commons/1/14/Google_Cloud_icon_%282026%29.svg",
       "source": "web-search"
     },
-    "hash": "70c0cc860f1782c0"
+    "hash": "70c0cc860f1782c0",
+    "seen": [
+      "70c0cc860f1782c0",
+      "68e8cc8e8ecce870",
+      "292da736a62d6d68"
+    ]
   },
   {
     "id": "poppler",
@@ -231,7 +341,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "azure-cli",
@@ -241,7 +352,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/azure/azure-original.svg",
       "source": "devicon"
     },
-    "hash": "6068e4e4cc8ada9c"
+    "hash": "6068e4e4cc8ada9c",
+    "seen": [
+      "6068e4e4cc8ada9c",
+      "b271e9c8d89c8e7e",
+      "6969e0e4ccc09a8a"
+    ]
   },
   {
     "id": "imagemagick",
@@ -251,7 +367,11 @@
       "icon": "https://imagemagick.org/image/wand.png",
       "source": "apple-touch-icon"
     },
-    "hash": "1a3adab060c48810"
+    "hash": "1a3adab060c48810",
+    "seen": [
+      "1a3adab060c48810",
+      "e386acb4b05a2e2e"
+    ]
   },
   {
     "id": "coreutils",
@@ -266,7 +386,12 @@
       "icon": "https://upload.wikimedia.org/wikipedia/commons/2/22/Heckert_GNU_white.svg",
       "source": "web-search"
     },
-    "hash": "8e6925b29ccc70b8"
+    "hash": "8e6925b29ccc70b8",
+    "seen": [
+      "8e6925b29ccc70b8",
+      "8e21aebed8cce179",
+      "8e69aebed8cce079"
+    ]
   },
   {
     "id": "fzf",
@@ -276,7 +401,10 @@
       "icon": "https://junegunn.github.io/apple-touch-icon.png",
       "source": "touch-icon-default"
     },
-    "hash": "60686864746c4cc8"
+    "hash": "60686864746c4cc8",
+    "seen": [
+      "60686864746c4cc8"
+    ]
   },
   {
     "id": "yq",
@@ -291,7 +419,10 @@
       "icon": "https://mikefarah.gitbook.io/yq/~gitbook/icon?size=large&theme=light",
       "source": "web-search"
     },
-    "hash": "124d693333337182"
+    "hash": "124d693333337182",
+    "seen": [
+      "124d693333337182"
+    ]
   },
   {
     "id": "pnpm",
@@ -301,7 +432,12 @@
       "icon": "https://avatars.githubusercontent.com/u/21320719?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "b292b27272b2b2b2"
+    "hash": "b292b27272b2b2b2",
+    "seen": [
+      "3216323232323232",
+      "b292b27272b2b2b2",
+      "6949b23131323332"
+    ]
   },
   {
     "id": "pandoc",
@@ -311,7 +447,11 @@
       "icon": "https://pandoc.org/pandoc-icon.svg?v=20261007184000",
       "source": "svg-icon"
     },
-    "hash": "6174767254514240"
+    "hash": "6174767254514240",
+    "seen": [
+      "6174767254514240",
+      "d05cc6c6e4a0a2a0"
+    ]
   },
   {
     "id": "cloudflared",
@@ -326,7 +466,15 @@
       "icon": "https://developers.cloudflare.com/_astro/logo.te5VL_aD.svg",
       "source": "page-logo"
     },
-    "hash": "b179f8d8c88a9292"
+    "hash": "b179f8d8c88a9292",
+    "seen": [
+      "b179f8d8c88a9292",
+      "525266d6d2642da9",
+      "f08c964a268ce263",
+      "4c4cd64654a8e868",
+      "9692684d4d689692",
+      "208431f8c2920080"
+    ]
   },
   {
     "id": "nmap",
@@ -341,7 +489,11 @@
       "icon": "https://nmap.org/images/sitelogo.png",
       "source": "page-logo"
     },
-    "hash": "8e17337133070f33"
+    "hash": "8e17337133070f33",
+    "seen": [
+      "8e17337133070f33",
+      "0000000000000000"
+    ]
   },
   {
     "id": "anomalyco/tap/opencode-v2",
@@ -356,7 +508,14 @@
       "icon": "https://raw.githubusercontent.com/anomalyco/opencode/HEAD/packages/console/app/src/asset/logo-ornate-light.svg",
       "source": "readme-logo"
     },
-    "hash": "0a5b5545d79659a0"
+    "hash": "0a5b5545d79659a0",
+    "seen": [
+      "0a5b5545d79659a0",
+      "0b13274b17372662",
+      "0313274b17342a64",
+      "0b13264b17342564",
+      "0b13264b17352624"
+    ]
   },
   {
     "id": "glab",
@@ -371,7 +530,10 @@
       "icon": "https://gitlab.com/uploads/-/system/project/avatar/34675721/cli-logo.png?v=1793566227",
       "source": "web-search"
     },
-    "hash": "00d0e87464e0d000"
+    "hash": "00d0e87464e0d000",
+    "seen": [
+      "00d0e87464e0d000"
+    ]
   },
   {
     "id": "opencode",
@@ -381,7 +543,12 @@
       "icon": "https://opencode.ai/apple-touch-icon-v3.png",
       "source": "apple-touch-icon"
     },
-    "hash": "608e96b2b2969660"
+    "hash": "608e96b2b2969660",
+    "seen": [
+      "608e96b2b2969660",
+      "e0868686868686e0",
+      "8086868686868680"
+    ]
   },
   {
     "id": "neovim",
@@ -391,7 +558,12 @@
       "icon": "https://avatars.githubusercontent.com/u/6471485?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "ccc68696969e9ccc"
+    "hash": "ccc68696969e9ccc",
+    "seen": [
+      "c4868696969e9ecc",
+      "ccc68696969e9ccc",
+      "c4c66676725a8ccc"
+    ]
   },
   {
     "id": "helm",
@@ -401,7 +573,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/helm/helm-original.svg",
       "source": "devicon"
     },
-    "hash": "d2d44da6a64dd4d2"
+    "hash": "d2d44da6a64dd4d2",
+    "seen": [
+      "d2d44da6a64dd4d2",
+      "b2d44ca7a94cd4b2",
+      "d2d4cca6a2ccd4d2"
+    ]
   },
   {
     "id": "lazygit",
@@ -410,7 +587,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "rust",
@@ -420,7 +598,14 @@
       "icon": "https://rust-lang.org/static/images/android-chrome-512x512.png?v=ngJW8jGAmR",
       "source": "manifest"
     },
-    "hash": "f0d48a696b8eccf0"
+    "hash": "f0d48a696b8eccf0",
+    "seen": [
+      "71c4caaaaacccc71",
+      "f0d48a696b8eccf0",
+      "e0d48a696b8eccf0",
+      "e8d48a69698ecce8",
+      "f0d48a69698eccf0"
+    ]
   },
   {
     "id": "anomalyco/tap/opencode",
@@ -430,7 +615,11 @@
       "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/opencode.svg",
       "source": "simple-icons"
     },
-    "hash": "8086868686868680"
+    "hash": "8086868686868680",
+    "seen": [
+      "e0868686868686e0",
+      "8086868686868680"
+    ]
   },
   {
     "id": "gnupg",
@@ -445,7 +634,10 @@
       "icon": "https://gnupg.org/share/logo-gnupg-light-purple-bg.png",
       "source": "page-logo"
     },
-    "hash": "a0911007065ac989"
+    "hash": "a0911007065ac989",
+    "seen": [
+      "a0911007065ac989"
+    ]
   },
   {
     "id": "ccache",
@@ -455,7 +647,10 @@
       "icon": "https://avatars.githubusercontent.com/u/16579254?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "009292f069eccccc"
+    "hash": "009292f069eccccc",
+    "seen": [
+      "009292f069eccccc"
+    ]
   },
   {
     "id": "wget",
@@ -464,7 +659,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "ripgrep",
@@ -473,7 +669,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "just",
@@ -483,7 +680,10 @@
       "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/just.svg",
       "source": "simple-icons"
     },
-    "hash": "e8cc8ec8c88ecce8"
+    "hash": "e8cc8ec8c88ecce8",
+    "seen": [
+      "e8cc8ec8c88ecce8"
+    ]
   },
   {
     "id": "xcbeautify",
@@ -492,7 +692,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "kubernetes-cli",
@@ -502,7 +703,13 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/kubernetes.svg",
       "source": "dashboard-icons"
     },
-    "hash": "f0e88e96aa96d4e0"
+    "hash": "f0e88e96aa96d4e0",
+    "seen": [
+      "f0cc8e962b96d4e8",
+      "f0e88e96aa96d4e0",
+      "31e88e86aa96d469",
+      "f0cc8e962b96d4e0"
+    ]
   },
   {
     "id": "git-lfs",
@@ -512,7 +719,11 @@
       "icon": "https://avatars.githubusercontent.com/u/20246716?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "9473c49cbcf87196"
+    "hash": "9473c49cbcf87196",
+    "seen": [
+      "9473c49cbcf87196",
+      "70e28e3926a8e870"
+    ]
   },
   {
     "id": "shellcheck",
@@ -521,7 +732,12 @@
     "model": {
       "icon": null,
       "source": "findable"
-    }
+    },
+    "seen": [
+      "d4d0ecc4c48aca40",
+      "b29262729aceaca4",
+      "da78781e607363e2"
+    ]
   },
   {
     "id": "curl",
@@ -531,7 +747,13 @@
       "icon": "https://curl.se/logo/curl-symbol.svg",
       "source": "svg-icon"
     },
-    "hash": "5b5a36346c69d9d2"
+    "hash": "5b5a36346c69d9d2",
+    "seen": [
+      "5b5a36346c69d9d2",
+      "1a9ab4a5e9dad048",
+      "195b12346d49d290",
+      "093b12342d48da90"
+    ]
   },
   {
     "id": "starship",
@@ -541,7 +763,12 @@
       "icon": "https://avatars.githubusercontent.com/u/49654870?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "f0d4a6c6c6a6ccd8"
+    "hash": "f0d4a6c6c6a6ccd8",
+    "seen": [
+      "f0f4a6ce86a6ccd8",
+      "f0d4a6c6c6a6ccd8",
+      "f0b4a68e8686c898"
+    ]
   },
   {
     "id": "docker-compose",
@@ -551,7 +778,11 @@
       "icon": "https://docs.docker.com/apple-touch-icon.png",
       "source": "touch-icon-default"
     },
-    "hash": "0e7cec16acaeb049"
+    "hash": "0e7cec16acaeb049",
+    "seen": [
+      "34f0c44aa498e064",
+      "0e7cec16acaeb049"
+    ]
   },
   {
     "id": "bash",
@@ -561,7 +792,10 @@
       "icon": null,
       "source": "none"
     },
-    "hash": "e886065e5c169cf8"
+    "hash": "e886065e5c169cf8",
+    "seen": [
+      "e886065e5c169cf8"
+    ]
   },
   {
     "id": "kubeconform",
@@ -570,7 +804,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "llvm",
@@ -580,7 +815,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/llvm/llvm-original.svg",
       "source": "devicon"
     },
-    "hash": "00d4960b2b78d800"
+    "hash": "00d4960b2b78d800",
+    "seen": [
+      "00d4960b2b78d800",
+      "0196960b69786d00",
+      "248a9296e4f8c0e4"
+    ]
   },
   {
     "id": "xcodegen",
@@ -589,7 +829,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "hello",
@@ -598,7 +839,12 @@
     "model": {
       "icon": null,
       "source": "findable"
-    }
+    },
+    "seen": [
+      "e1a3b483da64d636",
+      "8e6925b29ccc70b8",
+      "8e69aebed8cce079"
+    ]
   },
   {
     "id": "ninja",
@@ -607,7 +853,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "can1357/tap/omp",
@@ -617,7 +864,13 @@
       "icon": "https://omp.sh/favicon-512x512.png",
       "source": "manifest"
     },
-    "hash": "c01217959485a4c4"
+    "hash": "c01217959485a4c4",
+    "seen": [
+      "c00217979485a4c4",
+      "c0a21f17140686c4",
+      "c01217959485a4c4",
+      "c0221795958524c4"
+    ]
   },
   {
     "id": "openjdk",
@@ -627,7 +880,11 @@
       "icon": "https://avatars.githubusercontent.com/u/41768318?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "5829a1614d44d468"
+    "hash": "5829a1614d44d468",
+    "seen": [
+      "5829a1614d44d468",
+      "30f068cc968282c4"
+    ]
   },
   {
     "id": "gnu-tar",
@@ -636,7 +893,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "zsh",
@@ -646,7 +904,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/zsh/zsh-original.svg",
       "source": "devicon"
     },
-    "hash": "82411101011b0b8a"
+    "hash": "82411101011b0b8a",
+    "seen": [
+      "00b0a0ccc0646c80",
+      "82411101011b0b8a",
+      "00b0a04cc0646c80"
+    ]
   },
   {
     "id": "direnv",
@@ -656,7 +919,10 @@
       "icon": "https://avatars.githubusercontent.com/u/13077327?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "4070e4fcdcdcd400"
+    "hash": "4070e4fcdcdcd400",
+    "seen": [
+      "4070e4fcdcdcd400"
+    ]
   },
   {
     "id": "actionlint",
@@ -665,7 +931,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "redis",
@@ -675,7 +942,15 @@
       "icon": "https://redis.io/icon.png?icon.3r8p6nysrg-mh.png",
       "source": "page-icon"
     },
-    "hash": "6c062b0b1f2b6694"
+    "hash": "6c062b0b1f2b6694",
+    "seen": [
+      "6c062b0b1f2b6698",
+      "6c062b0b1f2b6694",
+      "70e8becef096e070",
+      "e8bc0fcc966bc870",
+      "126c8e8e9ea66412",
+      "f8d0b2f6c982b438"
+    ]
   },
   {
     "id": "php",
@@ -685,7 +960,15 @@
       "icon": "https://avatars.githubusercontent.com/u/25158?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "b0ce296b53738690"
+    "hash": "b0ce296b53738690",
+    "seen": [
+      "b0ce296b53738690",
+      "aa52494d53530ca2",
+      "0168f4f2aaf87001",
+      "78d4d4eac88ac470",
+      "19f0f4c8d8700360",
+      "0170e89756f0f801"
+    ]
   },
   {
     "id": "ruby",
@@ -695,7 +978,15 @@
       "icon": "https://www.ruby-lang.org/images/icon-192.png",
       "source": "page-icon"
     },
-    "hash": "40b87468d8e06000"
+    "hash": "40b87468d8e06000",
+    "seen": [
+      "40b874e8cce4e000",
+      "40b87468d8e06000",
+      "36e2c486acf2b2a0",
+      "76e3c486beb272a0",
+      "36f2c68e9e767280",
+      "72e3c384866662c0"
+    ]
   },
   {
     "id": "herdr",
@@ -710,7 +1001,11 @@
       "icon": "https://herdr.dev/live/icons/herdr.png",
       "source": "page-logo"
     },
-    "hash": "c4f0eac6f4b2f8d8"
+    "hash": "c4f0eac6f4b2f8d8",
+    "seen": [
+      "c4f0eac6f4b2f8d8",
+      "249239e6e6f8ba58"
+    ]
   },
   {
     "id": "nvm",
@@ -720,7 +1015,10 @@
       "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/nvm.svg",
       "source": "simple-icons"
     },
-    "hash": "94208e9c696b0029"
+    "hash": "94208e9c696b0029",
+    "seen": [
+      "94208e9c696b0029"
+    ]
   },
   {
     "id": "hashicorp/tap/terraform",
@@ -730,7 +1028,13 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/terraform.svg",
       "source": "dashboard-icons"
     },
-    "hash": "0883a7f63c303238"
+    "hash": "0883a7f63c303238",
+    "seen": [
+      "68c88aaaaaaeec68",
+      "8886c6f434b03238",
+      "0883a7f63c303238",
+      "8083d6f434f03238"
+    ]
   },
   {
     "id": "cocoapods",
@@ -740,7 +1044,18 @@
       "icon": "https://avatars.githubusercontent.com/u/1189714?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "649a0b69291bd020"
+    "hash": "649a0b69291bd020",
+    "seen": [
+      "649a0b69291bd422",
+      "659a0b69291bd024",
+      "649a2b69291bd422",
+      "659a0b69291bd021",
+      "64982b69291bd02a",
+      "64982b69291bd428",
+      "60980b69291bd022",
+      "649a0b69291bd020",
+      "64e29a1b1b9ae264"
+    ]
   },
   {
     "id": "1password-cli",
@@ -750,7 +1065,12 @@
       "icon": "https://www.1password.dev/mintlify-assets/_mintlify/favicons/ab-634991b8/cic7o6CrHhA6877e/_generated/favicon/apple-touch-icon.png",
       "source": "apple-touch-icon"
     },
-    "hash": "ccf055969655f0cc"
+    "hash": "ccf055969655f0cc",
+    "seen": [
+      "f0e8d49292d4e8f0",
+      "ccf055969655f0cc",
+      "f0cc8ecccc8eccf0"
+    ]
   },
   {
     "id": "maven",
@@ -760,7 +1080,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/maven/maven-original.svg",
       "source": "devicon"
     },
-    "hash": "d6ccd8d8d064e040"
+    "hash": "d6ccd8d8d064e040",
+    "seen": [
+      "d6ccd8d8d064e040"
+    ]
   },
   {
     "id": "tesseract",
@@ -775,7 +1098,10 @@
       "icon": "https://avatars.githubusercontent.com/u/8401422?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "b2b2719696b29292"
+    "hash": "b2b2719696b29292",
+    "seen": [
+      "b2b2719696b29292"
+    ]
   },
   {
     "id": "sevenzip",
@@ -790,7 +1116,12 @@
       "icon": "https://upload.wikimedia.org/wikipedia/commons/3/32/7-Zip_Icon.svg",
       "source": "web-search"
     },
-    "hash": "4141515d55554541"
+    "hash": "4141515d55554541",
+    "seen": [
+      "4141515d55554541",
+      "4424222a6a666a45",
+      "c465232b6b666acd"
+    ]
   },
   {
     "id": "graphviz",
@@ -805,7 +1136,10 @@
       "icon": "https://graphviz.org/Resources/app.png",
       "source": "page-logo"
     },
-    "hash": "6065e0f0fceac4c0"
+    "hash": "6065e0f0fceac4c0",
+    "seen": [
+      "6065e0f0fceac4c0"
+    ]
   },
   {
     "id": "rtk",
@@ -815,7 +1149,11 @@
       "icon": "https://www.rtk-ai.app/brand/favicon/favicon-192.png",
       "source": "page-icon"
     },
-    "hash": "438716561223c3b2"
+    "hash": "438716561223c3b2",
+    "seen": [
+      "438716561232c592",
+      "438716561223c3b2"
+    ]
   },
   {
     "id": "fd",
@@ -824,7 +1162,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "powershell",
@@ -834,7 +1173,11 @@
       "icon": "https://avatars.githubusercontent.com/u/11524380?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "eed6deee9caca4d8"
+    "hash": "eed6deee9caca4d8",
+    "seen": [
+      "eed6deee9caca4d8",
+      "ecd6daee8cb6a4d8"
+    ]
   },
   {
     "id": "atuin",
@@ -844,7 +1187,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/atuin.svg",
       "source": "dashboard-icons"
     },
-    "hash": "0cf99b5e5a22b4c4"
+    "hash": "0cf99b5e5a22b4c4",
+    "seen": [
+      "0cf99b5e5a22b4c4"
+    ]
   },
   {
     "id": "protobuf",
@@ -859,7 +1205,10 @@
       "icon": "https://avatars.githubusercontent.com/u/26310541?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "272b29391b86a6a6"
+    "hash": "272b29391b86a6a6",
+    "seen": [
+      "272b29391b86a6a6"
+    ]
   },
   {
     "id": "microsoft/git/microsoft-git",
@@ -874,7 +1223,11 @@
       "icon": "https://avatars.githubusercontent.com/u/6154722?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "aeaeaeaeaeaeaeae"
+    "hash": "aeaeaeaeaeaeaeae",
+    "seen": [
+      "aeaeaeaeaeaeaeae",
+      "0c0c0c0c0c0c0c0c"
+    ]
   },
   {
     "id": "ansible",
@@ -884,7 +1237,13 @@
       "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/ansible.svg",
       "source": "simple-icons"
     },
-    "hash": "f0c88ed496b2e0f0"
+    "hash": "f0c88ed496b2e0f0",
+    "seen": [
+      "f0cc8ed496b6f0f0",
+      "f0cc8ed496b2f0f0",
+      "71eccc8c9696e871",
+      "f0c88ed496b2e0f0"
+    ]
   },
   {
     "id": "pre-commit",
@@ -894,7 +1253,11 @@
       "icon": "https://avatars.githubusercontent.com/u/6943086?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "b269f0bab2c469b2"
+    "hash": "b269f0bab2c469b2",
+    "seen": [
+      "b269f0bab2c469b2",
+      "71f0c4c4dcd8f071"
+    ]
   },
   {
     "id": "aria2",
@@ -904,7 +1267,10 @@
       "icon": "https://avatars.githubusercontent.com/u/13545224?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "92929292b2716969"
+    "hash": "92929292b2716969",
+    "seen": [
+      "92929292b2716969"
+    ]
   },
   {
     "id": "rclone",
@@ -914,7 +1280,12 @@
       "icon": "https://avatars.githubusercontent.com/u/24937341?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "7068ccce8a3382cc"
+    "hash": "7068ccce8a3382cc",
+    "seen": [
+      "7068ccce8a3382cc",
+      "70e8ccc68a3382cc",
+      "70e8ccec8a33b2cc"
+    ]
   },
   {
     "id": "llama.cpp",
@@ -929,7 +1300,13 @@
       "icon": "https://llama.app/#svg-1",
       "source": "page-svg"
     },
-    "hash": "f860d2e481b870e0"
+    "hash": "f860d2e481b870e0",
+    "seen": [
+      "f860d2e481b870e0",
+      "c08203130396f070",
+      "0000009e9e000000",
+      "00d8dc869ec4e400"
+    ]
   },
   {
     "id": "kustomize",
@@ -944,7 +1321,10 @@
       "icon": "https://avatars.githubusercontent.com/u/36015203?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "31e88e96aa96d469"
+    "hash": "31e88e96aa96d469",
+    "seen": [
+      "31e88e96aa96d469"
+    ]
   },
   {
     "id": "qemu",
@@ -954,7 +1334,13 @@
       "icon": "https://www.qemu.org/assets/favicons/android-chrome-512x512.png",
       "source": "manifest"
     },
-    "hash": "c492ba3e9a9accf2"
+    "hash": "c492ba3e9a9accf2",
+    "seen": [
+      "69d49e9e9ac8ec72",
+      "c492ba3e9a9accf2",
+      "c492ba3a9a9accf2",
+      "f09c9eb8969ac8f2"
+    ]
   },
   {
     "id": "gcc",
@@ -964,7 +1350,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/gcc/gcc-original.svg",
       "source": "devicon"
     },
-    "hash": "f1f8a8b8d4e8c8f0"
+    "hash": "f1f8a8b8d4e8c8f0",
+    "seen": [
+      "f1f8a8b8d4e8c8f0"
+    ]
   },
   {
     "id": "whisper.cpp",
@@ -979,7 +1368,11 @@
       "icon": "https://user-images.githubusercontent.com/1991296/235238348-05d0f6a4-da44-4900-a1de-d0707e75b763.jpeg",
       "source": "readme-logo"
     },
-    "hash": "420919714b4f4f2c"
+    "hash": "420919714b4f4f2c",
+    "seen": [
+      "420919714b4f4f2c",
+      "00d8dc869ec4e400"
+    ]
   },
   {
     "id": "chezmoi",
@@ -994,7 +1387,15 @@
       "icon": "https://www.chezmoi.io/logo.svg",
       "source": "page-logo"
     },
-    "hash": "0000000000000000"
+    "hash": "0000000000000000",
+    "seen": [
+      "0000000000000000",
+      "00c0c0c0c0c0c000",
+      "826ce0c2c2e06c82",
+      "01f0c0c3c3c0f001",
+      "60e0988ad86c8442",
+      "b269cc96d4d4d490"
+    ]
   },
   {
     "id": "copilot-cli",
@@ -1004,7 +1405,10 @@
       "icon": "https://docs.github.com/assets/cb-27314/images/site/apple-touch-icon-512x512.png",
       "source": "manifest"
     },
-    "hash": "4d0f2b6969333396"
+    "hash": "4d0f2b6969333396",
+    "seen": [
+      "4d0f2b6969333396"
+    ]
   },
   {
     "id": "watchman",
@@ -1019,7 +1423,11 @@
       "icon": "https://raw.githubusercontent.com/meta/watchman/HEAD/website/static/img/logo.png",
       "source": "readme-logo"
     },
-    "hash": "f0cc8e55558eccf0"
+    "hash": "f0cc8e55558eccf0",
+    "seen": [
+      "f0cc8e55558eccf0",
+      "5468ecd6bacc5088"
+    ]
   },
   {
     "id": "git-delta",
@@ -1028,7 +1436,10 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": [
+      "70c4cdd9889a02c4"
+    ]
   },
   {
     "id": "rustup",
@@ -1043,7 +1454,14 @@
       "icon": "https://avatars.githubusercontent.com/u/5430905?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "71c4caaaaacccc71"
+    "hash": "71c4caaaaacccc71",
+    "seen": [
+      "70c4cdd9889a02c4",
+      "48c2701c1c70c248",
+      "71c4caaaaacccc71",
+      "f0d48a696b8eccf0",
+      "e0d48a696b8eccf0"
+    ]
   },
   {
     "id": "gradle",
@@ -1053,7 +1471,13 @@
       "icon": "https://gradle.org/assets/icon/apple-touch-icon.png",
       "source": "apple-touch-icon"
     },
-    "hash": "0666e1d8bcc0692c"
+    "hash": "0666e1d8bcc0692c",
+    "seen": [
+      "8e26e1d2b4a96900",
+      "0666e1d8bcc0692c",
+      "7066561786622488",
+      "8666e1d8bc80692c"
+    ]
   },
   {
     "id": "gitleaks",
@@ -1063,7 +1487,10 @@
       "icon": "https://avatars.githubusercontent.com/u/90395851?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "e4d4f6eacacac464"
+    "hash": "e4d4f6eacacac464",
+    "seen": [
+      "e4d4f6eacacac464"
+    ]
   },
   {
     "id": "btop",
@@ -1072,7 +1499,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "bat",
@@ -1082,7 +1510,10 @@
       "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/bat.svg",
       "source": "simple-icons"
     },
-    "hash": "924cd496f0709244"
+    "hash": "924cd496f0709244",
+    "seen": [
+      "924cd496f0709244"
+    ]
   },
   {
     "id": "colima",
@@ -1092,7 +1523,11 @@
       "icon": "https://colima.run/favicon-dark.svg",
       "source": "svg-icon"
     },
-    "hash": "e4caf0f8b0f4ec6c"
+    "hash": "e4caf0f8b0f4ec6c",
+    "seen": [
+      "e4caf0f8b0f4ec6c",
+      "e0c8c0c4c4e86c4c"
+    ]
   },
   {
     "id": "mysql",
@@ -1102,7 +1537,13 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/mysql/mysql-original.svg",
       "source": "devicon"
     },
-    "hash": "086090a9dcc6aa07"
+    "hash": "086090a9dcc6aa07",
+    "seen": [
+      "086090a9dcc6aa07",
+      "00080c0c98cc6400",
+      "888c8a84e8a5b5c2",
+      "08081a0d14144440"
+    ]
   },
   {
     "id": "bats-core",
@@ -1112,7 +1553,10 @@
       "icon": "https://avatars.githubusercontent.com/u/32112113?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "e88e361e1e1e98f9"
+    "hash": "e88e361e1e1e98f9",
+    "seen": [
+      "e88e361e1e1e98f9"
+    ]
   },
   {
     "id": "swiftlint",
@@ -1127,7 +1571,14 @@
       "icon": "https://avatars.githubusercontent.com/u/7575099?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "71f8cc9e8eccf871"
+    "hash": "71f8cc9e8eccf871",
+    "seen": [
+      "71f8dc9e8ec4f871",
+      "939494939d999990",
+      "9090808888809090",
+      "a6644161736664a6",
+      "71f8cc9e8eccf871"
+    ]
   },
   {
     "id": "tailscale",
@@ -1137,7 +1588,13 @@
       "icon": "https://avatars.githubusercontent.com/u/48932923?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "d4aaaaaaaaaaaad4"
+    "hash": "d4aaaaaaaaaaaad4",
+    "seen": [
+      "d4aaaaaaaaaaaad4",
+      "b2b292b2b292b2b2",
+      "402aaaaaaa8e2a50",
+      "232992b2b2927133"
+    ]
   },
   {
     "id": "mkcert",
@@ -1146,7 +1603,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "docker-buildx",
@@ -1156,7 +1614,10 @@
       "icon": "https://docs.docker.com/apple-touch-icon.png",
       "source": "touch-icon-default"
     },
-    "hash": "34f0c44aa498e064"
+    "hash": "34f0c44aa498e064",
+    "seen": [
+      "34f0c44aa498e064"
+    ]
   },
   {
     "id": "oras",
@@ -1171,7 +1632,12 @@
       "icon": "https://oras.land/img/oras.svg",
       "source": "page-logo"
     },
-    "hash": "abab2b260bada243"
+    "hash": "abab2b260bada243",
+    "seen": [
+      "abab2b260bada243",
+      "0000000000000000",
+      "aa54aaaaaae24880"
+    ]
   },
   {
     "id": "flyctl",
@@ -1181,7 +1647,12 @@
       "icon": "https://fly.io/phx/ui/images/favicon/android-chrome-512x512.png",
       "source": "manifest"
     },
-    "hash": "f0f0dadae8b2b2d4"
+    "hash": "f0f0dadae8b2b2d4",
+    "seen": [
+      "b2615a5a69b2b230",
+      "f0f0dadae8b2b2d4",
+      "d0e0cacae0b2b2d4"
+    ]
   },
   {
     "id": "trivy",
@@ -1191,7 +1662,13 @@
       "icon": "https://trivy.dev/assets/images/favicon_192x192.png",
       "source": "page-icon"
     },
-    "hash": "8e2769554d692b8e"
+    "hash": "8e2769554d692b8e",
+    "seen": [
+      "8c2761554d692b8e",
+      "8e2769554d692b8e",
+      "e23948496c453ba7",
+      "f0e8d0b2d4aacc70"
+    ]
   },
   {
     "id": "lua",
@@ -1201,7 +1678,13 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/lua/lua-original.svg",
       "source": "devicon"
     },
-    "hash": "b2f2c6a6a2e8f0f0"
+    "hash": "b2f2c6a6a2e8f0f0",
+    "seen": [
+      "c6b2f2e6e4e471b2",
+      "b2f2c6a6a2e8f0f0",
+      "faf2c6a6a2e8f0f0",
+      "f2f2c6a6aae8f0f0"
+    ]
   },
   {
     "id": "automake",
@@ -1210,7 +1693,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "ngrok",
@@ -1220,7 +1704,12 @@
       "icon": "https://ngrok.com/apple-touch-icon.png",
       "source": "apple-touch-icon"
     },
-    "hash": "0104994911966910"
+    "hash": "0104994911966910",
+    "seen": [
+      "0104994911966910",
+      "1284122aec690020",
+      "228812666ceb0020"
+    ]
   },
   {
     "id": "golangci-lint",
@@ -1230,7 +1719,10 @@
       "icon": "https://golangci-lint.run/apple-touch-icon.png",
       "source": "touch-icon-default"
     },
-    "hash": "f0cc969662c6ced0"
+    "hash": "f0cc969662c6ced0",
+    "seen": [
+      "f0cc969662c6ced0"
+    ]
   },
   {
     "id": "zoxide",
@@ -1245,7 +1737,10 @@
       "icon": "https://raw.githubusercontent.com/ajeetdsouza/zoxide/HEAD/contrib/logo-light.svg",
       "source": "readme-logo"
     },
-    "hash": "c4f2cc8c848c9284"
+    "hash": "c4f2cc8c848c9284",
+    "seen": [
+      "c4f2cc8c848c9284"
+    ]
   },
   {
     "id": "jsonnet",
@@ -1254,7 +1749,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "eza",
@@ -1264,7 +1760,11 @@
       "icon": "https://eza.rocks/icon-192.png",
       "source": "page-icon"
     },
-    "hash": "200c32696971926c"
+    "hash": "200c32696971926c",
+    "seen": [
+      "200c326969719268",
+      "200c32696971926c"
+    ]
   },
   {
     "id": "tree",
@@ -1273,7 +1773,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "ruff",
@@ -1283,7 +1784,11 @@
       "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/ruff.svg",
       "source": "simple-icons"
     },
-    "hash": "80148e1616961680"
+    "hash": "80148e1616961680",
+    "seen": [
+      "c0d4d4cccccccccc",
+      "80148e1616961680"
+    ]
   },
   {
     "id": "vim",
@@ -1293,7 +1798,12 @@
       "icon": "https://avatars.githubusercontent.com/u/11618545?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "b1b3a6ac98a0e8f0"
+    "hash": "b1b3a6ac98a0e8f0",
+    "seen": [
+      "b1b3a6ac98a0e8f0",
+      "b0b2a6ac9ab2f2f2",
+      "b1b1b62e1cb8a0b0"
+    ]
   },
   {
     "id": "fastfetch",
@@ -1308,7 +1818,11 @@
       "icon": "https://avatars.githubusercontent.com/u/136235211?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "c622223636363e32"
+    "hash": "c622223636363e32",
+    "seen": [
+      "4f4f6d2f4fcf4e4d",
+      "c622223636363e32"
+    ]
   },
   {
     "id": "dotnet",
@@ -1318,7 +1832,13 @@
       "icon": "https://dotnet.microsoft.com/apple-touch-icon.png",
       "source": "apple-touch-icon"
     },
-    "hash": "4480328e8e701810"
+    "hash": "4480328e8e701810",
+    "seen": [
+      "4480328e8e701810",
+      "9401c6d6b4bc0014",
+      "02d4232b0f479008",
+      "4009aaaaaaaa08a2"
+    ]
   },
   {
     "id": "ghostscript",
@@ -1328,7 +1848,10 @@
       "icon": "https://www.ghostscript.com/images/favicon.svg",
       "source": "svg-icon"
     },
-    "hash": "6cc49cc4c0ecaea0"
+    "hash": "6cc49cc4c0ecaea0",
+    "seen": [
+      "6cc49cc4c0ecaea0"
+    ]
   },
   {
     "id": "rsync",
@@ -1337,7 +1860,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "argocd",
@@ -1347,7 +1871,16 @@
       "icon": "https://argoproj.github.io/icons/icon-512x512.png?v=48b38c857977860245a12be5b6e591b1",
       "source": "apple-touch-icon"
     },
-    "hash": "e8f0f07155f0e870"
+    "hash": "e8f0f07155f0e870",
+    "seen": [
+      "e8f0f07155f0e870",
+      "e0f0f07155f0e8f0",
+      "e0f0f07155f0e8f1",
+      "e0f0f07155f0e870",
+      "e0f0f07151f0e870",
+      "70f0f0f4f0707070",
+      "f0f07155f0f068e8"
+    ]
   },
   {
     "id": "pi-coding-agent",
@@ -1357,7 +1890,10 @@
       "icon": "https://pi.dev/favicon.svg?v=b84e31d9-cda9-4256-a07e-0257c6e7989f",
       "source": "svg-icon"
     },
-    "hash": "6018181806060606"
+    "hash": "6018181806060606",
+    "seen": [
+      "6018181806060606"
+    ]
   },
   {
     "id": "ast-grep",
@@ -1367,7 +1903,10 @@
       "icon": "https://avatars.githubusercontent.com/u/114017360?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "88e4dadae2dc8824"
+    "hash": "88e4dadae2dc8824",
+    "seen": [
+      "88e4dadae2dc8824"
+    ]
   },
   {
     "id": "scrcpy",
@@ -1377,7 +1916,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/scrcpy.svg",
       "source": "dashboard-icons"
     },
-    "hash": "84f0aa8e96aae060"
+    "hash": "84f0aa8e96aae060",
+    "seen": [
+      "84f0aa8e96aae060"
+    ]
   },
   {
     "id": "k9s",
@@ -1392,7 +1934,11 @@
       "icon": "https://k9scli.io/assets/imhotep_logo.png",
       "source": "page-logo"
     },
-    "hash": "5858d858f8c8f0b2"
+    "hash": "5858d858f8c8f0b2",
+    "seen": [
+      "5858d858f8c8f0b2",
+      "d48e8e96e8696970"
+    ]
   },
   {
     "id": "pipenv",
@@ -1407,7 +1953,10 @@
       "icon": "https://avatars.githubusercontent.com/u/647025?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "801494953c885200"
+    "hash": "801494953c885200",
+    "seen": [
+      "801494953c885200"
+    ]
   },
   {
     "id": "htop",
@@ -1417,7 +1966,10 @@
       "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/htop.svg",
       "source": "simple-icons"
     },
-    "hash": "8e8e0f8e8e0f8e8e"
+    "hash": "8e8e0f8e8e0f8e8e",
+    "seen": [
+      "8e8e0f8e8e0f8e8e"
+    ]
   },
   {
     "id": "libimobiledevice",
@@ -1427,7 +1979,10 @@
       "icon": "https://avatars.githubusercontent.com/u/3584568?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "80c8c8ccd8c0e064"
+    "hash": "80c8c8ccd8c0e064",
+    "seen": [
+      "80c8c8ccd8c0e064"
+    ]
   },
   {
     "id": "gobject-introspection",
@@ -1436,7 +1991,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "opentofu",
@@ -1446,7 +2002,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/opentofu.svg",
       "source": "dashboard-icons"
     },
-    "hash": "f0cc0f311153d5f0"
+    "hash": "f0cc0f311153d5f0",
+    "seen": [
+      "f0cc0f311153d5f0",
+      "4c33ccd4d6d4314c",
+      "f08e0e6c381ed8f0"
+    ]
   },
   {
     "id": "podman",
@@ -1456,7 +2017,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/podman/podman-original.svg",
       "source": "devicon"
     },
-    "hash": "d4aa6971ccf8d4f0"
+    "hash": "d4aa6971ccf8d4f0",
+    "seen": [
+      "d4aa6971ccf8d4f0",
+      "d4aa6971ccfcd4f0",
+      "d4aa6969e6fcd4f0"
+    ]
   },
   {
     "id": "shfmt",
@@ -1465,7 +2031,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "hugo",
@@ -1475,7 +2042,13 @@
       "icon": "https://gohugo.io/apple-touch-icon.png",
       "source": "touch-icon-default"
     },
-    "hash": "f0d496969696d4f0"
+    "hash": "f0d496969696d4f0",
+    "seen": [
+      "30f0d49696d4f0b0",
+      "f0d496969696d4f0",
+      "f0d413171713d6f0",
+      "f0cc29696969ccf0"
+    ]
   },
   {
     "id": "oven-sh/bun/bun",
@@ -1485,7 +2058,16 @@
       "icon": "https://bun.sh/logo@1024x.png",
       "source": "manifest"
     },
-    "hash": "708c324959339ef8"
+    "hash": "708c324959339ef8",
+    "seen": [
+      "72c8b6496933cc70",
+      "708c324959339ef8",
+      "70ccb6496933cc70",
+      "70cc96496933cc70",
+      "72ccb6496933cc70",
+      "71e8b64961b7cc70",
+      "71e8c8b2b28cc8f0"
+    ]
   },
   {
     "id": "bun",
@@ -1495,7 +2077,16 @@
       "icon": "https://bun.com/logo@1024x.png",
       "source": "manifest"
     },
-    "hash": "70ccb6496933cc70"
+    "hash": "70ccb6496933cc70",
+    "seen": [
+      "72c8b6496933cc70",
+      "708c324959339ef8",
+      "70ccb6496933cc70",
+      "70cc96496933cc70",
+      "72ccb6496933cc70",
+      "71e8b64961b7cc70",
+      "71e8c8b2b28cc8f0"
+    ]
   },
   {
     "id": "swiftformat",
@@ -1504,7 +2095,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "sqlite",
@@ -1514,7 +2106,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/sqlite/sqlite-original.svg",
       "source": "devicon"
     },
-    "hash": "860e8a9c98908290"
+    "hash": "860e8a9c98908290",
+    "seen": [
+      "ac2c9c9cb9a2a4b0",
+      "860e8a9c98908290",
+      "c2868284808082d0"
+    ]
   },
   {
     "id": "license-eye",
@@ -1524,7 +2121,10 @@
       "icon": "https://skywalking.apache.org/favicons/apple-touch-icon.png",
       "source": "apple-touch-icon"
     },
-    "hash": "0096962eb894b408"
+    "hash": "0096962eb894b408",
+    "seen": [
+      "0096962eb894b408"
+    ]
   },
   {
     "id": "xcodes",
@@ -1539,7 +2139,12 @@
       "icon": "https://avatars.githubusercontent.com/u/96437613?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "7ccccc4cccc4c444"
+    "hash": "7ccccc4cccc4c444",
+    "seen": [
+      "80c2baaeb6ba8280",
+      "7ccccc4cccc4c444",
+      "71d4b23232b2d471"
+    ]
   },
   {
     "id": "mysql-client",
@@ -1554,7 +2159,10 @@
       "icon": "https://avatars.githubusercontent.com/u/2452804?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "888c8a84e8a5b5c2"
+    "hash": "888c8a84e8a5b5c2",
+    "seen": [
+      "888c8a84e8a5b5c2"
+    ]
   },
   {
     "id": "fluxcd/tap/flux",
@@ -1564,7 +2172,10 @@
       "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/flux.svg",
       "source": "simple-icons"
     },
-    "hash": "70e8e82828e8e8f0"
+    "hash": "70e8e82828e8e8f0",
+    "seen": [
+      "70e8e82828e8e8f0"
+    ]
   },
   {
     "id": "fastlane",
@@ -1574,7 +2185,11 @@
       "icon": "https://avatars.githubusercontent.com/u/11098337?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "3272ce9696d4cccc"
+    "hash": "3272ce9696d4cccc",
+    "seen": [
+      "3272ce9696d4cccc",
+      "30f28e978ec6d4cc"
+    ]
   },
   {
     "id": "mitmproxy",
@@ -1584,7 +2199,10 @@
       "icon": "https://avatars.githubusercontent.com/u/4652787?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "0f5369d44e612b96"
+    "hash": "0f5369d44e612b96",
+    "seen": [
+      "0f5369d44e612b96"
+    ]
   },
   {
     "id": "ddev/ddev/ddev",
@@ -1594,7 +2212,10 @@
       "icon": "https://avatars.githubusercontent.com/u/595986?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "204e8f1b138f4610"
+    "hash": "204e8f1b138f4610",
+    "seen": [
+      "204e8f1b138f4610"
+    ]
   },
   {
     "id": "virtualenv",
@@ -1604,7 +2225,10 @@
       "icon": "https://virtualenv.pypa.io/en/latest/_static/virtualenv.svg",
       "source": "svg-icon"
     },
-    "hash": "20e0c4b0b8e8e020"
+    "hash": "20e0c4b0b8e8e020",
+    "seen": [
+      "20e0c4b0b8e8e020"
+    ]
   },
   {
     "id": "age",
@@ -1619,7 +2243,10 @@
       "icon": "https://raw.githubusercontent.com/FiloSottile/age/main/logo/logo.svg",
       "source": "readme-logo"
     },
-    "hash": "40c0d4bab48c9cb8"
+    "hash": "40c0d4bab48c9cb8",
+    "seen": [
+      "40c0d4bab48c9cb8"
+    ]
   },
   {
     "id": "boost",
@@ -1629,7 +2256,12 @@
       "icon": "https://www.boost.org/static/img/favicon.svg",
       "source": "svg-icon"
     },
-    "hash": "70cc962666d6cce0"
+    "hash": "70cc962666d6cce0",
+    "seen": [
+      "e0cc962666d6dce8",
+      "70cc962666d6cce0",
+      "c060e8ce8cc8f91c"
+    ]
   },
   {
     "id": "ruby-build",
@@ -1644,7 +2276,10 @@
       "icon": "https://avatars.githubusercontent.com/u/10675212?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "41373b1d1d334311"
+    "hash": "41373b1d1d334311",
+    "seen": [
+      "41373b1d1d334311"
+    ]
   },
   {
     "id": "hf",
@@ -1659,7 +2294,17 @@
       "icon": "https://huggingface.co/front/assets/huggingface_logo-noborder.svg",
       "source": "page-logo"
     },
-    "hash": "70c4e8a8f0aaf0e8"
+    "hash": "70c4e8a8f0aaf0e8",
+    "seen": [
+      "70c4e8a8f0aaf0e8",
+      "58bc72daa4b0c2c4",
+      "60d88ca48ccc6682",
+      "00c0c0c0c0c0c000",
+      "30f0c4ccf8d8f830",
+      "70f0ccccd4f0f070",
+      "0000baf2da626000",
+      "b070e8e8f096c8cc"
+    ]
   },
   {
     "id": "supabase/tap/supabase",
@@ -1669,7 +2314,16 @@
       "icon": "https://supabase.com/favicon/android-icon-512x512.png",
       "source": "manifest"
     },
-    "hash": "f0ca981b27e6aed0"
+    "hash": "f0ca981b27e6aed0",
+    "seen": [
+      "344b981b27e62d12",
+      "f0ca981b27e6aed0",
+      "f0ca981b27e6acd0",
+      "2060c0b888d81918",
+      "2060c0f898d81918",
+      "344a589b06e42d10",
+      "a060c0e0d8dc1998"
+    ]
   },
   {
     "id": "python-yq",
@@ -1678,7 +2332,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "xcresultparser",
@@ -1687,7 +2342,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "caddy",
@@ -1697,7 +2353,11 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/caddy.svg",
       "source": "dashboard-icons"
     },
-    "hash": "c4b22b6955c58ed8"
+    "hash": "c4b22b6955c58ed8",
+    "seen": [
+      "c4b22b6955c58ed8",
+      "c4b22b6945c58ed8"
+    ]
   },
   {
     "id": "httpie",
@@ -1707,7 +2367,16 @@
       "icon": "https://httpie.io/Brand/Favicons/Black/apple-icon-180x180.png",
       "source": "apple-touch-icon"
     },
-    "hash": "68e8c4f8e2d2e260"
+    "hash": "68e8c4f8e2d2e260",
+    "seen": [
+      "68e8c4f8e2d2e260",
+      "68e8ccf0e2d2e264",
+      "68e8ccf0e2d2e260",
+      "68e8c4f0e2d2e264",
+      "68e8c4f0e2d2e260",
+      "1669e97162e26018",
+      "e0a2c0f0e1c0b0e0"
+    ]
   },
   {
     "id": "tilt",
@@ -1722,7 +2391,12 @@
       "icon": "https://tilt.dev/#svg-1",
       "source": "page-svg"
     },
-    "hash": "a63792b2b2aaa8aa"
+    "hash": "a63792b2b2aaa8aa",
+    "seen": [
+      "a63792b2b2aaa8aa",
+      "0000000000000000",
+      "c233274e4e4e4e04"
+    ]
   },
   {
     "id": "xclogparser",
@@ -1731,7 +2405,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "k3d",
@@ -1746,7 +2421,16 @@
       "icon": "https://k3d.io/stable/static/img/k3d_logo_black_blue.svg",
       "source": "page-logo"
     },
-    "hash": "d6b3a99991a9b3d6"
+    "hash": "d6b3a99991a9b3d6",
+    "seen": [
+      "2026251535252624",
+      "d6b3a99991a9b3d6",
+      "00c0c0c0c0c0c000",
+      "01f0c0c3c3c0f001",
+      "826ce0c2c2e06c82",
+      "60e0988ad86c8442",
+      "9201d69395d60154"
+    ]
   },
   {
     "id": "tree-sitter-cli",
@@ -1756,7 +2440,10 @@
       "icon": "https://avatars.githubusercontent.com/u/17203512?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "70d2a2b1e0f070e8"
+    "hash": "70d2a2b1e0f070e8",
+    "seen": [
+      "70d2a2b1e0f070e8"
+    ]
   },
   {
     "id": "antigravity-cli",
@@ -1766,7 +2453,13 @@
       "icon": "https://antigravity.google/assets/image/antigravity-logo.png",
       "source": "page-icon"
     },
-    "hash": "20b2707969cc9642"
+    "hash": "20b2707969cc9642",
+    "seen": [
+      "0032307969cc9648",
+      "007030f068ccd428",
+      "20b2707969cc9642",
+      "30f878f0cc8c962b"
+    ]
   },
   {
     "id": "duckdb",
@@ -1776,7 +2469,15 @@
       "icon": "https://www.duckdb.org/images/favicon/android-chrome-512x512.png",
       "source": "manifest"
     },
-    "hash": "f0c09c1b1b9cc0f0"
+    "hash": "f0c09c1b1b9cc0f0",
+    "seen": [
+      "f0d49a1b3b9ad4f0",
+      "f0d49a1b1b9ad4f0",
+      "f0d49a3b3b9ad4f0",
+      "f0c09c1b1b9cc0f0",
+      "0803981b0b980308",
+      "f0d09c0b0b9cc0f0"
+    ]
   },
   {
     "id": "trufflehog",
@@ -1786,7 +2487,10 @@
       "icon": "https://framerusercontent.com/images/mBYTE4QIu1EiDhJqzvX1cUdRE.png",
       "source": "apple-touch-icon"
     },
-    "hash": "ccf0f03270303010"
+    "hash": "ccf0f03270303010",
+    "seen": [
+      "ccf0f03270303010"
+    ]
   },
   {
     "id": "iperf3",
@@ -1795,7 +2499,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "nginx",
@@ -1805,7 +2510,13 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/nginx.svg",
       "source": "dashboard-icons"
     },
-    "hash": "70e8b2baa2b2e870"
+    "hash": "70e8b2baa2b2e870",
+    "seen": [
+      "20006428a8620020",
+      "70e8b2baa2b2e870",
+      "b0f0d2da96d6f032",
+      "70e0929aa6b6e070"
+    ]
   },
   {
     "id": "qpdf",
@@ -1815,7 +2526,10 @@
       "icon": "https://avatars.githubusercontent.com/u/1812112?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "a24d2d554b535120"
+    "hash": "a24d2d554b535120",
+    "seen": [
+      "a24d2d554b535120"
+    ]
   },
   {
     "id": "bats-core/bats-core/bats-support",
@@ -1830,7 +2544,10 @@
       "icon": "https://avatars.githubusercontent.com/u/32112113?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "e88e361e1e1e98f9"
+    "hash": "e88e361e1e1e98f9",
+    "seen": [
+      "e88e361e1e1e98f9"
+    ]
   },
   {
     "id": "bats-core/bats-core/bats-assert",
@@ -1839,7 +2556,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "composer",
@@ -1849,7 +2567,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/composer/composer-original.svg",
       "source": "devicon"
     },
-    "hash": "cca8aaf2ccc4ec78"
+    "hash": "cca8aaf2ccc4ec78",
+    "seen": [
+      "cca8aaf2ccc4ec78",
+      "f9c8ccf4cccc6870",
+      "c8ca86ccccd4e870"
+    ]
   },
   {
     "id": "asdf",
@@ -1864,7 +2587,10 @@
       "icon": "https://avatars.githubusercontent.com/u/17869024?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "0192e892b269b0b2"
+    "hash": "0192e892b269b0b2",
+    "seen": [
+      "0192e892b269b0b2"
+    ]
   },
   {
     "id": "bats-core/bats-core/bats-file",
@@ -1873,7 +2599,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "tcl-tk",
@@ -1888,7 +2615,12 @@
       "icon": "https://www.tcl-lang.org/images/logo.png",
       "source": "page-logo"
     },
-    "hash": "40dc98ac68c8ca98"
+    "hash": "40dc98ac68c8ca98",
+    "seen": [
+      "40dc98ac68c8ca98",
+      "844ad2a2a6929600",
+      "0929a8dae8a92900"
+    ]
   },
   {
     "id": "deno",
@@ -1898,7 +2630,18 @@
       "icon": "https://deno.com/images/icons/icon-512x512.png",
       "source": "manifest"
     },
-    "hash": "f0c4ca0d2686e6e4"
+    "hash": "f0c4ca0d2686e6e4",
+    "seen": [
+      "f0ccca0d0686e6e4",
+      "f0d4ca0d06a6e6e4",
+      "f0dcca0d06a6e6e4",
+      "f0ccca0d0686c6e4",
+      "f0ccca0d06a6e6e4",
+      "70cc96a29e9e9c0c",
+      "71cc96929e989c0d",
+      "f0c4ca0d2686e6e4",
+      "f0cc9613171e189c"
+    ]
   },
   {
     "id": "p7zip",
@@ -1907,7 +2650,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "gentleman-programming/tap/engram",
@@ -1916,7 +2660,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "aws-sam-cli",
@@ -1926,7 +2671,11 @@
       "icon": "https://a0.awsstatic.com/libra-css/images/site/touch-icon-ipad-144-smile.png",
       "source": "apple-touch-icon"
     },
-    "hash": "12443b0b3b1fcc13"
+    "hash": "12443b0b3b1fcc13",
+    "seen": [
+      "12443b0b3b1fcc13",
+      "224c332f3b0f4c32"
+    ]
   },
   {
     "id": "exiftool",
@@ -1936,7 +2685,14 @@
       "icon": "https://exiftool.org/android-chrome-512x512.png",
       "source": "manifest"
     },
-    "hash": "e8ce8c8c9ce47859"
+    "hash": "e8ce8c8c9ce47859",
+    "seen": [
+      "7ae8dcc9c9e959d8",
+      "e8ce8c8c9ce47859",
+      "e8ce9c849cec7859",
+      "fd8bcaccccecd818",
+      "72ea8cccccec78d8"
+    ]
   },
   {
     "id": "mint",
@@ -1945,7 +2701,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "go-task",
@@ -1960,7 +2717,17 @@
       "icon": "https://taskfile.dev/img/logo.svg",
       "source": "page-logo"
     },
-    "hash": "70e8928acc8ae870"
+    "hash": "70e8928acc8ae870",
+    "seen": [
+      "70e8968ea286e070",
+      "70e8928acc8ae870",
+      "4f324d8e9e0d720b",
+      "08040c4d8e960004",
+      "28e88aaaaaaee828",
+      "aeaeaeaeaeaeaeae",
+      "b2f0cc86a79adcf8",
+      "909023342b3d2b20"
+    ]
   },
   {
     "id": "semgrep",
@@ -1970,7 +2737,10 @@
       "icon": "https://avatars.githubusercontent.com/u/29760937?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "4b9669d4d6699649"
+    "hash": "4b9669d4d6699649",
+    "seen": [
+      "4b9669d4d6699649"
+    ]
   },
   {
     "id": "rjyo/moshi/moshi-hook",
@@ -1980,7 +2750,11 @@
       "icon": "https://getmoshi.app/icon.png",
       "source": "apple-touch-icon"
     },
-    "hash": "220033332b4d3208"
+    "hash": "220033332b4d3208",
+    "seen": [
+      "220033332b4d3208",
+      "71e88cce8ccee870"
+    ]
   },
   {
     "id": "yamllint",
@@ -1989,7 +2763,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "stripe/stripe-cli/stripe",
@@ -1999,7 +2774,13 @@
       "icon": "https://avatars.githubusercontent.com/u/856813?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "0c628696969e3846"
+    "hash": "0c628696969e3846",
+    "seen": [
+      "9e630717171e3982",
+      "bc430206063e3dc2",
+      "0c628696969e3846",
+      "f0ccc4e0789cccf0"
+    ]
   },
   {
     "id": "wix/brew/applesimutils",
@@ -2008,7 +2789,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "git-filter-repo",
@@ -2017,7 +2799,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "mpv",
@@ -2027,7 +2810,10 @@
       "icon": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/mpv.svg",
       "source": "simple-icons"
     },
-    "hash": "f0b84c56566dbad0"
+    "hash": "f0b84c56566dbad0",
+    "seen": [
+      "f0b84c56566dbad0"
+    ]
   },
   {
     "id": "zizmor",
@@ -2042,7 +2828,17 @@
       "icon": "https://docs.zizmor.sh/assets/rainbow.svg",
       "source": "page-logo"
     },
-    "hash": "1e7067deb8306264"
+    "hash": "1e7067deb8306264",
+    "seen": [
+      "1e7067deb8306264",
+      "c0c0c0c0c0c0c0c0",
+      "f0f0ccccd4d4f0f0",
+      "b0f0ccb2b2ccf0f0",
+      "f0f0cce6e6ccf0f0",
+      "70c884ae84cc7232",
+      "0000000000000000",
+      "4eb860c68e9e9cb9"
+    ]
   },
   {
     "id": "ffmpeg-full",
@@ -2057,7 +2853,13 @@
       "icon": "https://avatars.githubusercontent.com/u/729418?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "6e6cd8f2acd2c6ee"
+    "hash": "6e6cd8f2acd2c6ee",
+    "seen": [
+      "0000000000000000",
+      "b8e8decae2fcd8d4",
+      "0009144c1d82b230",
+      "6e6cd8f2acd2c6ee"
+    ]
   },
   {
     "id": "openssh",
@@ -2066,7 +2868,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "unar",
@@ -2076,7 +2879,11 @@
       "icon": "https://theunarchiver.com/images/the-unarchiver-144x144.png",
       "source": "apple-touch-icon"
     },
-    "hash": "c4cc8cdcd4e4d4d4"
+    "hash": "c4cc8cdcd4e4d4d4",
+    "seen": [
+      "c4cc8cdcd4e4d4d4",
+      "c4cc8cdcd4e4d4c4"
+    ]
   },
   {
     "id": "hyperfine",
@@ -2090,7 +2897,10 @@
     "finderModel": {
       "icon": "https://github.com/user-attachments/assets/9a5a45d3-df3f-4e0e-8cc9-5d8153f39e48",
       "source": "readme-logo"
-    }
+    },
+    "seen": [
+      "7901010101010101"
+    ]
   },
   {
     "id": "stablyai/orca/orca",
@@ -2100,7 +2910,11 @@
       "icon": "https://www.onorca.dev/icon.png?icon.0ga.kvqer~1c5.png",
       "source": "page-icon"
     },
-    "hash": "060c03e72c29c408"
+    "hash": "060c03e72c29c408",
+    "seen": [
+      "020c23e72c39c030",
+      "060c03e72c29c408"
+    ]
   },
   {
     "id": "mongosh",
@@ -2115,7 +2929,15 @@
       "icon": "https://webimages.mongodb.com/_com_assets/icons/atlas_new.svg",
       "source": "page-logo"
     },
-    "hash": "7060f869ccce9c8e"
+    "hash": "7060f869ccce9c8e",
+    "seen": [
+      "0020060e52525a5a",
+      "0000000000000000",
+      "2baa96cc6d68b230",
+      "7060f869ccce9c8e",
+      "7ad6b2f476460202",
+      "00040004042e0e14"
+    ]
   },
   {
     "id": "zig",
@@ -2125,7 +2947,12 @@
       "icon": "https://ziglang.org/favicon.svg",
       "source": "svg-icon"
     },
-    "hash": "0621023171246080"
+    "hash": "0621023171246080",
+    "seen": [
+      "0621023171246080",
+      "07ae393961639a00",
+      "07a6391b23639200"
+    ]
   },
   {
     "id": "ghidra",
@@ -2135,7 +2962,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/ghidra/ghidra-original.svg",
       "source": "devicon"
     },
-    "hash": "dcba64e323678ef0"
+    "hash": "dcba64e323678ef0",
+    "seen": [
+      "dcba64e323678ef0"
+    ]
   },
   {
     "id": "fish",
@@ -2145,7 +2975,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/fish/fish-original.svg",
       "source": "devicon"
     },
-    "hash": "2160e21d3dc74001"
+    "hash": "2160e21d3dc74001",
+    "seen": [
+      "2160e21d3dc74001"
+    ]
   },
   {
     "id": "doctl",
@@ -2155,7 +2988,11 @@
       "icon": "https://docs.digitalocean.com/apple-touch-icon.png",
       "source": "apple-touch-icon"
     },
-    "hash": "f0cc961367269cd8"
+    "hash": "f0cc961367269cd8",
+    "seen": [
+      "f0cc961367269cd8",
+      "f0cc860b2326dcd8"
+    ]
   },
   {
     "id": "subversion",
@@ -2165,7 +3002,13 @@
       "icon": "https://subversion.apache.org/icon512.png",
       "source": "manifest"
     },
-    "hash": "38823f70f983fec1"
+    "hash": "38823f70f983fec1",
+    "seen": [
+      "38803f70f983fec1",
+      "38823f70f983fec1",
+      "60802e70d10deef0",
+      "70802f70f10ffef1"
+    ]
   },
   {
     "id": "lld",
@@ -2180,7 +3023,10 @@
       "icon": "https://avatars.githubusercontent.com/u/17149993?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "0196960b69786d00"
+    "hash": "0196960b69786d00",
+    "seen": [
+      "0196960b69786d00"
+    ]
   },
   {
     "id": "topgrade",
@@ -2189,7 +3035,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "agent-browser",
@@ -2198,7 +3045,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "jupyterlab",
@@ -2208,7 +3056,14 @@
       "icon": "https://jupyter.org/favicon.svg",
       "source": "svg-icon"
     },
-    "hash": "f08e034044038ef0"
+    "hash": "f08e034044038ef0",
+    "seen": [
+      "f08e0340c4038ef0",
+      "f08e034480038ef0",
+      "f08e2b48c02b8ef0",
+      "f08e034844038ef0",
+      "f08e034044038ef0"
+    ]
   },
   {
     "id": "vale",
@@ -2218,7 +3073,10 @@
       "icon": "https://vale.sh/apple-touch-icon.png",
       "source": "touch-icon-default"
     },
-    "hash": "032c8cc949642418"
+    "hash": "032c8cc949642418",
+    "seen": [
+      "032c8cc949642418"
+    ]
   },
   {
     "id": "fnm",
@@ -2227,7 +3085,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "clang-format",
@@ -2242,7 +3101,11 @@
       "icon": "https://avatars.githubusercontent.com/u/17149993?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "0196960b69786d00"
+    "hash": "0196960b69786d00",
+    "seen": [
+      "96969e2b7179587c",
+      "0196960b69786d00"
+    ]
   },
   {
     "id": "hashicorp/tap/vault",
@@ -2252,7 +3115,13 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/vault/vault-original.svg",
       "source": "devicon"
     },
-    "hash": "a884d4cc68703010"
+    "hash": "a884d4cc68703010",
+    "seen": [
+      "68c88aaaaaaeec68",
+      "a884d4cc68703010",
+      "a890d4cc68f03054",
+      "80ccd4cc68f03054"
+    ]
   },
   {
     "id": "bitwarden-cli",
@@ -2262,7 +3131,16 @@
       "icon": "https://bitwarden.com/icons/icon-512x512.png",
       "source": "apple-touch-icon"
     },
-    "hash": "861b1b1b1b1b1fcc"
+    "hash": "861b1b1b1b1b1fcc",
+    "seen": [
+      "0078e4e4e461b044",
+      "0078e4e4e461b054",
+      "0078e4e4e4613044",
+      "0078e4e46461b210",
+      "861b1b1b1b1b1fcc",
+      "271b191b1b1b8e6d",
+      "c28282c6a2c6ec70"
+    ]
   },
   {
     "id": "lima",
@@ -2277,7 +3155,11 @@
       "icon": "https://lima-vm.io/#svg-1",
       "source": "page-svg"
     },
-    "hash": "50506b735355570b"
+    "hash": "50506b735355570b",
+    "seen": [
+      "50506b735355570b",
+      "407280b2ae961080"
+    ]
   },
   {
     "id": "tfenv",
@@ -2286,7 +3168,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "sikarugir-app/sikarugir/sikarugir",
@@ -2295,7 +3178,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "sccache",
@@ -2304,7 +3188,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "mas",
@@ -2313,7 +3198,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "poetry",
@@ -2323,7 +3209,11 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/poetry/poetry-original.svg",
       "source": "devicon"
     },
-    "hash": "908084a088b8f0e0"
+    "hash": "908084a088b8f0e0",
+    "seen": [
+      "908084a088b8f0e0",
+      "a8b098a8c088f8e0"
+    ]
   },
   {
     "id": "railway",
@@ -2333,7 +3223,13 @@
       "icon": "https://railway.com/android-chrome-512x512.png",
       "source": "manifest"
     },
-    "hash": "8e172b4d512b170e"
+    "hash": "8e172b4d512b170e",
+    "seen": [
+      "8e17234d5923178e",
+      "8e172b4d512b170e",
+      "0000000000000000",
+      "f0ccb6f3cbb6ccf0"
+    ]
   },
   {
     "id": "summarize",
@@ -2343,7 +3239,10 @@
       "icon": "https://summarize.sh/favicon.svg",
       "source": "svg-icon"
     },
-    "hash": "e08c130f1c1a86e0"
+    "hash": "e08c130f1c1a86e0",
+    "seen": [
+      "e08c130f1c1a86e0"
+    ]
   },
   {
     "id": "docker-credential-helper",
@@ -2358,7 +3257,12 @@
       "icon": "https://www.docker.com/app/uploads/2024/02/cropped-docker-logo-favicon-192x192.png",
       "source": "maker-site"
     },
-    "hash": "32f4c41ac498e1e0"
+    "hash": "32f4c41ac498e1e0",
+    "seen": [
+      "47324c8e9e4d720f",
+      "32f4c43ac498e1e0",
+      "32f4c41ac498e1e0"
+    ]
   },
   {
     "id": "glow",
@@ -2373,7 +3277,10 @@
       "icon": "https://avatars.githubusercontent.com/u/57376114?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "144b8f1f17179f9c"
+    "hash": "144b8f1f17179f9c",
+    "seen": [
+      "144b8f1f17179f9c"
+    ]
   },
   {
     "id": "cameroncooke/axe/axe",
@@ -2382,7 +3289,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "jfrog-cli",
@@ -2392,7 +3300,12 @@
       "icon": "https://avatars.githubusercontent.com/u/499942?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "8294f0f8c4d8dca4"
+    "hash": "8294f0f8c4d8dca4",
+    "seen": [
+      "5bdadcb8c6ceca8e",
+      "8294f0f8c4d8dca4",
+      "5bdadcf8c6ceca8e"
+    ]
   },
   {
     "id": "wimlib",
@@ -2401,7 +3314,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "bazelisk",
@@ -2416,7 +3330,10 @@
       "icon": "https://avatars.githubusercontent.com/u/11684617?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "ccccb2b2cce871b2"
+    "hash": "ccccb2b2cce871b2",
+    "seen": [
+      "ccccb2b2cce871b2"
+    ]
   },
   {
     "id": "gentleman-programming/tap/gentle-ai",
@@ -2425,7 +3342,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "vmware-tanzu/carvel/vendir",
@@ -2440,7 +3358,16 @@
       "icon": "https://avatars.githubusercontent.com/u/116381947?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "c2f0c6c2d4e47182"
+    "hash": "c2f0c6c2d4e47182",
+    "seen": [
+      "90406a1e98939090",
+      "68688b8aae2e6868",
+      "8200008282000082",
+      "1386cc3030cc8613",
+      "f0a8aa03038e8ccc",
+      "22c0aaa888c6d022",
+      "c2f0c6c2d4e47182"
+    ]
   },
   {
     "id": "vips",
@@ -2449,7 +3376,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "yazi",
@@ -2459,7 +3387,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/png/yazi.png",
       "source": "dashboard-icons"
     },
-    "hash": "f0cc8cca9b9ed4f0"
+    "hash": "f0cc8cca9b9ed4f0",
+    "seen": [
+      "f0cc8cca9b9ed4f0"
+    ]
   },
   {
     "id": "syncthing",
@@ -2469,7 +3400,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/syncthing.svg",
       "source": "dashboard-icons"
     },
-    "hash": "f0967941456392f0"
+    "hash": "f0967941456392f0",
+    "seen": [
+      "f0967941456392f0",
+      "f0b66941457392f0",
+      "f0966141457392f0"
+    ]
   },
   {
     "id": "zsh-autosuggestions",
@@ -2478,7 +3414,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "tealdeer",
@@ -2487,7 +3424,10 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": [
+      "70c4cdd9889a02c4"
+    ]
   },
   {
     "id": "ctlptl",
@@ -2496,7 +3436,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "databricks/tap/databricks",
@@ -2506,7 +3447,11 @@
       "icon": "https://avatars.githubusercontent.com/u/4998052?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "70cc968eb292cc70"
+    "hash": "70cc968eb292cc70",
+    "seen": [
+      "70cc968eb292cc70",
+      "f0cc8fccaae9d4f0"
+    ]
   },
   {
     "id": "httpd",
@@ -2521,7 +3466,13 @@
       "icon": "https://httpd.apache.org/images/httpd_logo_wide_new.png",
       "source": "page-logo"
     },
-    "hash": "39f068e8d0f064c8"
+    "hash": "39f068e8d0f064c8",
+    "seen": [
+      "4072727272404040",
+      "39f068e8d0f064c8",
+      "b9f069e8f0e26448",
+      "b9f069e8d0e264c8"
+    ]
   },
   {
     "id": "cloudflare-wrangler",
@@ -2536,7 +3487,15 @@
       "icon": "https://developers.cloudflare.com/_astro/logo.te5VL_aD.svg",
       "source": "page-logo"
     },
-    "hash": "b179f8d8c88a9292"
+    "hash": "b179f8d8c88a9292",
+    "seen": [
+      "b179f8d8c88a9292",
+      "525266d6d2642da9",
+      "f08c964a268ce263",
+      "4c4cd64654a8e868",
+      "9692684d4d689692",
+      "208431f8c2920080"
+    ]
   },
   {
     "id": "betterleaks",
@@ -2546,7 +3505,12 @@
       "icon": "https://betterleaks.com/logo-512.png",
       "source": "manifest"
     },
-    "hash": "cb63758b040b0b04"
+    "hash": "cb63758b040b0b04",
+    "seen": [
+      "8b61758b040b0b04",
+      "cb63758b040b0b04",
+      "848b8c0c88141406"
+    ]
   },
   {
     "id": "dysk",
@@ -2556,7 +3520,10 @@
       "icon": "https://dystroy.org/apple-touch-icon.png",
       "source": "touch-icon-default"
     },
-    "hash": "9661dc9aeacc7192"
+    "hash": "9661dc9aeacc7192",
+    "seen": [
+      "9661dc9aeacc7192"
+    ]
   },
   {
     "id": "gnu-sed",
@@ -2571,7 +3538,11 @@
       "icon": "https://upload.wikimedia.org/wikipedia/commons/2/22/Heckert_GNU_white.svg",
       "source": "web-search"
     },
-    "hash": "8e6925b29ccc70b8"
+    "hash": "8e6925b29ccc70b8",
+    "seen": [
+      "8e6925b29ccc70b8",
+      "8e21aebed8cce179"
+    ]
   },
   {
     "id": "docker/tap/sbx",
@@ -2586,7 +3557,12 @@
       "icon": "https://www.docker.com/app/uploads/2024/02/cropped-docker-logo-favicon-192x192.png",
       "source": "maker-site"
     },
-    "hash": "47324c8e9e4d720f"
+    "hash": "47324c8e9e4d720f",
+    "seen": [
+      "47324c8e9e4d720f",
+      "32f4c43ac498e1e0",
+      "32f4c41ac498e1e0"
+    ]
   },
   {
     "id": "telnet",
@@ -2595,7 +3571,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "zsh-syntax-highlighting",
@@ -2604,7 +3581,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "nushell",
@@ -2614,7 +3592,11 @@
       "icon": "https://avatars.githubusercontent.com/u/50749515?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "042132734b9e5914"
+    "hash": "042132734b9e5914",
+    "seen": [
+      "042132734b9e5914",
+      "2a002a2b6b3a012a"
+    ]
   },
   {
     "id": "openai-whisper",
@@ -2629,7 +3611,11 @@
       "icon": "https://avatars.githubusercontent.com/u/14957082?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "c471d4e8e8d47148"
+    "hash": "c471d4e8e8d47148",
+    "seen": [
+      "929a9a1a1aa4b0a4",
+      "c471d4e8e8d47148"
+    ]
   },
   {
     "id": "cue",
@@ -2644,7 +3630,10 @@
       "icon": "https://avatars.githubusercontent.com/u/62243907?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "e8862b49593386e8"
+    "hash": "e8862b49593386e8",
+    "seen": [
+      "e8862b49593386e8"
+    ]
   },
   {
     "id": "grafana-alloy",
@@ -2659,7 +3648,14 @@
       "icon": "https://raw.githubusercontent.com/grafana/alloy/HEAD/docs/sources/assets/logo_alloy_dark.svg#gh-light-mode-only",
       "source": "readme-logo"
     },
-    "hash": "b1b119703633bd0b"
+    "hash": "b1b119703633bd0b",
+    "seen": [
+      "14d218cccc18d214",
+      "4428c4cc70104430",
+      "9090104000509000",
+      "b1b119703633bd0b",
+      "ed0e33232b139671"
+    ]
   },
   {
     "id": "guile",
@@ -2674,7 +3670,11 @@
       "icon": "https://upload.wikimedia.org/wikipedia/commons/b/b3/GNU-Guile-logo.svg",
       "source": "web-search"
     },
-    "hash": "90a08c355795a282"
+    "hash": "90a08c355795a282",
+    "seen": [
+      "90a08c355795a282",
+      "908d45e3e2e9a980"
+    ]
   },
   {
     "id": "aws-vault",
@@ -2689,7 +3689,11 @@
       "icon": "https://raw.githubusercontent.com/ByteNess/aws-vault/HEAD/docs/static/images/aws-vault-lockup-light.svg",
       "source": "readme-logo"
     },
-    "hash": "a08092a52ca480a0"
+    "hash": "a08092a52ca480a0",
+    "seen": [
+      "a08092a52ca480a0",
+      "4639696bb2984430"
+    ]
   },
   {
     "id": "nikitabobko/tap/aerospace",
@@ -2704,7 +3708,10 @@
       "icon": "https://raw.githubusercontent.com/nikitabobko/AeroSpace/HEAD/resources/Assets.xcassets/AppIcon.appiconset/icon.png",
       "source": "readme-logo"
     },
-    "hash": "4084e8f8e8e880d0"
+    "hash": "4084e8f8e8e880d0",
+    "seen": [
+      "4084e8f8e8e880d0"
+    ]
   },
   {
     "id": "supabase",
@@ -2714,7 +3721,13 @@
       "icon": "https://avatars.githubusercontent.com/u/54469796?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "344a589b06e42d10"
+    "hash": "344a589b06e42d10",
+    "seen": [
+      "2060c0b888d81918",
+      "2060c0f898d81918",
+      "344a589b06e42d10",
+      "a060c0e0d8dc1998"
+    ]
   },
   {
     "id": "azure/kubelogin/kubelogin",
@@ -2729,7 +3742,11 @@
       "icon": "https://avatars.githubusercontent.com/u/6844498?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "6969e0e4ccc09a8a"
+    "hash": "6969e0e4ccc09a8a",
+    "seen": [
+      "6969e0e4ccc09a8a",
+      "2c2c2c2c2c2c2c2c"
+    ]
   },
   {
     "id": "watch",
@@ -2738,7 +3755,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "xctesthtmlreport",
@@ -2748,7 +3766,10 @@
       "icon": "https://avatars.githubusercontent.com/u/90536595?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "5032e8d4d4683270"
+    "hash": "5032e8d4d4683270",
+    "seen": [
+      "5032e8d4d4683270"
+    ]
   },
   {
     "id": "systeminit/tap/swamp",
@@ -2758,7 +3779,11 @@
       "icon": "https://swamp-club.com/apple-touch-icon.png",
       "source": "apple-touch-icon"
     },
-    "hash": "10008e9abaae0010"
+    "hash": "10008e9abaae0010",
+    "seen": [
+      "10008e9abaae0010",
+      "00cca8a8a8a8cc00"
+    ]
   },
   {
     "id": "cosign",
@@ -2768,7 +3793,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/cosign.svg",
       "source": "dashboard-icons"
     },
-    "hash": "69f4e8cc9498e061"
+    "hash": "69f4e8cc9498e061",
+    "seen": [
+      "69f4e8cc9498e061"
+    ]
   },
   {
     "id": "terraform-linters/tap/tflint",
@@ -2783,7 +3811,10 @@
       "icon": "https://avatars.githubusercontent.com/u/54197850?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "9696cc6969e8e082"
+    "hash": "9696cc6969e8e082",
+    "seen": [
+      "9696cc6969e8e082"
+    ]
   },
   {
     "id": "circleci",
@@ -2793,7 +3824,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/circleci/circleci-plain.svg",
       "source": "devicon"
     },
-    "hash": "f0cc8eb6b68eccf0"
+    "hash": "f0cc8eb6b68eccf0",
+    "seen": [
+      "f0cc8eb6b68eccf0"
+    ]
   },
   {
     "id": "terragrunt",
@@ -2803,7 +3837,10 @@
       "icon": "https://terragrunt.com/favicon.svg",
       "source": "svg-icon"
     },
-    "hash": "f0d433791939dcf8"
+    "hash": "f0d433791939dcf8",
+    "seen": [
+      "f0d433791939dcf8"
+    ]
   },
   {
     "id": "qt",
@@ -2813,7 +3850,11 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/qt/qt-original.svg",
       "source": "devicon"
     },
-    "hash": "e09c3b2b2a0b4a24"
+    "hash": "e09c3b2b2a0b4a24",
+    "seen": [
+      "e09c3b2b2a0b4a24",
+      "e09c3b2b2b0bc824"
+    ]
   },
   {
     "id": "sops",
@@ -2828,7 +3869,11 @@
       "icon": "https://getsops.io/#svg-1",
       "source": "page-svg"
     },
-    "hash": "0200130b0b120412"
+    "hash": "0200130b0b120412",
+    "seen": [
+      "0200130b0b120412",
+      "00024c2a2b400200"
+    ]
   },
   {
     "id": "syft",
@@ -2843,7 +3888,15 @@
       "icon": "https://user-images.githubusercontent.com/5199289/136844524-1527b09f-c5cb-4aa9-be54-5aa92a6086c1.png",
       "source": "readme-logo"
     },
-    "hash": "b6f4e8c8cc706961"
+    "hash": "b6f4e8c8cc706961",
+    "seen": [
+      "b2b069cccc70d8e4",
+      "b6f4e8c8cc706961",
+      "e8862b59592b86e0",
+      "e8963371713396e0",
+      "71cccc7ce4c4c466",
+      "70e8cc3cc4c4c464"
+    ]
   },
   {
     "id": "terraform-docs",
@@ -2853,7 +3906,11 @@
       "icon": "https://avatars.githubusercontent.com/u/63984590?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "b0f1e8e4e46c71f2"
+    "hash": "b0f1e8e4e46c71f2",
+    "seen": [
+      "b0f1e8e4e46c70f2",
+      "b0f1e8e4e46c71f2"
+    ]
   },
   {
     "id": "oh-my-posh",
@@ -2863,7 +3920,11 @@
       "icon": null,
       "source": "findable"
     },
-    "hash": "e875494945014180"
+    "hash": "e875494945014180",
+    "seen": [
+      "e875494945014180",
+      "6061414901010100"
+    ]
   },
   {
     "id": "azcopy",
@@ -2878,7 +3939,12 @@
       "icon": "https://avatars.githubusercontent.com/u/6844498?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "6969e0e4ccc09a8a"
+    "hash": "6969e0e4ccc09a8a",
+    "seen": [
+      "06e6a2c2ba9e8282",
+      "6969e0e4ccc09a8a",
+      "2c2c2c2c2c2c2c2c"
+    ]
   },
   {
     "id": "smartmontools",
@@ -2887,7 +3953,11 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": [
+      "aaaaaa9092aa90a6",
+      "f4b2d4d4f4d4d2b4"
+    ]
   },
   {
     "id": "ansible-lint",
@@ -2902,7 +3972,14 @@
       "icon": "https://docs.ansible.com/projects/lint/#svg-1",
       "source": "page-svg"
     },
-    "hash": "0000000000000000"
+    "hash": "0000000000000000",
+    "seen": [
+      "0000000000000000",
+      "00c0c0c0c0c0c000",
+      "f0f0ccccd4d4f0f0",
+      "b0f0ccb2b2ccf0f0",
+      "f0f0cce6e6ccf0f0"
+    ]
   },
   {
     "id": "firebase-cli",
@@ -2912,7 +3989,12 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/firebase.svg",
       "source": "dashboard-icons"
     },
-    "hash": "3278e4f2f8bad8f8"
+    "hash": "3278e4f2f8bad8f8",
+    "seen": [
+      "4044e4e0c4d0ecf0",
+      "3278e4f2f8bad8f8",
+      "b228ecc6a2a296f0"
+    ]
   },
   {
     "id": "pyenv-virtualenv",
@@ -2927,7 +4009,11 @@
       "icon": "https://avatars.githubusercontent.com/u/16530698?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "a2591d251d13679a"
+    "hash": "a2591d251d13679a",
+    "seen": [
+      "caca48696d48caca",
+      "a2591d251d13679a"
+    ]
   },
   {
     "id": "potrace",
@@ -2942,7 +4028,12 @@
       "icon": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Potrace_logo.svg",
       "source": "web-search"
     },
-    "hash": "61cea67d58d87ce0"
+    "hash": "61cea67d58d87ce0",
+    "seen": [
+      "61cea67d58d87ce0",
+      "2464acd858487860",
+      "64eeaed9d8d858e4"
+    ]
   },
   {
     "id": "gauche",
@@ -2957,7 +4048,11 @@
       "icon": "https://raw.githubusercontent.com/shirok/Gauche/master/icons/gauche_logo-1000.png",
       "source": "web-search"
     },
-    "hash": "64547330488deca2"
+    "hash": "64547330488deca2",
+    "seen": [
+      "605453f048ddf4aa",
+      "64547330488deca2"
+    ]
   },
   {
     "id": "jadx",
@@ -2972,7 +4067,10 @@
       "icon": "https://raw.githubusercontent.com/skylot/jadx/master/jadx-gui/src/main/resources/logos/jadx-logo.png",
       "source": "readme-logo"
     },
-    "hash": "71d8cedaa595c870"
+    "hash": "71d8cedaa595c870",
+    "seen": [
+      "71d8cedaa595c870"
+    ]
   },
   {
     "id": "gogcli",
@@ -2982,7 +4080,10 @@
       "icon": null,
       "source": "none"
     },
-    "hash": "ccb233323333b2cc"
+    "hash": "ccb233323333b2cc",
+    "seen": [
+      "ccb233323333b2cc"
+    ]
   },
   {
     "id": "k6",
@@ -2992,7 +4093,15 @@
       "icon": "https://k6.io/icons/icon-512x512.png?v=b39a6f3e0dc925c8ec4f77e0a65490e9",
       "source": "apple-touch-icon"
     },
-    "hash": "566c6cecd0d2a282"
+    "hash": "566c6cecd0d2a282",
+    "seen": [
+      "566c6cecd0d2a282",
+      "366c6cecd2d2a2a2",
+      "366c6cecd6d2a2a2",
+      "346c6cecd4d2a2a2",
+      "160cec68d4d69684",
+      "560cec68d4d696a4"
+    ]
   },
   {
     "id": "mosh",
@@ -3001,7 +4110,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "r",
@@ -3016,7 +4126,10 @@
       "icon": "https://www.r-project.org/Rlogo.png",
       "source": "page-logo"
     },
-    "hash": "f8c6bc36b6b4f6b6"
+    "hash": "f8c6bc36b6b4f6b6",
+    "seen": [
+      "f8c6bc36b6b4f6b6"
+    ]
   },
   {
     "id": "trash-cli",
@@ -3025,7 +4138,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "cliproxyapi",
@@ -3034,7 +4148,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "container",
@@ -3049,7 +4164,12 @@
       "icon": "https://raw.githubusercontent.com/apple/container/HEAD/assets/Containerization-Logo.png",
       "source": "readme-logo"
     },
-    "hash": "fcab2b2b2b2baae4"
+    "hash": "fcab2b2b2b2baae4",
+    "seen": [
+      "fcab2b2b2b2baae4",
+      "c8d868c9d9e46869",
+      "689a79e9d9686996"
+    ]
   },
   {
     "id": "kind",
@@ -3059,7 +4179,10 @@
       "icon": "https://kind.sigs.k8s.io/apple-touch-icon.png",
       "source": "apple-touch-icon"
     },
-    "hash": "0088a8a2a8e19208"
+    "hash": "0088a8a2a8e19208",
+    "seen": [
+      "0088a8a2a8e19208"
+    ]
   },
   {
     "id": "openvpn",
@@ -3069,7 +4192,12 @@
       "icon": "https://avatars.githubusercontent.com/u/1569141?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "f1cc96b2b296b2b2"
+    "hash": "f1cc96b2b296b2b2",
+    "seen": [
+      "f0cc96b233b6b2f0",
+      "f1cc96b2b296b2b2",
+      "f0cc9632339696b0"
+    ]
   },
   {
     "id": "act",
@@ -3079,7 +4207,11 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/svg/act.svg",
       "source": "dashboard-icons"
     },
-    "hash": "b6b6aaaa8a8a7272"
+    "hash": "b6b6aaaa8a8a7272",
+    "seen": [
+      "70c4cdd9889a02c4",
+      "b6b6aaaa8a8a7272"
+    ]
   },
   {
     "id": "glslang",
@@ -3089,7 +4221,12 @@
       "icon": "https://www.khronos.org/android-chrome-384x384.png",
       "source": "manifest"
     },
-    "hash": "08f08fae8a8cf002"
+    "hash": "08f08fae8a8cf002",
+    "seen": [
+      "10e08fbe828cf002",
+      "08f08fae8a8cf002",
+      "10f08eae828cf002"
+    ]
   },
   {
     "id": "chibi-scheme",
@@ -3098,7 +4235,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "qwen-code",
@@ -3113,7 +4251,11 @@
       "icon": "https://avatars.githubusercontent.com/u/141221163?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "7060a896ceccc8d9"
+    "hash": "7060a896ceccc8d9",
+    "seen": [
+      "3d7f8360626e1676",
+      "7060a896ceccc8d9"
+    ]
   },
   {
     "id": "sshpass",
@@ -3122,7 +4264,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "osv-scanner",
@@ -3137,7 +4280,12 @@
       "icon": "https://opensource.google/_pwa/opensource/icons/icon-512x512.png",
       "source": "maker-site"
     },
-    "hash": "30b261ccce78b230"
+    "hash": "30b261ccce78b230",
+    "seen": [
+      "30f9c9989cccf032",
+      "30b260ccce78b230",
+      "30b261ccce78b230"
+    ]
   },
   {
     "id": "freerdp",
@@ -3146,7 +4294,10 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": [
+      "b064e0d2d1c8e494"
+    ]
   },
   {
     "id": "norwoodj/tap/helm-docs",
@@ -3155,7 +4306,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "facebook/fb/idb-companion",
@@ -3164,7 +4316,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "socat",
@@ -3173,7 +4326,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "llmfit",
@@ -3182,7 +4336,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "cliclick",
@@ -3191,7 +4346,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "grype",
@@ -3201,7 +4357,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/png/grype.png",
       "source": "dashboard-icons"
     },
-    "hash": "b2aa969688cc9e9a"
+    "hash": "b2aa969688cc9e9a",
+    "seen": [
+      "b2aa969688cc9e9a"
+    ]
   },
   {
     "id": "sqlcmd",
@@ -3216,7 +4375,11 @@
       "icon": "https://avatars.githubusercontent.com/u/6154722?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "aeaeaeaeaeaeaeae"
+    "hash": "aeaeaeaeaeaeaeae",
+    "seen": [
+      "aeaeaeaeaeaeaeae",
+      "0c0c0c0c0c0c0c0c"
+    ]
   },
   {
     "id": "pgvector",
@@ -3226,7 +4389,10 @@
       "icon": "https://avatars.githubusercontent.com/u/98363230?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "0000000000000000"
+    "hash": "0000000000000000",
+    "seen": [
+      "0000000000000000"
+    ]
   },
   {
     "id": "ideviceinstaller",
@@ -3235,7 +4401,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "parallel",
@@ -3244,7 +4411,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "tectonic",
@@ -3253,7 +4421,8 @@
     "model": {
       "icon": null,
       "source": "none"
-    }
+    },
+    "seen": []
   },
   {
     "id": "rust-analyzer",
@@ -3263,7 +4432,12 @@
       "icon": "https://rust-analyzer.github.io/assets/fav/android-chrome-512x512.png",
       "source": "manifest"
     },
-    "hash": "10c8d4dc5ada5a5c"
+    "hash": "10c8d4dc5ada5a5c",
+    "seen": [
+      "1048c0d4585a580c",
+      "10c8d4dc5ada5a5c",
+      "30c8d4dc5ada5a5c"
+    ]
   },
   {
     "id": "sentry-cli",
@@ -3273,7 +4447,11 @@
       "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/sentry/sentry-original.svg",
       "source": "devicon"
     },
-    "hash": "30ea68d4aada519b"
+    "hash": "30ea68d4aada519b",
+    "seen": [
+      "30ea68d4aada519b",
+      "30686cd4aada515b"
+    ]
   },
   {
     "id": "zellij",
@@ -3283,7 +4461,10 @@
       "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@83f32e08257b66fbd971ac8d7645f5b38d52e85d/png/zellij.png",
       "source": "dashboard-icons"
     },
-    "hash": "f0c40d27230fc8f0"
+    "hash": "f0c40d27230fc8f0",
+    "seen": [
+      "f0c40d27230fc8f0"
+    ]
   },
   {
     "id": "oci-cli",
@@ -3298,7 +4479,13 @@
       "icon": "https://avatars.githubusercontent.com/u/4430336?s=256&v=4",
       "source": "org-avatar"
     },
-    "hash": "02e8962b2b96c001"
+    "hash": "02e8962b2b96c001",
+    "seen": [
+      "02e8962b2b96c001",
+      "00c486030386c400",
+      "00c88e030386c000",
+      "20e086030386c000"
+    ]
   },
   {
     "id": "helmfile",
@@ -3308,6 +4495,9 @@
       "icon": "https://avatars.githubusercontent.com/u/83191469?s=256&v=4",
       "source": "github-avatar"
     },
-    "hash": "f08c96965dcc96f0"
+    "hash": "f08c96965dcc96f0",
+    "seen": [
+      "f08c96965dcc96f0"
+    ]
   }
 ]
