@@ -14,6 +14,10 @@
 // --update is for the second round (find-logos.ts): each package the owner found an icon for (or
 // now says has none) replaces its "findable" entry, marked `findable: true` so the key still says
 // the first round's candidates didn't have it. Packages still "findable" are left as they were.
+// Both record the chosen image's perceptual hash (`hash`), and --update adds it to entries that lack
+// one when this folder has their image: the URL of an inline SVG (`page#svg-n`) or an avatar can
+// change between crawls, the image less so. A hash only shows the same file, not the same logo:
+// re-drawn files of one logo differ by up to 44 of its 64 bits.
 //
 // Everything shown was fetched by the dry run and is served from its folder, so the owner's
 // browser never contacts the sites. Crawled files are untrusted: text is escaped, and images
@@ -60,6 +64,9 @@ const { packages } = JSON.parse(readFileSync(join(DIR, 'results.json'), 'utf8'))
   packages: PackageResult[];
 };
 const byId = new Map(packages.map((p) => [p.id, p]));
+/** The perceptual hash of a package's candidate, when it was measured. */
+const hashOf = (id: string, url: string | null) =>
+  (url && byId.get(id)?.icons.find((i) => i.url === url)?.hash) || undefined;
 const readAnswers = (): Record<string, Answer> =>
   existsSync(ANSWERS) ? JSON.parse(readFileSync(ANSWERS, 'utf8')) : {};
 /** Read on every request, so picks show up while icon-check.ts is still running. */
@@ -75,6 +82,7 @@ if (args.export) {
       id: p.id,
       icon: answers[p.id].icon,
       source: answers[p.id].source,
+      hash: hashOf(p.id, answers[p.id].icon),
       // What the model had picked, to measure it against the owner.
       ...(picks[p.id] && { model: { icon: picks[p.id].icon, source: picks[p.id].source } }),
     }));
@@ -91,9 +99,11 @@ if (args.update) {
     id: string;
     icon: string | null;
     source: string;
+    hash?: string;
   }[];
   let updated = 0;
-  const next = key.map((entry) => {
+  const next = key.map((known) => {
+    const entry = known.hash ? known : { ...known, hash: hashOf(known.id, known.icon) };
     const answer = answers[entry.id];
     if (entry.source !== 'findable' || !answer || answer.source === 'findable') return entry;
     updated++;
@@ -102,6 +112,7 @@ if (args.update) {
       ...entry,
       icon: answer.icon,
       source: answer.source,
+      hash: hashOf(entry.id, answer.icon),
       findable: true,
       ...(pick && { finderModel: { icon: pick.icon, source: pick.source } }),
     };

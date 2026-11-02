@@ -17,26 +17,13 @@ import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { repoKey } from '../data/repos.ts';
 import type { IconResult, PackageResult } from './dry-run.ts';
-import {
-  ICON_REJECT_BELOW,
-  hamming,
-  homepageIcons,
-  hostOf,
-  isSharedHost,
-  manifestIcons,
-  readPage,
-  type IconCandidate,
-  type ManifestIcon,
-  type PageFacts,
-} from './extract.ts';
-import { SafeFetcher, decodeText } from './fetch.ts';
+import { ICON_REJECT_BELOW, hamming, hostOf, isSharedHost } from './extract.ts';
+import { SafeFetcher } from './fetch.ts';
 import { fetchDetails } from './github.ts';
 import { measure } from './images.ts';
-import { makerSite, pageLogos, rawGitHub, readmeLogos } from './logos.ts';
+import { logoCandidates, rawGitHub, type LogoCandidate } from './logos.ts';
+import { makerCandidates, readSite, type Site } from './site.ts';
 import { EXT, failure, pool, safeName } from './util.ts';
-
-/** Icons kept from each maker site: its best few are enough. */
-const MAKER_ICONS = 3;
 
 const { values: args } = parseArgs({
   options: {
@@ -72,34 +59,6 @@ log(`${packages.length} findable packages → ${OUT}`);
 
 const fetcher = new SafeFetcher();
 
-/** A page and its manifest's icons; null when it can't be read. */
-async function readSite(
-  url: string,
-): Promise<{ facts: PageFacts; manifest: ManifestIcon[]; html: string } | null> {
-  try {
-    let page = await fetcher.get(url, 'html');
-    let html = decodeText(page);
-    let facts = readPage(html, page.url);
-    if (facts.refresh) {
-      page = await fetcher.get(facts.refresh, 'html');
-      html = decodeText(page);
-      facts = readPage(html, page.url);
-    }
-    let manifest: ManifestIcon[] = [];
-    if (facts.manifest) {
-      try {
-        const fetched = await fetcher.get(facts.manifest, 'json', 200_000);
-        manifest = manifestIcons(JSON.parse(decodeText(fetched)), fetched.url);
-      } catch {
-        // A broken manifest only loses its icons.
-      }
-    }
-    return { facts, manifest, html };
-  } catch {
-    return null;
-  }
-}
-
 // GitHub: the repository the data knows, or the one a github.com homepage names.
 const repoOf = (p: PackageResult) => p.repo?.name.toLowerCase() ?? repoKey(p.homepage);
 let token = process.env.GITHUB_TOKEN;
@@ -113,7 +72,7 @@ let done = 0;
 await pool(packages, Number(args.concurrency), async (p) => {
   const repoKeyOf = repoOf(p);
   const repo = repoKeyOf ? (details.get(repoKeyOf) ?? null) : null;
-  const candidates: (IconCandidate & { svg?: string })[] = [];
+  const candidates: LogoCandidate[] = [];
   for (const { url } of suggested[p.id] ?? []) {
     if (URL.canParse(url) && /^https?:$/.test(new URL(url).protocol))
       candidates.push({ source: 'web-search', url: rawGitHub(url), declared: null });
@@ -121,36 +80,22 @@ await pool(packages, Number(args.concurrency), async (p) => {
 
   // The tool's own: its homepage's logo, then its README's.
   let pageError: string | null = null;
+  let page: Site | null = null;
   if (p.homepage && !isSharedHost(hostOf(p.homepage))) {
-    const site = await readSite(p.homepage);
-    if (site) {
-      for (const logo of pageLogos(site.html, site.facts.url)) {
-        candidates.push({
-          source: logo.svg ? 'page-svg' : 'page-logo',
-          url: logo.url,
-          declared: null,
-          ...(logo.svg && { svg: logo.svg }),
-        });
-      }
-    } else pageError = 'homepage not read';
+    try {
+      page = await readSite(fetcher, p.homepage);
+    } catch {
+      pageError = 'homepage not read';
+    }
   }
-  if (repo?.readme) {
-    for (const url of readmeLogos(repo.readme, repo.nameWithOwner))
-      candidates.push({ source: 'readme-logo', url, declared: null });
-  }
-
-  // The maker's: the GitHub organisation's avatar, and its site's icons.
-  if (repo?.owner.isOrganization && repo.owner.avatarUrl)
-    candidates.push({ source: 'org-avatar', url: repo.owner.avatarUrl, declared: null });
-  const makers = [makerSite(p.homepage), repo?.owner.websiteUrl ?? null].filter(
-    (url): url is string => url !== null && hostOf(url) !== hostOf(p.homepage),
+  candidates.push(
+    ...logoCandidates(
+      page,
+      repo?.readme ? { markdown: repo.readme, repo: repo.nameWithOwner } : null,
+    ),
   );
-  for (const url of [...new Map(makers.map((u) => [hostOf(u), u])).values()]) {
-    const site = await readSite(url);
-    if (!site) continue;
-    for (const icon of homepageIcons(url, site.facts, site.manifest).slice(0, MAKER_ICONS))
-      candidates.push({ ...icon, source: 'maker-site' });
-  }
+  // The maker's: the GitHub organisation's avatar, and its site's icons.
+  candidates.push(...(await makerCandidates(fetcher, p.homepage, repo?.owner ?? null)));
 
   // Fetched, measured and saved, like the dry run's.
   const dir = join(OUT, 'files', safeName(p.id));

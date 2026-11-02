@@ -334,6 +334,8 @@ export interface IconCandidate {
   url: string;
   /** Size the source declares, when it does. */
   declared: number | null;
+  /** page-logo, page-svg, readme-logo: the page or README calls it a logo (not only placed there). */
+  marked?: boolean;
 }
 
 /** Names a package goes by, squashed for exact matching (`Visual Studio Code` → visualstudiocode). */
@@ -354,6 +356,11 @@ export function homepageIcons(
   manifest: ManifestIcon[],
 ): IconCandidate[] {
   if (!homepage || isSharedHost(hostOf(homepage)) || !page) return [];
+  return siteIcons(page, manifest);
+}
+
+/** A site's icons, best first, whoever's site it is (a maker's, github.com for gh). */
+export function siteIcons(page: PageFacts, manifest: ManifestIcon[]): IconCandidate[] {
   const big = (size: number | null) => size === null || size >= ICON_MIN_SIZE;
   const bySize = <T extends { size: number | null }>(a: T, b: T) => (b.size ?? 0) - (a.size ?? 0);
   const out: IconCandidate[] = [];

@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { makerSite, pageLogos, rawGitHub, readmeLogos } from '../../scripts/crawl/logos.ts';
+import {
+  logoCandidates,
+  makerSite,
+  pageLogos,
+  rawGitHub,
+  readmeLogos,
+} from '../../scripts/crawl/logos.ts';
 
 describe('pageLogos', () => {
   const page = 'https://tool.test/docs/';
@@ -53,9 +59,33 @@ describe('readmeLogos', () => {
 ![sponsor logo](https://sponsor.test/logo.png)
 ![screenshot](docs/shot.png)`;
     expect(readmeLogos(md, 'o/r')).toEqual([
-      'https://raw.githubusercontent.com/o/r/HEAD/assets/tool-logo.svg',
-      'https://raw.githubusercontent.com/o/r/HEAD/docs/banner.png',
+      { url: 'https://raw.githubusercontent.com/o/r/HEAD/assets/tool-logo.svg', marked: true },
+      { url: 'https://raw.githubusercontent.com/o/r/HEAD/docs/banner.png', marked: false },
     ]);
+  });
+});
+
+describe('logoCandidates', () => {
+  it('keeps whether the page or README marks the image as a logo', () => {
+    const html = `<header><a href="/"><img src="/brand.svg"></a><img src="/x.png"></header>`;
+    const md = `![demo](docs/demo.png)`;
+    expect(
+      logoCandidates({ html, url: 'https://tool.test/' }, { markdown: md, repo: 'o/r' }),
+    ).toEqual([
+      { source: 'page-logo', url: 'https://tool.test/brand.svg', declared: null, marked: true },
+      { source: 'page-logo', url: 'https://tool.test/x.png', declared: null, marked: false },
+      {
+        source: 'readme-logo',
+        url: 'https://raw.githubusercontent.com/o/r/HEAD/docs/demo.png',
+        declared: null,
+        marked: false,
+      },
+    ]);
+  });
+
+  it('reads no page logos on a code host', () => {
+    const html = `<img class="logo" src="/logo.png">`;
+    expect(logoCandidates({ html, url: 'https://github.com/o/r' }, null)).toEqual([]);
   });
 });
 

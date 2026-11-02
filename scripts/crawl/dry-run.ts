@@ -3,15 +3,20 @@
 // each rejection, to look at (or to build the icon answer key from, contact-sheet.ts). No AI step:
 // that needs the owner's Anthropic key.
 //
-//   node scripts/crawl/dry-run.ts --out <dir> [--top 50 | --answer-key 300] [--icons-only]
+//   node scripts/crawl/dry-run.ts --out <dir> [--top 50 | --answer-key 300 | --ids <icons.json>] [--icons-only]
 //
 // --top N:        the N most popular listed packages, everything extracted.
 // --answer-key N: the N most popular listed packages without a CaskFlow icon (fonts aside), icons
 //                 only: the packages the icon answer key covers (M5 C1).
+// --ids <file>:   exactly the packages of an answer key (tests/fixtures/answer-key/icons.json),
+//                 icons only, to score with score.ts: popularity moves, so --answer-key drifts.
+//
+// Icon candidates: the homepage's icons, icon libraries by name, the logos the homepage and README
+// show (logos.ts), and the maker's (site.ts). rank.ts orders them.
 // GitHub needs a token: GITHUB_TOKEN, or `gh auth token` when the GitHub CLI is signed in.
 
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { getCatalog, type Entry } from '../../src/lib/catalog.ts';
@@ -26,10 +31,8 @@ import {
   SCREENSHOT_MIN_WIDTH,
   homepageIcons,
   libraryIcons,
-  manifestIcons,
   nameKeys,
   readLibraries,
-  readPage,
   readmeImages,
   repoFromHomepage,
   capBytes,
@@ -43,6 +46,8 @@ import {
 import { SafeFetcher, decodeText, type ImageFormat } from './fetch.ts';
 import { fetchDetails, type RepoDetails } from './github.ts';
 import { measure } from './images.ts';
+import { logoCandidates, type LogoCandidate } from './logos.ts';
+import { makerCandidates, readSite } from './site.ts';
 import { EXT, failure, pool, safeName } from './util.ts';
 
 const { values: args } = parseArgs({
@@ -50,6 +55,7 @@ const { values: args } = parseArgs({
     out: { type: 'string' },
     top: { type: 'string' },
     'answer-key': { type: 'string' },
+    ids: { type: 'string' },
     'icons-only': { type: 'boolean', default: false },
     concurrency: { type: 'string', default: '8' },
   },
@@ -61,7 +67,7 @@ if (!args.out) {
   process.exit(2);
 }
 const OUT = args.out;
-const iconsOnly = args['icons-only'] || args['answer-key'] !== undefined;
+const iconsOnly = args['icons-only'] || args['answer-key'] !== undefined || args.ids !== undefined;
 const log = (line: string) => console.log(`${new Date().toISOString().slice(11, 19)} ${line}`);
 
 export interface IconResult extends IconCandidate {
@@ -112,9 +118,17 @@ const catalog = getCatalog();
 const listed = catalog.entries
   .filter((e) => e.listed && !e.font)
   .sort((a, b) => b.popularity.d30 - a.popularity.d30 || a.id.localeCompare(b.id));
-const selected = args['answer-key']
-  ? listed.filter((e) => e.icon === null).slice(0, Number(args['answer-key']))
-  : listed.slice(0, Number(args.top ?? 50));
+const keyIds = args.ids
+  ? (JSON.parse(readFileSync(args.ids, 'utf8')) as { id: string }[]).map((k) => k.id)
+  : null;
+const byId = new Map(catalog.entries.map((e) => [e.id, e]));
+const selected = keyIds
+  ? keyIds.map((id) => byId.get(id)).filter((e): e is Entry => e !== undefined)
+  : args['answer-key']
+    ? listed.filter((e) => e.icon === null).slice(0, Number(args['answer-key']))
+    : listed.slice(0, Number(args.top ?? 50));
+if (keyIds && selected.length < keyIds.length)
+  log(`${keyIds.length - selected.length} of the key's packages are no longer in the catalog`);
 log(
   `${selected.length} packages, ${iconsOnly ? 'icons only' : 'icons, screenshots and text'} → ${OUT}`,
 );
@@ -148,26 +162,16 @@ log(
 // 1. Homepages.
 const pages = new Map<string, { facts: PageFacts; url: string } | { error: string }>();
 const manifests = new Map<string, ManifestIcon[]>();
+/** The logos each homepage shows, read while its HTML is at hand. */
+const pageLogos = new Map<string, LogoCandidate[]>();
 let done = 0;
 await pool(selected, concurrency, async (entry) => {
   if (entry.homepage) {
     try {
-      let page = await fetcher.get(entry.homepage, 'html');
-      let facts = readPage(decodeText(page), page.url);
-      // A page that only forwards (tmux.github.io → its GitHub wiki): one more hop.
-      if (facts.refresh) {
-        page = await fetcher.get(facts.refresh, 'html');
-        facts = readPage(decodeText(page), page.url);
-      }
-      pages.set(entry.id, { facts, url: page.url });
-      if (facts.manifest) {
-        try {
-          const manifest = await fetcher.get(facts.manifest, 'json', 200_000);
-          manifests.set(entry.id, manifestIcons(JSON.parse(decodeText(manifest)), manifest.url));
-        } catch {
-          // A broken manifest only loses its icons.
-        }
-      }
+      const site = await readSite(fetcher, entry.homepage);
+      pages.set(entry.id, { facts: site.facts, url: site.url });
+      manifests.set(entry.id, site.manifest);
+      pageLogos.set(entry.id, logoCandidates(site, null));
     } catch (error) {
       pages.set(entry.id, { error: failure(error) });
     }
@@ -218,18 +222,27 @@ await pool(selected, concurrency, async (entry) => {
           .map((k) => details.get(k))
           .find((d) => d && d.nameWithOwner === repo?.name) ?? null);
 
-  const candidates = [
+  const candidates: LogoCandidate[] = [
     ...homepageIcons(entry.homepage, facts, manifests.get(entry.id) ?? []),
     ...libraryIcons(nameKeys(entry.token, entry.name), libraries, repoInfo?.owner ?? null),
+    ...(pageLogos.get(entry.id) ?? []),
+    ...logoCandidates(
+      null,
+      repo && repoInfo?.readme ? { markdown: repoInfo.readme, repo: repo.name } : null,
+    ),
+    ...(await makerCandidates(fetcher, entry.homepage, repoInfo?.owner ?? null)),
   ];
   const dir = filesDir(entry.id);
   const icons: IconResult[] = [];
   const seenHashes = new Set<string>();
-  for (const [i, candidate] of candidates.entries()) {
+  for (const [i, { svg, ...candidate }] of candidates.entries()) {
+    if (icons.some((r) => r.url === candidate.url)) continue;
     const result: IconResult = { ...candidate, status: 'rejected' };
     icons.push(result);
     try {
-      const image = await fetcher.get(candidate.url, 'image');
+      const image = svg
+        ? { url: candidate.url, body: Buffer.from(svg), format: 'svg' as const }
+        : await fetcher.get(candidate.url, 'image');
       const { width, height, hash } = await measure(image.body, image.format!);
       const size = { width, height, hash };
       Object.assign(result, { finalUrl: image.url, format: image.format, ...size });
@@ -334,11 +347,14 @@ const shared = sharedImages(hashed);
 for (const r of results) {
   for (const icon of r.icons) {
     const others = shared.get(`${r.id} ${icon.url}`);
-    // Library icons are picked by exact name, so two packages of one project may share them.
+    // Library icons are picked by exact name, so two packages of one project may share them, and
+    // a maker's logo is shared by its tools.
     if (
       others &&
       icon.status === 'ok' &&
-      !['devicon', 'dashboard-icons', 'simple-icons'].includes(icon.source)
+      !['devicon', 'dashboard-icons', 'simple-icons', 'org-avatar', 'maker-site'].includes(
+        icon.source,
+      )
     ) {
       icon.status = 'rejected';
       icon.reason = `looks like ${others.slice(0, 3).join(', ')}'s${others.length > 3 ? ` (+${others.length - 3})` : ''}`;

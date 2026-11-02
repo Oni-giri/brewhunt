@@ -10,7 +10,14 @@
 // Pure functions over fetched text; the I/O is in find-logos.ts.
 
 import { ELEMENT_NODE, parse, renderSync, walkSync, type ElementNode } from 'ultrahtml';
-import { decodeEntities, hostOf, isBadgeOrAvatar, isSharedHost, readmeRefs } from './extract.ts';
+import {
+  decodeEntities,
+  hostOf,
+  isBadgeOrAvatar,
+  isSharedHost,
+  readmeRefs,
+  type IconCandidate,
+} from './extract.ts';
 
 /** Logos kept per page, and per README. */
 export const MAX_PAGE_LOGOS = 6;
@@ -107,16 +114,46 @@ export function pageLogos(html: string, pageUrl: string): PageLogo[] {
 }
 
 /**
- * The logo at the top of a README: images whose address or alt text says logo or icon, and the
- * first image when it isn't a badge (projects often open with their logo).
+ * The logo at the top of a README: images whose address or alt text says logo or icon (marked),
+ * and the first image when it isn't a badge (projects often open with their logo; it may also be
+ * a banner or a screenshot).
  */
-export function readmeLogos(markdown: string, repo: string): string[] {
+export function readmeLogos(markdown: string, repo: string): { url: string; marked: boolean }[] {
   const images = readmeRefs(markdown, repo).filter(
     (i) => !isBadgeOrAvatar(i.url) && !OTHERS.test(i.alt) && !OTHERS.test(i.url),
   );
-  const out = images.filter((i) => /logo|icon|brand/i.test(`${new URL(i.url).pathname} ${i.alt}`));
+  const isMarked = (i: (typeof images)[number]) =>
+    /logo|icon|brand/i.test(`${new URL(i.url).pathname} ${i.alt}`);
+  const out = images.filter(isMarked);
   if (images[0] && !out.includes(images[0])) out.push(images[0]);
-  return out.slice(0, MAX_README_LOGOS).map((i) => i.url);
+  return out.slice(0, MAX_README_LOGOS).map((i) => ({ url: i.url, marked: isMarked(i) }));
+}
+
+/** A candidate, with an inline SVG's markup (its URL is the page's, with `#svg-n`). */
+export type LogoCandidate = IconCandidate & { svg?: string };
+
+/** The tool's own logos: its homepage's (from the page's HTML), then its README's. */
+export function logoCandidates(
+  page: { html: string; url: string } | null,
+  readme: { markdown: string; repo: string } | null,
+): LogoCandidate[] {
+  const out: LogoCandidate[] = [];
+  if (page && !isSharedHost(hostOf(page.url))) {
+    for (const logo of pageLogos(page.html, page.url)) {
+      out.push({
+        source: logo.svg ? 'page-svg' : 'page-logo',
+        url: logo.url,
+        declared: null,
+        marked: logo.marked,
+        ...(logo.svg && { svg: logo.svg }),
+      });
+    }
+  }
+  if (readme) {
+    for (const { url, marked } of readmeLogos(readme.markdown, readme.repo))
+      out.push({ source: 'readme-logo', url, declared: null, marked });
+  }
+  return out;
 }
 
 /** Hosting platforms: a subdomain of one belongs to its user, not to the platform. */
