@@ -108,6 +108,9 @@
     "seen": [
       "6e6cd8f2acd2c6ee",
       "de94a892acdac6ee"
+    ],
+    "accepted": [
+      "6e6cd8f2acd2c6ee"
     ]
   },
   {
@@ -1173,6 +1176,9 @@
       "f0e8d49292d4e8f0",
       "ccf055969655f0cc",
       "f0cc8ecccc8eccf0"
+    ],
+    "rejected": [
+      "f0e8d49292d4e8f0"
     ]
   },
   {
@@ -2493,6 +2499,9 @@
       "70f0ccccd4f0f070",
       "0000baf2da626000",
       "b070e8e8f096c8cc"
+    ],
+    "rejected": [
+      "58bc72daa4b0c2c4"
     ]
   },
   {
@@ -2629,6 +2638,9 @@
       "826ce0c2c2e06c82",
       "60e0988ad86c8442",
       "9201d69395d60154"
+    ],
+    "rejected": [
+      "2026251535252624"
     ]
   },
   {
@@ -2680,6 +2692,9 @@
       "f0c09c1b1b9cc0f0",
       "0803981b0b980308",
       "f0d09c0b0b9cc0f0"
+    ],
+    "accepted": [
+      "f0d49a1b1b9ad4f0"
     ]
   },
   {
@@ -2957,6 +2972,9 @@
       "aeaeaeaeaeaeaeae",
       "b2f0cc86a79adcf8",
       "909023342b3d2b20"
+    ],
+    "accepted": [
+      "70e8968ea286e070"
     ]
   },
   {
@@ -3096,6 +3114,9 @@
       "b8e8decae2fcd8d4",
       "0009144c1d82b230",
       "6e6cd8f2acd2c6ee"
+    ],
+    "rejected": [
+      "b8e8decae2fcd8d4"
     ]
   },
   {
@@ -3163,7 +3184,7 @@
   },
   {
     "id": "mongosh",
-    "icon": "https://webimages.mongodb.com/_com_assets/icons/atlas_new.svg",
+    "icon": "https://webimages.mongodb.com/_com_assets/cms/kuyjf3vea2hg34taa-horizontal_default_slate_blue.svg?auto=format%252Ccompress",
     "source": "page-logo",
     "model": {
       "icon": null,
@@ -3174,7 +3195,7 @@
       "icon": "https://webimages.mongodb.com/_com_assets/icons/atlas_new.svg",
       "source": "page-logo"
     },
-    "hash": "7060f869ccce9c8e",
+    "hash": "0020060e52525a5a",
     "seen": [
       "0020060e52525a5a",
       "0000000000000000",
@@ -3182,21 +3203,27 @@
       "7060f869ccce9c8e",
       "7ad6b2f476460202",
       "00040004042e0e14"
+    ],
+    "accepted": [
+      "7060f869ccce9c8e"
     ]
   },
   {
     "id": "zig",
-    "icon": "https://ziglang.org/favicon.svg",
-    "source": "svg-icon",
+    "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon@2.18.0/icons/zig/zig-original.svg",
+    "source": "devicon",
     "model": {
       "icon": "https://ziglang.org/favicon.svg",
       "source": "svg-icon"
     },
-    "hash": "0621023171246080",
+    "hash": "07ae393961639a00",
     "seen": [
       "0621023171246080",
       "07ae393961639a00",
       "07a6391b23639200"
+    ],
+    "accepted": [
+      "0621023171246080"
     ]
   },
   {
@@ -3369,6 +3396,9 @@
     "seen": [
       "96969e2b7179587c",
       "0196960b69786d00"
+    ],
+    "accepted": [
+      "96969e2b7179587c"
     ]
   },
   {
@@ -3407,6 +3437,9 @@
       "861b1b1b1b1b1fcc",
       "271b191b1b1b8e6d",
       "c28282c6a2c6ec70"
+    ],
+    "rejected": [
+      "0078e4e4e461b044"
     ]
   },
   {
@@ -3652,6 +3685,9 @@
       "f0a8aa03038e8ccc",
       "22c0aaa888c6d022",
       "c2f0c6c2d4e47182"
+    ],
+    "rejected": [
+      "90406a1e98939090"
     ]
   },
   {
@@ -4214,6 +4250,9 @@
       "e8963371713396e0",
       "71cccc7ce4c4c466",
       "70e8cc3cc4c4c464"
+    ],
+    "accepted": [
+      "b2b069cccc70d8e4"
     ]
   },
   {
@@ -4481,7 +4520,12 @@
       "icon": null,
       "source": "none"
     },
-    "seen": []
+    "seen": [
+      "c89227ac9e26a2c8"
+    ],
+    "rejected": [
+      "c89227ac9e26a2c8"
+    ]
   },
   {
     "id": "container",
