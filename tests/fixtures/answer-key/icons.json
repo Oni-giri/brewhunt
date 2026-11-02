@@ -4438,7 +4438,12 @@
       "icon": null,
       "source": "none"
     },
-    "seen": []
+    "seen": [
+      "f0c080929480c0e0"
+    ],
+    "rejected": [
+      "f0c080929480c0e0"
+    ]
   },
   {
     "id": "r",
