@@ -5,6 +5,9 @@ design/
 package-lock.json
 *.md
 data/
+enrichment/
+# Written by scripts/crawl/contact-sheet.ts and review-sheet.ts.
+tests/fixtures/answer-key/
 .cache/
 playwright-report/
 test-results/
