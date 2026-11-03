@@ -90,6 +90,16 @@ A cask that installs only command-line programs (`binary`, no app, pkg or plugin
 
 **Takedowns** (`content/takedown.yaml`, how to ask: `/developers#remove`): an entry without hashes removes everything crawled for the package and its CaskFlow icon; hashes remove just those images, for every package showing them. An entry stays when the package leaves Homebrew.
 
+## The crawl's review: verdicts on `main`, drafts on the branch (3 Nov 2026)
+
+**The plan said** the first run, community packages and changed sources go to a review page before publishing, without saying where the verdicts live.
+
+**Decision:** the `enrichment` branch holds both what's published and the draft waiting (`pending`, with its hash); the owner's verdicts go in `content/approvals.yaml` on `main`, by draft hash. The site applies them at build time, as it applies takedowns, so approving is one commit and shows on the next deploy without a crawl; the next crawl folds approved drafts into `published`. A verdict names one exact draft: a later, different draft waits again, and the approved one stays shown meanwhile. Rejected drafts aren't asked about again. "Sources changed" is any change to a source text's hash, stricter than the plan's "README rewritten", until the first runs show how often that triggers.
+
+**Also:** images are uploaded before the file that refers to them is committed, and deleted only after the site that stopped showing them is deployed. The jobs holding the R2 keys and the write token run no npm code (the AWS CLI on the runner does the upload), as in the data workflow.
+
+**To reverse:** keep verdicts on the branch instead (a review page writing to it through a workflow dispatch), at the cost of a crawl run per approval.
+
 ## GitHub repositories from download URLs (30 Oct 2026)
 
 Homebrew gives a homepage, which is rarely the repository (gh's is cli.github.com). The data job also reads the formula `urls.stable`/`urls.head`, the cask `url` and community taps' `url`/`head` stanzas, keeps the `github.com/owner/repo` candidates and looks them up with GitHub GraphQL (`scripts/data/repos.ts`, about 8,100 repositories in about 165 queries of 50, one point each, one at a time: about 8 minutes).

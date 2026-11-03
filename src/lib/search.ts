@@ -59,6 +59,8 @@ export interface SearchIndex {
   trend: Record<string, number>;
   /** Sparse: the install command, only where it isn't `brew install [--cask] <id>`. */
   command: Record<string, string>;
+  /** Sparse: the icon's URL where it isn't CaskFlow's (the crawler's, enrichment.ts). */
+  iconAt?: Record<string, string>;
 }
 
 export const DAY_MS = 86_400_000;
@@ -182,7 +184,9 @@ export function prepare(index: SearchIndex): SearchData {
       linuxOnly: !!(flags & FLAG.linuxOnly),
       listed: !!(flags & FLAG.listed),
       cliCask: !!(flags & FLAG.cliCask),
-      icon: flags & FLAG.icon && index.iconBase ? iconUrl(index.iconBase, token) : null,
+      icon:
+        index.iconAt?.[row] ??
+        (flags & FLAG.icon && index.iconBase ? iconUrl(index.iconBase, token) : null),
       installs30: index.pop[row],
       trend: index.trend[row] ?? null,
       added: index.added[row] ?? null,

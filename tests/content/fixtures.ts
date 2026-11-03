@@ -57,6 +57,7 @@ export function rawContent(): RawFixture {
     'packages.yaml': { rectangle: { tagline: 'Snap windows with keyboard shortcuts' } },
     'overrides.yaml': { library: { show: [], hide: [] }, hidden: [] },
     'takedown.yaml': [],
+    'approvals.yaml': [],
   };
 }
 

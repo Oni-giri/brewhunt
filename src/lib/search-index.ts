@@ -4,6 +4,7 @@
 
 import type { Entry } from './catalog.ts';
 import { dayNumber, FLAG, type SearchIndex } from './search.ts';
+import { iconUrl } from './tiles.ts';
 
 export type IndexEntry = Pick<
   Entry,
@@ -86,6 +87,7 @@ export function buildSearchIndex(input: IndexInput): SearchIndex {
     added: {},
     trend: {},
     command: {},
+    iconAt: {},
   };
 
   entries.forEach((e, row) => {
@@ -101,6 +103,10 @@ export function buildSearchIndex(input: IndexInput): SearchIndex {
       return true;
     });
     index.alt.push(alts.map((alt) => alt.replaceAll('|', ' ')).join('|'));
+    // CaskFlow's icons are rebuilt from the token; any other is stored whole.
+    const caskflowIcon =
+      !!e.icon && !!input.iconBase && e.icon === iconUrl(input.iconBase, e.token);
+    if (e.icon && !caskflowIcon) index.iconAt![row] = e.icon;
     index.flags.push(
       (e.kind === 'cask' ? FLAG.cask : 0) |
         (e.source === 'community' ? FLAG.community : 0) |
@@ -110,7 +116,7 @@ export function buildSearchIndex(input: IndexInput): SearchIndex {
         (linuxOnly(e) ? FLAG.linuxOnly : 0) |
         (e.listed ? FLAG.listed : 0) |
         (e.kind === 'cask' && e.commandLine ? FLAG.cliCask : 0) |
-        (e.icon ? FLAG.icon : 0),
+        (caskflowIcon ? FLAG.icon : 0),
     );
     index.pop.push(e.popularity.d30);
     // A "file" date is the last edit to the definition, not a release: don't call it an update.

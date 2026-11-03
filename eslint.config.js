@@ -11,6 +11,7 @@ export default [
       'node_modules/',
       'design/',
       'data/',
+      'enrichment/',
       '.cache/',
       'playwright-report/',
       'test-results/',

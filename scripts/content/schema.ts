@@ -29,6 +29,7 @@ export const CONTENT_FILES = [
   'packages.yaml',
   'overrides.yaml',
   'takedown.yaml',
+  'approvals.yaml',
 ] as const;
 
 export type ContentFile = (typeof CONTENT_FILES)[number];
@@ -352,6 +353,30 @@ export type PackageEditorial = z.infer<typeof packageEditorialSchema>;
 export type Overrides = z.infer<typeof overridesSchema>;
 export type Takedown = z.infer<typeof takedownSchema>;
 
+// --- approvals.yaml ---
+
+/**
+ * The owner's verdict on a crawler draft waiting for review (the `enrichment` branch's
+ * `pending`), by the draft's hash: a new draft for the package needs a new verdict.
+ */
+export const approvalSchema = z.strictObject({
+  id: packageId,
+  draft: z.string().regex(SHA256, 'Use the 64-character hash the review page shows.'),
+  verdict: z.enum(['approve', 'reject']),
+  date: z.iso.date('Use a date like 2026-10-28.'),
+});
+
+export const approvalsSchema = list(approvalSchema).superRefine((approvals, ctx) => {
+  unique(
+    approvals.map((a) => `${a.id} ${a.draft}`),
+    ctx,
+    (i) => [i, 'draft'],
+    'verdict on draft',
+  );
+});
+
+export type Approval = z.infer<typeof approvalSchema>;
+
 export interface Content {
   /** In display order. A package's first category in this order is its primary one. */
   categories: Category[];
@@ -363,6 +388,8 @@ export interface Content {
   overrides: Overrides;
   /** Removals that win over every crawler result. */
   takedown: Takedown[];
+  /** The owner's verdicts on crawler drafts. */
+  approvals: Approval[];
 }
 
 /** The parsed but unvalidated YAML of each file; a missing key stands for an empty file. */
@@ -377,6 +404,7 @@ const SCHEMAS = {
   'packages.yaml': packagesEditorialSchema,
   'overrides.yaml': overridesSchema,
   'takedown.yaml': takedownsSchema,
+  'approvals.yaml': approvalsSchema,
 } as const;
 
 /** What an empty file (or one with only comments) stands for. */
@@ -387,6 +415,7 @@ const EMPTY: Record<ContentFile, unknown> = {
   'packages.yaml': {},
   'overrides.yaml': {},
   'takedown.yaml': [],
+  'approvals.yaml': [],
 };
 
 /** Checks across files that don't need the package list. */
@@ -442,6 +471,7 @@ function parseFiles(raw: RawContent, unreadable: ReadonlySet<ContentFile>): Cont
     packages: parsed['packages.yaml'] as Record<string, PackageEditorial>,
     overrides: parsed['overrides.yaml'] as Overrides,
     takedown: parsed['takedown.yaml'] as Takedown[],
+    approvals: parsed['approvals.yaml'] as Approval[],
   };
   return { content, issues: crossCheck(content) };
 }

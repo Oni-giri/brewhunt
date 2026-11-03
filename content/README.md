@@ -10,6 +10,7 @@ Brewhunt's curated layer: categories, collections, editor's picks and a few over
 | `packages.yaml` | Optional display name, type, tagline, developer and search keywords per package |
 | `overrides.yaml` | Corrections to the pipeline's "library" flag, and packages to hide |
 | `takedown.yaml` | Crawled text and images removed at the developer's or rights holder's request |
+| `approvals.yaml` | Your verdicts on crawler drafts waiting for review |
 
 ## Package ids
 
@@ -61,6 +62,13 @@ A package can be in several categories. Its first category in file order is its 
 - `hashes` (optional): only these images, by the 64-character hash in the image's URL. Without it, the package loses all its crawled text and images.
 
 A takedown stays when its package leaves Homebrew (the check warns), in case it comes back.
+
+**approvals.yaml**: a list of verdicts on the crawler's drafts (summary, tags, icon, screenshots) that wait for review: the whole first run, every community package, and any package whose sources changed. The review page shows each draft with its hash.
+
+- `id`: the package.
+- `draft`: the draft's 64-character hash. A verdict holds for that exact draft only: when a later crawl writes a different one, it waits for a new verdict and the approved one stays on the site.
+- `verdict`: `approve` (show it from the next build) or `reject` (keep what's shown now, or nothing; the crawl won't ask about the same draft again).
+- `date`: when you decided.
 
 ## Checking your changes
 

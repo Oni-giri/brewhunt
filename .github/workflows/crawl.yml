@@ -1,0 +1,338 @@
+name: Crawl
+
+# Weekly enrichment (M5 C): homepages and READMEs → summaries, tags, icons and screenshots, on the
+# `enrichment` branch, then the site rebuilt with them. Each job gets only what its step needs, as
+# in data.yml:
+#   fetch    reads the web (untrusted), no secrets: sources and image candidates, as an artifact
+#   enrich   the AI step and its checks, with the model keys and nothing else
+#   merge    the drafts merged into the branch's file (scripts/crawl/publish.ts), read-only
+#   publish  uploads new images to R2, then commits the file: write access, runs no npm code
+#   site     ci.yml with the new commit (build, browser tests, deploy)
+#   cleanup  deletes the images the site no longer shows, once it's deployed
+# Drafts wait for the owner's review in the file's `pending` (content/approvals.yaml approves
+# them); a failed job leaves the branch as it was.
+#
+# Until the AI step exists (scripts/crawl/enrich.ts, waiting on the owner's choice of models)
+# and its keys are set, the weekly run does nothing; a manual run still fetches, to try the
+# crawler. Publishing images needs the R2 secrets and the ASSET_BASE_URL variable, whose origin
+# public/_headers' img-src must allow.
+on:
+  schedule:
+    # Mondays, clear of the daily data runs (06:17 and 14:17).
+    - cron: '41 2 * * 1'
+  workflow_dispatch:
+    inputs:
+      top:
+        description: How many of the most popular listed packages to crawl
+        type: number
+        default: 1000
+
+concurrency:
+  group: crawl
+  cancel-in-progress: false
+
+permissions: {}
+
+env:
+  BUCKET: brewhunt-assets
+
+jobs:
+  ready:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      enrich: ${{ steps.check.outputs.enrich }}
+      crawl: ${{ steps.check.outputs.crawl }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts/crawl
+      - name: Check the AI step and its keys
+        id: check
+        env:
+          HAS_KEYS: ${{ secrets.ANTHROPIC_API_KEY != '' && secrets.JEV_API_KEY != '' }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          enrich=false
+          if [ ! -f scripts/crawl/enrich.ts ]; then
+            echo "::notice::No AI step yet (scripts/crawl/enrich.ts): nothing is enriched or published."
+          elif [ "$HAS_KEYS" != "true" ]; then
+            echo "::notice::ANTHROPIC_API_KEY / JEV_API_KEY not set: nothing is enriched or published."
+          else
+            enrich=true
+          fi
+          echo "enrich=$enrich" >> "$GITHUB_OUTPUT"
+          # A manual run fetches anyway, to try the crawler.
+          if [ "$enrich" = "true" ] || [ "$EVENT" = "workflow_dispatch" ]; then
+            echo "crawl=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  fetch:
+    needs: ready
+    if: needs.ready.outputs.crawl == 'true'
+    # Reads homepages and READMEs anyone can write: no secrets beyond the read-only token, which
+    # the GitHub lookups use.
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: data
+          path: data
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Crawl
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          TOP: ${{ inputs.top || 1000 }}
+        run: node scripts/crawl/dry-run.ts --out "$RUNNER_TEMP/crawl" --top "$TOP"
+      - name: Stay a bounded artifact
+        # About 0.9 MB a package on a 30-package run (Nov 2026).
+        run: |
+          size=$(du -sm "$RUNNER_TEMP/crawl" | cut -f1)
+          echo "The crawl is $size MB"
+          if [ "$size" -gt 3000 ]; then
+            echo "::error::The crawl is $size MB; the limit is 3,000."
+            exit 1
+          fi
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: crawl
+          path: ${{ runner.temp }}/crawl
+          retention-days: 7
+          if-no-files-found: error
+
+  enrich:
+    needs: [ready, fetch]
+    if: needs.ready.outputs.enrich == 'true'
+    # The model keys and no write access. The AI step reads only the artifact and calls only the
+    # model APIs (GitHub's runners can't restrict that further without a third-party action).
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: data
+          path: data
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: crawl
+          path: ${{ runner.temp }}/crawl
+      - name: Enrich and check
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          JEV_API_KEY: ${{ secrets.JEV_API_KEY }}
+        run: node scripts/crawl/enrich.ts --from "$RUNNER_TEMP/crawl" --out "$RUNNER_TEMP/drafts"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: drafts
+          path: ${{ runner.temp }}/drafts
+          retention-days: 7
+          if-no-files-found: error
+
+  merge:
+    needs: enrich
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      first: ${{ steps.previous.outputs.first }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: data
+          path: data
+          persist-credentials: false
+      - name: Find the previous enrichment
+        id: previous
+        run: |
+          status=0
+          git ls-remote --exit-code --heads "https://github.com/$GITHUB_REPOSITORY" enrichment > /dev/null || status=$?
+          if [ "$status" -eq 0 ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          elif [ "$status" -eq 2 ]; then
+            echo "first=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Couldn't check for the enrichment branch (git exit $status)."
+            exit 1
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.previous.outputs.exists == 'true'
+        with:
+          ref: enrichment
+          path: previous
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: drafts
+          path: ${{ runner.temp }}/drafts
+      - name: Merge
+        env:
+          ASSET_BASE_URL: ${{ vars.ASSET_BASE_URL }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          node scripts/crawl/publish.ts --previous previous --drafts "$RUNNER_TEMP/drafts/drafts.json" \
+            --assets "$RUNNER_TEMP/drafts/assets" --asset-base "$ASSET_BASE_URL" \
+            --run-id "$RUN_ID" --out "$RUNNER_TEMP/publish"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: publish
+          path: ${{ runner.temp }}/publish
+          retention-days: 7
+          if-no-files-found: error
+
+  publish:
+    needs: merge
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    env:
+      HAS_R2: ${{ secrets.R2_ACCESS_KEY_ID != '' && secrets.R2_SECRET_ACCESS_KEY != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: publish
+          path: ${{ runner.temp }}/publish
+      # Before the commit, so the file never refers to an image the store doesn't have. Keys are
+      # immutable: an upload that's tried again is harmless.
+      - name: Upload new images
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          # R2 doesn't take the AWS CLI's newer default checksums.
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          upload="$RUNNER_TEMP/publish/upload"
+          if [ ! -d "$upload" ]; then
+            echo "No new images."
+            exit 0
+          fi
+          if [ "$HAS_R2" != "true" ]; then
+            echo "::error::New images to upload, but the R2 secrets (R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, CLOUDFLARE_ACCOUNT_ID) aren't set."
+            exit 1
+          fi
+          aws s3 cp --recursive --only-show-errors "$upload" "s3://$BUCKET/" \
+            --endpoint-url "https://$ACCOUNT_ID.r2.cloudflarestorage.com" \
+            --content-type image/webp --cache-control 'public, max-age=31536000, immutable'
+          echo "Uploaded $(find "$upload" -type f | wc -l) images."
+      - name: Switch to the enrichment branch
+        run: |
+          if git ls-remote --exit-code --heads origin enrichment > /dev/null; then
+            git fetch --depth=1 origin enrichment
+            git checkout -B enrichment FETCH_HEAD
+          else
+            git checkout --orphan enrichment
+            git rm -rfq .
+          fi
+      - name: Commit if anything changed
+        id: commit
+        run: |
+          cp "$RUNNER_TEMP/publish/enrichment.json" enrichment.json
+          cat > README.md <<'EOF'
+          # Brewhunt enrichment
+
+          Written weekly by `.github/workflows/crawl.yml` on `main`. Don't edit by hand.
+
+          - `enrichment.json`: per package, the crawled summary, tags, icon and screenshots that are
+            published, and the draft waiting for review (approved in `content/approvals.yaml` on
+            `main`). See `scripts/crawl/enrichment.ts`.
+          EOF
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add enrichment.json README.md
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -qm "Enrichment from crawl run $GITHUB_RUN_ID"
+            git push origin HEAD:refs/heads/enrichment
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  site:
+    needs: publish
+    uses: ./.github/workflows/ci.yml
+    with:
+      enrichment-ref: ${{ needs.publish.outputs.sha }}
+    secrets: inherit
+    permissions:
+      contents: read
+      deployments: write
+
+  cleanup:
+    # After the deploy: until then the live site may still show these.
+    needs: [merge, site]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions: {}
+    env:
+      HAS_R2: ${{ secrets.R2_ACCESS_KEY_ID != '' && secrets.R2_SECRET_ACCESS_KEY != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: publish
+          path: ${{ runner.temp }}/publish
+      - name: Delete images no longer shown
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          remove="$RUNNER_TEMP/publish/remove.txt"
+          if [ ! -s "$remove" ]; then
+            echo "Nothing to delete."
+            exit 0
+          fi
+          if [ "$HAS_R2" != "true" ]; then
+            echo "::error::Images to delete, but the R2 secrets aren't set."
+            exit 1
+          fi
+          # Keys were checked against the asset key pattern by publish.ts.
+          while IFS= read -r key; do
+            aws s3 rm --only-show-errors "s3://$BUCKET/$key" \
+              --endpoint-url "https://$ACCOUNT_ID.r2.cloudflarestorage.com"
+          done < "$remove"
+          echo "Deleted $(wc -l < "$remove") images."

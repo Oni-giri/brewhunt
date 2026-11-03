@@ -1,0 +1,12 @@
+# Approvals: the owner's verdicts on crawler drafts waiting for review. See content/README.md.
+#
+# The crawl's review page lists each draft with its hash. `approve` shows that exact draft on
+# the site from the next build; `reject` keeps what's shown now (or nothing), and the crawl won't
+# ask about the same draft again. A new draft for the package needs a new verdict.
+#
+# - id: wget
+#   draft: 0f3c…  # the 64-character hash the review page shows
+#   verdict: approve
+#   date: 2026-11-10
+
+[]

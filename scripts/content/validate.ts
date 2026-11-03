@@ -319,7 +319,7 @@ function summary(content: Content): string {
     `(${plural(ids.size, 'package')}), ${plural(content.collections.length, 'collection')}, ` +
     `${plural(content.picks.length, 'pick')}, ${plural(Object.keys(content.packages).length, 'package note')}, ` +
     `overrides: ${library.show.length} library.show, ${library.hide.length} library.hide, ${hidden.length} hidden, ` +
-    `${plural(content.takedown.length, 'takedown')}.`
+    `${plural(content.takedown.length, 'takedown')}, ${plural(content.approvals.length, 'draft verdict')}.`
   );
 }
 

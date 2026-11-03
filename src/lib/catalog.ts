@@ -13,6 +13,7 @@ import {
 import type { CaskCategories } from '../../scripts/data/categories.ts';
 import type { IconSet } from '../../scripts/data/icons.ts';
 import type { History, Meta, Package, Tap, WindowCounts } from '../../scripts/data/types.ts';
+import { enrichedPackages, readEnrichment, type Enriched } from './enrichment.ts';
 import { iconBase, iconUrl } from './tiles.ts';
 import { externalUrl } from './urls.ts';
 
@@ -39,8 +40,13 @@ export interface Entry extends Package {
   /** Installs on request for formulae, installs for casks: what rankings use. */
   popularity: WindowCounts;
   url: string;
-  /** The app's real icon (official casks CaskFlow has one for), else null for a tile. */
+  /**
+   * The app's real icon: CaskFlow's for official casks it covers, else the crawler's, else null
+   * for a tile.
+   */
   icon: string | null;
+  /** The crawler's content for the package (enrichment.ts), when there is any to show. */
+  enrichment: Enriched | null;
 }
 
 export interface Catalog {
@@ -174,6 +180,9 @@ function build(): Catalog {
   const caskflow = existsSync(join(DATA_DIR, 'caskflow-categories.json'))
     ? readJson<CaskCategories>('caskflow-categories.json')
     : null;
+  // Optional as well: the crawler's output, from the `enrichment` branch.
+  const enriched = enrichedPackages(readEnrichment(), content);
+
   const slugForCaskflow = new Map(
     content.categories.flatMap((c) => c.caskflow.map((id) => [id, c.slug] as const)),
   );
@@ -215,7 +224,10 @@ function build(): Catalog {
         page && !p.deprecated && !p.versioned && !isLibrary && !hidden.has(p.id) && !linuxOnly(p),
       popularity: p.installsOnRequest ?? p.installs,
       url: appUrl(p.id),
-      icon: takenDown.has(p.id) ? null : iconFor(iconsAt, iconTokens, p),
+      icon: takenDown.has(p.id)
+        ? null
+        : (iconFor(iconsAt, iconTokens, p) ?? enriched.get(p.id)?.icon ?? null),
+      enrichment: enriched.get(p.id) ?? null,
     };
   });
 

@@ -88,6 +88,8 @@ const entries: IndexEntry[] = [
   cask('amethyst', 'Amethyst', 'Automatic tiling window manager', 678, {
     updatedAt: '2025-06-01',
     updatedKind: 'version',
+    // The crawler's (enrichment.ts), not CaskFlow's.
+    icon: `https://assets.example.com/icons/v1/${'a'.repeat(64)}.webp`,
   }),
   cask('hazeover', 'HazeOver', 'Windows manager and desktop organiser', 78, {
     firstSeen: '2026-10-20',
@@ -244,11 +246,13 @@ describe('buildSearchIndex', () => {
     }
   });
 
-  it('round-trips icons, from the flag and one shared base', () => {
+  it('round-trips icons, CaskFlow’s from the flag and one shared base, others whole', () => {
     for (const item of data.items) {
       expect(item.icon).toBe(entries.find((e) => e.id === item.id)!.icon);
     }
     expect(JSON.stringify(index)).not.toContain('rectangle.png');
+    expect(index.flags[index.id.indexOf('amethyst')] & FLAG.icon).toBe(0);
+    expect(Object.keys(index.iconAt!)).toEqual([String(index.id.indexOf('amethyst'))]);
   });
 });
 

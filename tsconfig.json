@@ -5,5 +5,5 @@
     "erasableSyntaxOnly": true
   },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "data", ".cache"]
+  "exclude": ["dist", "data", "enrichment", ".cache"]
 }
