@@ -24,9 +24,10 @@ describe('worstCase', () => {
     expect(worstCase(haiku(10_000))).toBeCloseTo(0.0025, 10);
     expect(worstCase(haiku(10_000), false)).toBeCloseTo(0.005, 10);
     expect(worstCase(haiku(0, 0, 2))).toBeCloseTo((2 * IMAGE_MAX_TOKENS * 0.1) / 1e6 / 2, 12);
+    // Jev: input only, no batch discount.
     expect(
-      worstCase({ model: 'claude-sonnet-5-5', inputTokens: 1000, images: 0, maxTokens: 1000 }),
-    ).toBeCloseTo(0.006, 10);
+      worstCase({ model: 'jev-latest', inputTokens: 1_000_000, images: 0, maxTokens: 0 }),
+    ).toBeCloseTo(0.042, 10);
   });
 
   it('uses Haiku’s long-prompt prices past 100,000 tokens', () => {
@@ -42,13 +43,13 @@ describe('worstCase', () => {
 describe('actualCost', () => {
   it('prices cache writes and reads from the input price', () => {
     expect(
-      actualCost('claude-sonnet-5-5', {
+      actualCost('claude-haiku-5-5', {
         input_tokens: 1000,
         output_tokens: 100,
         cache_creation_input_tokens: 1000,
         cache_read_input_tokens: 1000,
       }),
-    ).toBeCloseTo(((1000 * 2 + 1000 * 2.5 + 1000 * 0.2 + 100 * 10) / 1e6) * 0.5, 10);
+    ).toBeCloseTo(((1000 * 0.1 + 1000 * 0.125 + 1000 * 0.01 + 100 * 0.5) / 1e6) * 0.5, 10);
   });
 });
 
@@ -102,7 +103,7 @@ describe('CostGuard', () => {
 });
 
 describe('packageRequests', () => {
-  it('asks Sonnet to check only a package that has sources, and caps the icon candidates', () => {
+  it('asks Jev to check only a package that has sources, and caps the icon candidates', () => {
     const full = packageRequests({
       sourceText: 'x'.repeat(4000),
       iconCandidates: 20,
@@ -113,7 +114,7 @@ describe('packageRequests', () => {
       ['claude-haiku-5-5', 0],
       ['claude-haiku-5-5', ICON_CANDIDATES],
       ['claude-haiku-5-5', 3],
-      ['claude-sonnet-5-5', 0],
+      ['jev-latest', 0],
     ]);
     expect(packageRequests({ sourceText: '', iconCandidates: 2, screenshots: 0 })).toHaveLength(1);
   });

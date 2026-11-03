@@ -1,7 +1,6 @@
 // The AI step's worst-case cost for a dry run's packages (cost.ts), before there's a key: what a
-// run's cap covers, and the most a run of N packages could cost. Sonnet's check is bounded here
-// by the summary's max_tokens; in a run its batch is planned once the summaries are back, from
-// their real length.
+// run's cap covers, and the most a run of N packages could cost. Jev's check is bounded here by
+// the summary's max_tokens; in a run it's priced from the real summaries.
 //
 //   node scripts/crawl/cost-estimate.ts --from <dir> [--cap 10]
 

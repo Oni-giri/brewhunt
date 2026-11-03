@@ -5,16 +5,18 @@
 // one's real usage is reconciled, and when the cap can't cover the next batch the run stops
 // before submitting it. Pure: the caller submits, polls and reports usage.
 //
-// Prices are Anthropic's list prices per million tokens (checked 3 Nov 2026); the Message
-// Batches API charges half of them on every token.
+// Prices are list prices per million tokens (checked 3 Nov 2026). Anthropic's Message Batches
+// API charges half of them on every token; TypeSafe's Jev (the summary check, jev-check.ts)
+// answers at once, charges for input only and has no batches.
 
 export const PRICES = {
   'claude-haiku-5-5': {
     input: 0.1,
     output: 0.5,
     long: { above: 100_000, input: 0.5, output: 2.5 },
+    batches: true,
   },
-  'claude-sonnet-5-5': { input: 2, output: 10 },
+  'jev-latest': { input: 0.042, output: 0, batches: false },
 } as const;
 export type Model = keyof typeof PRICES;
 
@@ -54,11 +56,14 @@ function rates(model: Model, promptTokens: number): { input: number; output: num
   return 'long' in price && promptTokens > price.long.above ? price.long : price;
 }
 
+const discount = (model: Model, batch: boolean) =>
+  batch && PRICES[model].batches ? BATCH_DISCOUNT : 1;
+
 /** Dollars for a request at its worst: every image at its largest, all of `max_tokens` used. */
 export function worstCase(request: RequestCost, batch = true): number {
   const prompt = request.inputTokens + request.images * IMAGE_MAX_TOKENS;
   const { input, output } = rates(request.model, prompt);
-  return ((prompt * input + request.maxTokens * output) / 1e6) * (batch ? BATCH_DISCOUNT : 1);
+  return ((prompt * input + request.maxTokens * output) / 1e6) * discount(request.model, batch);
 }
 
 /** Dollars a finished request cost, from its usage. */
@@ -68,7 +73,7 @@ export function actualCost(model: Model, usage: Usage, batch = true): number {
   const { input, output } = rates(model, usage.input_tokens + written + read);
   const inputCost =
     usage.input_tokens * input + written * input * CACHE.write + read * input * CACHE.read;
-  return ((inputCost + usage.output_tokens * output) / 1e6) * (batch ? BATCH_DISCOUNT : 1);
+  return ((inputCost + usage.output_tokens * output) / 1e6) * discount(model, batch);
 }
 
 export class BudgetError extends Error {}
@@ -147,7 +152,6 @@ export const MAX_TOKENS = {
   labels: 4000,
   icon: 2000,
   screenshots: 2000,
-  check: 4000,
 };
 /** Instructions and package details per call, allowed for generously. */
 export const OVERHEAD_TOKENS = 2000;
@@ -163,8 +167,8 @@ export interface PackageWork {
 
 /**
  * Every request the AI step makes for one package: summary, labels, icon judge and screenshot
- * classifier on Haiku, then Sonnet checking the summary, whose input is at most the summary's
- * own output plus the spans it cites (no longer than the summary's `max_tokens`).
+ * classifier on Haiku, then Jev checking the summary, whose input is at most the summary's own
+ * output plus the spans it cites (no longer than the summary's `max_tokens`).
  */
 export function packageRequests(work: PackageWork): RequestCost[] {
   const sources = estimateTokens(work.sourceText);
@@ -183,10 +187,10 @@ export function packageRequests(work: PackageWork): RequestCost[] {
   if (work.screenshots > 0) requests.push(haiku(0, work.screenshots, MAX_TOKENS.screenshots));
   if (sources > 0) {
     requests.push({
-      model: 'claude-sonnet-5-5' as const,
+      model: 'jev-latest' as const,
       inputTokens: OVERHEAD_TOKENS + 2 * MAX_TOKENS.summary,
       images: 0,
-      maxTokens: MAX_TOKENS.check,
+      maxTokens: 0,
     });
   }
   return requests;
