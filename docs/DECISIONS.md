@@ -70,6 +70,16 @@ A cask that installs only command-line programs (`binary`, no app, pkg or plugin
 
 **To reverse:** when phase C/D brings real screenshots, a pick that has one shows it in that space; a pick without one keeps the compact card.
 
+## Crawled images: keys, rights and takedowns (3 Nov 2026)
+
+**Keys** are `icons/v1/<hash>.webp` and `screenshots/v1/<hash>.webp`, where the hash is the source file's sha256, not the WebP's. A takedown by hash keeps matching after the encoder changes, and changing how images are encoded bumps `v1` instead of changing what a live URL serves. The record keeps both hashes, and a takedown matches either.
+
+**Rights basis per source:** an icon is the project's logo, shown to identify it ("trademark: identification use"), wherever it was found (homepage, README, icon library, the organisation's avatar). A README screenshot is recorded with the repository's licence and credited "Screenshot from the project's README"; one whose repository has no licence GitHub recognises is recorded with none (whether to show those is the owner's call before phase D).
+
+**Animated demos (my default, owner to confirm):** kept animated only within 300 frames, about 50 million pixels across all frames and 4 MB as WebP; otherwise shown as a still, the busiest of four frames. In a 30-package dry run all three animated READMEs were past the limit.
+
+**Takedowns** (`content/takedown.yaml`, how to ask: `/developers#remove`): an entry without hashes removes everything crawled for the package and its CaskFlow icon; hashes remove just those images, for every package showing them. An entry stays when the package leaves Homebrew.
+
 ## GitHub repositories from download URLs (30 Oct 2026)
 
 Homebrew gives a homepage, which is rarely the repository (gh's is cli.github.com). The data job also reads the formula `urls.stable`/`urls.head`, the cask `url` and community taps' `url`/`head` stanzas, keeps the `github.com/owner/repo` candidates and looks them up with GitHub GraphQL (`scripts/data/repos.ts`, about 8,100 repositories in about 165 queries of 50, one point each, one at a time: about 8 minutes).

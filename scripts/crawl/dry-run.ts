@@ -106,7 +106,13 @@ export interface PackageResult {
   caskflowIcon: string | null;
   page: { url: string; title: string | null; description: string | null; textBytes: number } | null;
   pageError: string | null;
-  repo: { name: string; via: 'data' | 'homepage' } | null;
+  repo: {
+    name: string;
+    via: 'data' | 'homepage';
+    /** From GitHub: the licence (SPDX) and the README's blob id, for the screenshots' records. */
+    licence?: string | null;
+    readmeRevision?: string | null;
+  } | null;
   /** Repositories the homepage links to, as asked of GitHub. */
   pageRepos: string[];
   icons: IconResult[];
@@ -336,7 +342,11 @@ await pool(selected, concurrency, async (entry) => {
           }
         : null,
     pageError: page && 'error' in page ? page.error : null,
-    repo,
+    repo: repo && {
+      ...repo,
+      licence: repoInfo?.licence ?? null,
+      readmeRevision: repoInfo?.readmeRevision ?? null,
+    },
     pageRepos: knownKey ? [] : pageRepoKeys(entry),
     icons,
     screenshots,

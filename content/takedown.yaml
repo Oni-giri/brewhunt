@@ -1,0 +1,13 @@
+# Takedowns: crawled content Brewhunt no longer shows. See content/README.md.
+#
+# Each entry wins over every crawler result. Without `hashes`, the package loses all its
+# crawled text and images (summary, tags, icon, screenshots); with them, only those images go.
+# The images are deleted from the asset store on the next crawl.
+#
+# - id: some-app
+#   date: 2026-11-03
+#   reason: Asked by the developer (issue #12).
+#   hashes:
+#     - 0f3c…  # the 64-character hash in the image's URL
+
+[]

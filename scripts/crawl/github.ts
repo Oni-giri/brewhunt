@@ -1,9 +1,10 @@
 // What the crawler asks GitHub about a repository: whether it's a fork, its homepage (to accept a
-// repository linked from a package's homepage), its owner (for the organisation's avatar) and its
-// README text (for screenshots and the summary). One GraphQL query per BATCH repositories, one at
-// a time, stopping before the hourly budget runs out. An organisation's website is where its
-// logo is when the tool has none of its own (find-logos.ts). GitHub's API is a fixed endpoint, so this
-// doesn't go through the SafeFetcher; the README's own links do.
+// repository linked from a package's homepage), its owner (for the organisation's avatar), its
+// README text and revision (for screenshots and the summary) and its licence (recorded with each
+// asset). One GraphQL query per BATCH repositories, one at a time, stopping before the hourly
+// budget runs out. An organisation's website is where its logo is when the tool has none of its
+// own (find-logos.ts). GitHub's API is a fixed endpoint, so this doesn't go through the
+// SafeFetcher; the README's own links do.
 
 /** Repositories per query: smaller than repos.ts's 50, since each brings its README. */
 export const BATCH = 20;
@@ -24,6 +25,10 @@ export interface RepoDetails {
     websiteUrl: string | null;
   };
   readme: string | null;
+  /** The README blob's id: the revision a screenshot taken from it comes from. */
+  readmeRevision: string | null;
+  /** The repository's licence as an SPDX id; null when GitHub doesn't recognise one. */
+  licence: string | null;
 }
 
 const OWNER = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/;
@@ -46,7 +51,7 @@ export function detailsQuery(keys: readonly string[]): {
     fields.push(`r${i}: repository(owner: $o${i}, name: $n${i}) { ...F }`);
   });
   const readmes = README_PATHS.map(
-    (path, i) => `m${i}: object(expression: "HEAD:${path}") { ... on Blob { text } }`,
+    (path, i) => `m${i}: object(expression: "HEAD:${path}") { ... on Blob { oid text } }`,
   ).join(' ');
   const query = `query(${declarations.join(', ')}) {
   rateLimit { cost remaining }
@@ -54,6 +59,7 @@ export function detailsQuery(keys: readonly string[]): {
 }
 fragment F on Repository {
   nameWithOwner isFork homepageUrl
+  licenseInfo { spdxId }
   owner { __typename login avatarUrl(size: 256) ... on Organization { websiteUrl } }
   ${readmes}
 }`;
@@ -70,7 +76,8 @@ interface Node {
     avatarUrl: string | null;
     websiteUrl?: string | null;
   };
-  [readme: `m${number}`]: { text?: string | null } | null;
+  licenseInfo: { spdxId: string | null } | null;
+  [readme: `m${number}`]: { oid?: string; text?: string | null } | null;
 }
 
 export function readDetails(
@@ -82,8 +89,9 @@ export function readDetails(
     const node = data[`r${i}`] as Node | null | undefined;
     if (node === undefined) return;
     if (node === null) return out.set(key, null);
-    const readme =
-      README_PATHS.map((_, j) => node[`m${j}`]?.text).find((t) => typeof t === 'string') ?? null;
+    const blob = README_PATHS.map((_, j) => node[`m${j}`]).find((b) => typeof b?.text === 'string');
+    const readme = blob?.text ?? null;
+    const spdx = node.licenseInfo?.spdxId;
     out.set(key, {
       nameWithOwner: node.nameWithOwner,
       isFork: node.isFork,
@@ -95,6 +103,9 @@ export function readDetails(
         websiteUrl: node.owner.websiteUrl || null,
       },
       readme: readme === null ? null : readme.slice(0, README_MAX_CHARS),
+      readmeRevision: blob?.oid ?? null,
+      // NOASSERTION: a licence file GitHub can't name.
+      licence: spdx && spdx !== 'NOASSERTION' ? spdx : null,
     });
   });
   return out;

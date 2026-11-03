@@ -9,6 +9,7 @@ Brewhunt's curated layer: categories, collections, editor's picks and a few over
 | `picks.yaml` | Editor's picks, newest first |
 | `packages.yaml` | Optional display name, type, tagline, developer and search keywords per package |
 | `overrides.yaml` | Corrections to the pipeline's "library" flag, and packages to hide |
+| `takedown.yaml` | Crawled text and images removed at the developer's or rights holder's request |
 
 ## Package ids
 
@@ -51,6 +52,15 @@ A package can be in several categories. Its first category in file order is its 
 - `library.show`: formulae the pipeline flags as libraries (mostly installed as a dependency, like `openssl`) that should still appear in charts and discovery. Say why in a comment.
 - `library.hide`: formulae to treat as libraries even though the pipeline doesn't flag them.
 - `hidden`: packages removed from every list. Their app pages stay.
+
+**takedown.yaml**: a list, one entry per package, for crawled content someone asked us to remove. It wins over every crawler result, and the removed images are deleted from the asset store on the next crawl.
+
+- `id`: the package.
+- `date`: when it was asked (`2026-11-03`).
+- `reason`: who asked and where, in a sentence ("Asked by the developer (issue #12).").
+- `hashes` (optional): only these images, by the 64-character hash in the image's URL. Without it, the package loses all its crawled text and images.
+
+A takedown stays when its package leaves Homebrew (the check warns), in case it comes back.
 
 ## Checking your changes
 

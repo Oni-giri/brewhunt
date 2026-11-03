@@ -157,6 +157,18 @@ export function validateContent(
     }
   }
 
+  // A takedown stays when its package leaves Homebrew: it may come back.
+  if (byId && packages) {
+    content.takedown.forEach((takedown, i) => {
+      if (byId.has(takedown.id)) return;
+      warnings.push({
+        file: 'takedown.yaml',
+        path: [i, 'id'],
+        message: unknownMessage(takedown.id, packages),
+      });
+    });
+  }
+
   if (byId) {
     for (const [id, editorial] of Object.entries(content.packages)) {
       const pkg = byId.get(id);
@@ -306,7 +318,8 @@ function summary(content: Content): string {
     `Content: ${plural(content.categories.length, 'category', 'categories')} ` +
     `(${plural(ids.size, 'package')}), ${plural(content.collections.length, 'collection')}, ` +
     `${plural(content.picks.length, 'pick')}, ${plural(Object.keys(content.packages).length, 'package note')}, ` +
-    `overrides: ${library.show.length} library.show, ${library.hide.length} library.hide, ${hidden.length} hidden.`
+    `overrides: ${library.show.length} library.show, ${library.hide.length} library.hide, ${hidden.length} hidden, ` +
+    `${plural(content.takedown.length, 'takedown')}.`
   );
 }
 

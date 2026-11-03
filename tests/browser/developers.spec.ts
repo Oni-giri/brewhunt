@@ -41,7 +41,7 @@ test('says what it takes for a tap to be listed, and has the tap command', async
 
 test('jump links reach each section', async ({ page }) => {
   await page.goto('/developers');
-  for (const id of ['homebrew', 'claim', 'sponsor']) {
+  for (const id of ['homebrew', 'claim', 'remove', 'sponsor']) {
     await expect(page.locator(`.jump a[href="#${id}"]`)).toBeVisible();
     await expect(page.locator(`#${id}`)).toHaveCount(1);
   }

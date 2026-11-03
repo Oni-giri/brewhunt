@@ -1,6 +1,6 @@
 ---
 // For developers: how an app gets onto Brewhunt (through Homebrew), claiming a listing (later),
-// and sponsorship. The header's "For developers" comes here. See docs/PRODUCT.md › Developers.
+// asking for an image or text to be removed (content/takedown.yaml), and sponsorship. The header's "For developers" comes here. See docs/PRODUCT.md › Developers.
 import Badge from '../components/Badge.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import Command from '../components/Command.astro';
@@ -35,6 +35,7 @@ const threshold = Math.min(...taps.map((t) => t.installs30d));
       <nav class="jump" aria-label="On this page">
         <a href="#homebrew">Get into Homebrew</a>
         <a href="#claim">Claim your listing</a>
+        <a href="#remove">Ask for a removal</a>
         <a href="#sponsor">Sponsor Brewhunt</a>
       </nav>
     </header>
@@ -122,6 +123,16 @@ const threshold = Math.min(...taps.map((t) => t.installs30d));
       <p class="lead">
         Sign in with GitHub to show you maintain the app, then add screenshots, your own description
         and links to your listing. Until then, listings use what's in your formula or cask.
+      </p>
+    </section>
+
+    <section class="section" id="remove" aria-labelledby="remove-title">
+      <h2 id="remove-title">Ask for a removal</h2>
+      <p class="lead">
+        Besides what's in your formula or cask, Brewhunt may show your app's icon, and later
+        screenshots and a summary taken from your website or README. If you'd rather it didn't,{' '}
+        <a href={ISSUES}>open an issue</a> with the package's name and what should go. Once it's
+        removed, it stays removed: the next crawl won't bring it back.
       </p>
     </section>
 

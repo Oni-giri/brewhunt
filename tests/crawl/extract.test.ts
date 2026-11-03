@@ -370,7 +370,7 @@ describe('GitHub details', () => {
     expect(() => detailsQuery(['a/b") { x }'])).toThrow();
   });
 
-  it('read the first README found, and null for missing repositories', () => {
+  it('read the first README found with its revision, the licence, and null for missing repositories', () => {
     const details = readDetails(['a/b', 'gone/x', 'unanswered/y'], {
       r0: {
         nameWithOwner: 'A/B',
@@ -382,9 +382,10 @@ describe('GitHub details', () => {
           avatarUrl: 'https://avatars.test/a',
           websiteUrl: 'https://a.test',
         },
+        licenseInfo: { spdxId: 'MIT' },
         m0: null,
-        m1: { text: '# readme' },
-        m2: { text: '# other' },
+        m1: { oid: 'abc123', text: '# readme' },
+        m2: { oid: 'def456', text: '# other' },
       },
       r1: null,
     });
@@ -399,6 +400,8 @@ describe('GitHub details', () => {
         websiteUrl: 'https://a.test',
       },
       readme: '# readme',
+      readmeRevision: 'abc123',
+      licence: 'MIT',
     });
     expect(details.get('gone/x')).toBeNull();
     expect(details.has('unanswered/y')).toBe(false);

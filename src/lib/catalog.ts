@@ -162,6 +162,8 @@ function build(): Catalog {
   const libraryShow = new Set(overrides.library.show);
   const libraryHide = new Set(overrides.library.hide);
   const hidden = new Set(overrides.hidden);
+  // A package taken down whole (content/takedown.yaml) shows no fetched image: the tile instead.
+  const takenDown = new Set(content.takedown.filter((t) => t.hashes.length === 0).map((t) => t.id));
   // Optional: data from before icons existed builds with tiles only.
   const icons = existsSync(join(DATA_DIR, 'icons.json')) ? readJson<IconSet>('icons.json') : null;
   const iconTokens = new Set(icons?.tokens);
@@ -211,7 +213,7 @@ function build(): Catalog {
         page && !p.deprecated && !p.versioned && !isLibrary && !hidden.has(p.id) && !linuxOnly(p),
       popularity: p.installsOnRequest ?? p.installs,
       url: appUrl(p.id),
-      icon: iconFor(iconsAt, iconTokens, p),
+      icon: takenDown.has(p.id) ? null : iconFor(iconsAt, iconTokens, p),
     };
   });
 

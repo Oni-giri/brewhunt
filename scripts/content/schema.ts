@@ -28,6 +28,7 @@ export const CONTENT_FILES = [
   'picks.yaml',
   'packages.yaml',
   'overrides.yaml',
+  'takedown.yaml',
 ] as const;
 
 export type ContentFile = (typeof CONTENT_FILES)[number];
@@ -317,6 +318,30 @@ export const overridesSchema = z
     });
   });
 
+// --- takedown.yaml ---
+
+const SHA256 = /^[0-9a-f]{64}$/;
+
+export const takedownSchema = z.strictObject({
+  id: packageId,
+  /**
+   * Only these images, by the hash in their URL (or their source file's). Without it, every
+   * crawled text and image for the package.
+   */
+  hashes: list(z.string().regex(SHA256, 'Use the 64-character hash from the image’s URL.')),
+  date: z.iso.date('Use a date like 2026-10-28.'),
+  reason: line(200),
+});
+
+export const takedownsSchema = list(takedownSchema).superRefine((takedowns, ctx) => {
+  unique(
+    takedowns.map((t) => t.id),
+    ctx,
+    (i) => [i, 'id'],
+    'package',
+  );
+});
+
 export type Tile = z.infer<typeof tileSchema>;
 export type Subcategory = z.infer<typeof subcategorySchema>;
 export type CategoryPackage = z.infer<typeof categoryPackageSchema>;
@@ -325,6 +350,7 @@ export type Collection = z.infer<typeof collectionSchema>;
 export type EditorsPick = z.infer<typeof pickSchema>;
 export type PackageEditorial = z.infer<typeof packageEditorialSchema>;
 export type Overrides = z.infer<typeof overridesSchema>;
+export type Takedown = z.infer<typeof takedownSchema>;
 
 export interface Content {
   /** In display order. A package's first category in this order is its primary one. */
@@ -335,6 +361,8 @@ export interface Content {
   /** Editorial fields keyed by package id. */
   packages: Record<string, PackageEditorial>;
   overrides: Overrides;
+  /** Removals that win over every crawler result. */
+  takedown: Takedown[];
 }
 
 /** The parsed but unvalidated YAML of each file; a missing key stands for an empty file. */
@@ -348,6 +376,7 @@ const SCHEMAS = {
   'picks.yaml': picksSchema,
   'packages.yaml': packagesEditorialSchema,
   'overrides.yaml': overridesSchema,
+  'takedown.yaml': takedownsSchema,
 } as const;
 
 /** What an empty file (or one with only comments) stands for. */
@@ -357,6 +386,7 @@ const EMPTY: Record<ContentFile, unknown> = {
   'picks.yaml': [],
   'packages.yaml': {},
   'overrides.yaml': {},
+  'takedown.yaml': [],
 };
 
 /** Checks across files that don't need the package list. */
@@ -411,6 +441,7 @@ function parseFiles(raw: RawContent, unreadable: ReadonlySet<ContentFile>): Cont
     picks: parsed['picks.yaml'] as EditorsPick[],
     packages: parsed['packages.yaml'] as Record<string, PackageEditorial>,
     overrides: parsed['overrides.yaml'] as Overrides,
+    takedown: parsed['takedown.yaml'] as Takedown[],
   };
   return { content, issues: crossCheck(content) };
 }
