@@ -8,7 +8,7 @@ Needed before phase C (crawler) and E (semantic search); A and B don't wait on t
 
 1. Cloudflare Pages project `brewhunt` (Workers & Pages → Create → Pages → Direct Upload). API token (custom) with **Account · Cloudflare Pages · Edit**, **Account · Workers AI · Read**, **Account · Workers R2 Storage · Edit**.
 2. An R2 bucket `brewhunt-assets` for icons, screenshots and the crawl cache, served on a subdomain of the site's domain (R2 custom domain; `r2.dev` URLs are rate-limited and not for production). Which domain will the site use?
-3. GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY` (with a monthly spend limit in the Anthropic console; budget $80), and R2 S3 credentials `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`.
+3. GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY` (with a monthly spend limit in the Anthropic console; budget $80), `JEV_API_KEY` (TypeSafe, for the summary check), and R2 S3 credentials `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`. And a repository variable (not a secret), `ASSET_BASE_URL`: the R2 custom domain's URL (like `https://assets.brewhunt.app`), whose origin also goes in `public/_headers`' `img-src`; `crawl.yml` and the build refuse to publish images until both are set.
 4. A Tally form for sponsorship enquiries; send me its link.
 5. Review time: about an hour for the first crawl's answer key and sample pages (C6).
 

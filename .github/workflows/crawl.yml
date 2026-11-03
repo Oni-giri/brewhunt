@@ -159,8 +159,6 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-    outputs:
-      first: ${{ steps.previous.outputs.first }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -177,9 +175,7 @@ jobs:
           git ls-remote --exit-code --heads "https://github.com/$GITHUB_REPOSITORY" enrichment > /dev/null || status=$?
           if [ "$status" -eq 0 ]; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
-          elif [ "$status" -eq 2 ]; then
-            echo "first=true" >> "$GITHUB_OUTPUT"
-          else
+          elif [ "$status" -ne 2 ]; then
             echo "::error::Couldn't check for the enrichment branch (git exit $status)."
             exit 1
           fi
