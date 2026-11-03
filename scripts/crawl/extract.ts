@@ -630,6 +630,33 @@ export function readmeImages(markdown: string, repo: string): ReadmeImage[] {
   );
 }
 
+/**
+ * A README as plain text for the summary step: what the model reads and what its quotes are
+ * checked against (checks.ts), so the two are the same string. Code blocks, images, HTML tags,
+ * bare links and link targets go; link text stays. Whitespace is collapsed like a page's text,
+ * and the result is cut to TEXT_MAX_BYTES.
+ */
+export function readmeText(markdown: string): string {
+  const text = markdown
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/^ {0,3}(`{3,}|~{3,})[^\n]*\n[\s\S]*?(?:^ {0,3}\1[^\n]*$|(?![\s\S]))/gm, ' ')
+    .replace(/<(script|style|pre)\b[\s\S]*?<\/\1\s*>/gi, ' ')
+    .replace(/^ {0,3}\[[^\]]+\]:\s*\S+.*$/gm, ' ')
+    .replace(/!\[[^\]]*\](\([^)]*\)|\[[^\]]*\])/g, ' ')
+    .replace(/\[([^\]]*)\](\([^)]*\)|\[[^\]]*\])/g, '$1')
+    .replace(/<\/?[a-z][^>]*>/gi, ' ')
+    .replace(/<?\bhttps?:\/\/[^\s<>)]+>?/g, ' ')
+    .replace(/^ {0,3}#{1,6}\s+|\s+#+\s*$/gm, ' ')
+    .replace(/^ {0,3}(?:[-*_] *){3,}$|^ {0,3}(?:=+|-+)\s*$/gm, ' ')
+    .replace(/^ {0,3}>\s?(?:\[![a-z]+\]\s*$)?/gim, '')
+    .replace(/^\s*(?:[-*+]|\d+[.)])\s+/gm, ' ')
+    .replace(/^\s*\|?(?:\s*:?-+:?\s*\|)+\s*:?-*:?\s*$/gm, ' ')
+    .replace(/\|/g, ' ')
+    .replace(/(\*\*|__)(?=\S)([\s\S]*?\S)\1/g, '$2')
+    .replace(/`+/g, '');
+  return capBytes(decodeEntities(text).replace(/\s+/g, ' ').trim());
+}
+
 // --- Image hashes ---
 
 /** Bits that differ between two 64-bit hex hashes. */

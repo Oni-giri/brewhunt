@@ -35,14 +35,15 @@ import {
   readLibraries,
   readmeImages,
   repoFromHomepage,
-  capBytes,
   hostOf,
+  readmeText,
   sharedImages,
   type IconCandidate,
   type IconLibraries,
   type ManifestIcon,
   type PageFacts,
 } from './extract.ts';
+import type { Source } from './checks.ts';
 import { SafeFetcher, decodeText, type ImageFormat } from './fetch.ts';
 import { fetchDetails, type RepoDetails } from './github.ts';
 import { measure } from './images.ts';
@@ -301,8 +302,19 @@ await pool(selected, concurrency, async (entry) => {
     }
   }
   if (!iconsOnly) {
-    if (facts) writeFileSync(join(dir, 'homepage.txt'), facts.text);
-    if (repoInfo?.readme) writeFileSync(join(dir, 'readme.md'), capBytes(repoInfo.readme));
+    // The texts the summary step reads and checks.ts checks its quotes against. A homepage that
+    // is the repository's GitHub page only adds GitHub's menus to the README.
+    const sources: Source[] = [];
+    if (facts?.text && !(repoInfo?.readme && hostOf(facts.url) === 'github.com'))
+      sources.push({ id: 'homepage', kind: 'homepage', url: facts.url, text: facts.text });
+    if (repo && repoInfo?.readme)
+      sources.push({
+        id: 'readme',
+        kind: 'readme',
+        url: `https://github.com/${repo.name}`,
+        text: readmeText(repoInfo.readme),
+      });
+    if (sources.length) writeFileSync(join(dir, 'sources.json'), JSON.stringify(sources, null, 1));
   }
 
   results.push({
