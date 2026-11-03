@@ -3,6 +3,7 @@ import {
   checkDraft,
   formatProblem,
   numbersIn,
+  parseDraft,
   type Draft,
   type Sentence,
   type Source,
@@ -17,7 +18,8 @@ const readme: Source = {
 };
 const ctx = {
   ownNames: ['tool', 'Tool'],
-  otherNames: ['Ripgrep', 'Docker', 'fd', 'tool'],
+  // As the catalog writes them: formulae lowercase, casks by display name.
+  otherNames: ['ripgrep', 'watch', 'Docker Desktop', 'fd', 'tool'],
   categories: ['Developer Tools', 'Utilities'],
 };
 const tags = [
@@ -133,13 +135,31 @@ describe('checkDraft', () => {
             citations: [cite('Unlike Ripgrep, it also indexes archives.')],
           },
           { text: 'It is faster than Ripgrep.', citations: [cite('Tool is a fast file finder')] },
-          { text: 'It runs in Docker.', citations: [cite('Tool is a fast file finder')] },
+          { text: 'It is faster than ripgrep.', citations: [cite('Tool is a fast file finder')] },
+          {
+            text: 'It runs beside Docker Desktop.',
+            citations: [cite('Tool is a fast file finder')],
+          },
         ]),
       ),
     ).toEqual([
       'names Ripgrep without a quote that does',
-      'names Docker without a quote that does',
+      'names ripgrep without a quote that does',
+      'names Docker Desktop without a quote that does',
     ]);
+  });
+
+  it('doesn’t take a sentence’s first word for a package, but does a lowercase name', () => {
+    const c = [cite('Tool is a fast file finder')];
+    expect(
+      reasons(
+        draft([
+          { text: 'Watch is not needed: Tool is a fast file finder.', citations: c },
+          // The known cost: a package named like a common word drops a good sentence.
+          { text: 'Tool can watch a fast file finder.', citations: c },
+        ]),
+      ),
+    ).toEqual(['names watch without a quote that does']);
   });
 
   it('keeps the summary and bullets within their limits', () => {
@@ -195,6 +215,24 @@ describe('checkDraft', () => {
     ]);
     expect(result.kept.tags).toHaveLength(15);
     expect(result.problems).toEqual(['no summary left']);
+  });
+});
+
+describe('parseDraft', () => {
+  it('takes a reply shaped like a draft, and nothing else', () => {
+    expect(
+      parseDraft({ summary: [{ text: 'Tool finds files.', citations: [] }], extra: 1 }),
+    ).toEqual({
+      summary: [{ text: 'Tool finds files.', citations: [] }],
+      bullets: [],
+      tags: [],
+      category: null,
+    });
+    expect(parseDraft({ summary: 'Tool finds files.' })).toBeNull();
+    expect(
+      parseDraft({ summary: [{ text: 'x', citations: [{ quote: 'no source' }] }] }),
+    ).toBeNull();
+    expect(parseDraft(null)).toBeNull();
   });
 });
 

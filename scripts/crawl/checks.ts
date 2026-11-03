@@ -8,13 +8,17 @@
 // must point at the same span. Then, per sentence:
 // - every number written in digits must appear in its quotes (spelled-out numbers aren't checked);
 // - no links, HTML or markdown;
-// - another catalog package named in the sentence must be named in its quotes too. A package
-//   named like a common word (watch, tree, less) can drop a good sentence: measure before tuning;
+// - another catalog package named in the sentence must be named in its quotes too: as the catalog
+//   writes it, or capitalised mid-sentence (formula names are lowercase: "faster than Ripgrep").
+//   A name that is also a common word can still drop a good sentence: measure before tuning;
 // - length limits, per sentence and for the whole summary.
 // Tags must be short lowercase labels; the category must be one of the catalog's.
 //
 // The result keeps counts per part as the model produced them, so the quality gate (C8:
-// unsupported sentences < 1%) is measured on the model's output, not on what survived.
+// unsupported sentences < 1%) is measured on the model's output, not on what survived. The
+// model's reply goes through parseDraft first: a reply that isn't a draft is a failed package.
+
+import { z } from 'zod';
 
 /** A text the model read: a homepage's visible text or a README's (extract.ts), as stored. */
 export interface Source {
@@ -43,6 +47,30 @@ export interface Draft {
   bullets: Sentence[];
   tags: string[];
   category: string | null;
+}
+
+const SentenceSchema = z.object({
+  text: z.string(),
+  citations: z.array(
+    z.object({
+      source: z.string(),
+      quote: z.string(),
+      start: z.number().int().optional(),
+      end: z.number().int().optional(),
+    }),
+  ),
+});
+const DraftSchema = z.object({
+  summary: z.array(SentenceSchema).max(50),
+  bullets: z.array(SentenceSchema).max(50).default([]),
+  tags: z.array(z.string()).max(100).default([]),
+  category: z.string().nullable().default(null),
+});
+
+/** The model's reply as a draft, or null when it isn't one (extra fields are dropped). */
+export function parseDraft(reply: unknown): Draft | null {
+  const parsed = DraftSchema.safeParse(reply);
+  return parsed.success ? parsed.data : null;
 }
 
 export interface CheckContext {
@@ -138,16 +166,29 @@ export function citationProblem(citation: Citation, sources: Map<string, Source>
   return text.includes(quote) ? null : 'quote not in source';
 }
 
-/** Word sequences of up to `n` words, as written. */
-function phrases(text: string, n = 4): string[] {
+/** Word sequences of up to `n` words, as written, and whether each starts the sentence. */
+function phrases(text: string, n = 4): { text: string; first: boolean }[] {
   const tokens = [...text.matchAll(/[\p{L}\p{N}][\p{L}\p{N}+#@.-]*/gu)].map((m) =>
     m[0].replace(/[.-]+$/, ''),
   );
-  const out: string[] = [];
+  const out: { text: string; first: boolean }[] = [];
   for (let i = 0; i < tokens.length; i++)
     for (let j = i + 1; j <= Math.min(tokens.length, i + n); j++)
-      out.push(tokens.slice(i, j).join(' '));
+      out.push({ text: tokens.slice(i, j).join(' '), first: i === 0 });
   return out;
+}
+
+/**
+ * Another package's name in the sentence: as the catalog writes it, or, since formula names are
+ * lowercase and a sentence capitalises them (ripgrep → "Ripgrep"), capitalised mid-sentence. A
+ * lowercase common word ("watch files") or a sentence's first word isn't a name.
+ */
+function namedProduct(text: string, exact: Set<string>, lower: Set<string>): string | null {
+  for (const p of phrases(text)) {
+    if (exact.has(p.text)) return p.text;
+    if (!p.first && /^\p{Lu}/u.test(p.text) && lower.has(p.text.toLowerCase())) return p.text;
+  }
+  return null;
 }
 
 const containsWord = (text: string, name: string) =>
@@ -162,6 +203,7 @@ export function checkDraft(draft: Draft, sources: Source[], ctx: CheckContext): 
   const others = new Set(
     [...ctx.otherNames].filter((n) => n.length >= LIMITS.nameMinChars && !own.has(n.toLowerCase())),
   );
+  const othersLower = new Set([...others].map((n) => n.toLowerCase()));
   const dropped: Dropped[] = [];
   const problems: string[] = [];
 
@@ -179,8 +221,8 @@ export function checkDraft(draft: Draft, sources: Source[], ctx: CheckContext): 
     const quoted = fold(s.citations.map((c) => collapse(c.quote)).join(' '));
     const missing = numbersIn(text).find((n) => !hasNumber(quoted, n));
     if (missing) return `number ${missing} not in its quotes`;
-    const named = phrases(text).find((p) => others.has(p) && !containsWord(quoted, p));
-    if (named) return `names ${named} without a quote that does`;
+    const named = namedProduct(text, others, othersLower);
+    if (named && !containsWord(quoted, named)) return `names ${named} without a quote that does`;
     return null;
   };
 
