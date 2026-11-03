@@ -44,6 +44,32 @@ describe('Robots', () => {
     expect(robots.allows('/files/a.pdf')).toBe(false);
     expect(robots.allows('/files/a.pdf.html')).toBe(true);
     expect(robots.allows('/page?session=1')).toBe(false);
+    const more = Robots.parse(
+      'User-agent: *\nDisallow: /a*b*c\nDisallow: /$\nDisallow: /x*y$',
+      AGENT,
+    );
+    expect(more.allows('/a-b-c-d')).toBe(false);
+    expect(more.allows('/a-c-b')).toBe(true);
+    expect(more.allows('/')).toBe(false);
+    expect(more.allows('/index')).toBe(true);
+    expect(more.allows('/xy')).toBe(false);
+    expect(more.allows('/x-y-y')).toBe(false);
+    expect(more.allows('/x-y-z')).toBe(true);
+  });
+
+  it('matches a hostile wildcard rule in linear time', () => {
+    const rule = `/${'*a'.repeat(200)}*b`;
+    const robots = Robots.parse(`User-agent: *\nDisallow: ${rule}`, AGENT);
+    const start = performance.now();
+    expect(robots.allows(`/${'a'.repeat(5000)}`)).toBe(true);
+    expect(robots.allows(`/${'a'.repeat(300)}b`)).toBe(false);
+    expect(performance.now() - start).toBeLessThan(100);
+    // Past any real path rule: ignored.
+    expect(
+      Robots.parse(`User-agent: *\nDisallow: /${'x'.repeat(2000)}`, AGENT).allows(
+        `/${'x'.repeat(2000)}`,
+      ),
+    ).toBe(true);
   });
 
   it('treats an empty Disallow as no rule, and ignores comments and other lines', () => {

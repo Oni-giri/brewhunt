@@ -13,12 +13,13 @@ import {
   pointsBack,
   readLibraries,
   readPage,
+  MAX_PAGE_ICONS,
   readmeImages,
   repoFromHomepage,
   sharedImages,
 } from '../../scripts/crawl/extract.ts';
 import { detailsQuery, readDetails } from '../../scripts/crawl/github.ts';
-import { icoSize, measure } from '../../scripts/crawl/images.ts';
+import { icoSize, MAX_SVG_BYTES, measure } from '../../scripts/crawl/images.ts';
 
 const PAGE = `<!doctype html><html><head>
 <title> Rectangle &amp; friends </title>
@@ -92,6 +93,19 @@ describe('readPage', () => {
       'https://x.test/',
     );
     expect(odd.icons).toEqual([]);
+  });
+
+  it('reads at most 20 icon links, once each', () => {
+    const links = Array.from(
+      { length: 5000 },
+      (_, i) => `<link rel="icon" href="/i${i % 3000}.png" sizes="512x512">`,
+    );
+    const many = readPage(
+      `<head>${links.join('')}${links.slice(0, 5).join('')}</head>`,
+      'https://x.test/',
+    );
+    expect(many.icons).toHaveLength(MAX_PAGE_ICONS);
+    expect(new Set(many.icons.map((i) => i.url)).size).toBe(MAX_PAGE_ICONS);
   });
 
   it('caps the text at 20 KB', () => {
@@ -359,6 +373,18 @@ describe('image hashes', () => {
       `<svg xmlns="http://www.w3.org/2000/svg" width="100000" height="100000"><rect width="10" height="10"/></svg>`,
     );
     await expect(measure(huge, 'svg')).rejects.toThrow();
+  });
+
+  it('check an SVG before decoding it: size and references', async () => {
+    const svg = (inner: string) =>
+      Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">${inner}</svg>`);
+    await expect(measure(svg('<image href="http://169.254.169.254/x"/>'), 'svg')).rejects.toThrow(
+      /refers to http/,
+    );
+    await expect(measure(svg(`<!--${'x'.repeat(MAX_SVG_BYTES)}-->`), 'svg')).rejects.toThrow(
+      /over/,
+    );
+    expect((await measure(svg('<rect width="64" height="64"/>'), 'svg')).width).toBe(64);
   });
 });
 

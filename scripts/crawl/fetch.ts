@@ -182,6 +182,15 @@ const defaultPort = (url: URL) =>
 const bareHost = (url: URL) => url.hostname.replace(/^\[|\]$/g, '');
 const sleep = (ms: number) => new Promise((done) => setTimeout(done, ms));
 
+/**
+ * One get's time, shared by its DNS lookups, robots.txt and every redirect, so a chain of slow
+ * hops can't each take the full timeout. Waiting for the host's turn doesn't count: that's the
+ * crawler pacing itself.
+ */
+interface Budget {
+  deadline: number;
+}
+
 export class SafeFetcher {
   readonly #resolve: (host: string) => Promise<ResolvedAddress[]>;
   readonly #allowAddress: (address: string) => boolean;
@@ -210,11 +219,12 @@ export class SafeFetcher {
   /** GET a URL as `kind`, or throw a FetchError saying why not. */
   async get(raw: string, kind: Kind, maxBytes = this.#maxBytes): Promise<Fetched> {
     let url = this.#checkUrl(raw);
+    const budget: Budget = { deadline: Date.now() + this.#timeout };
     for (let hop = 0; ; hop++) {
-      if (this.#robots && !(await this.#robotsFor(url)).allows(url.pathname + url.search)) {
+      if (this.#robots && !(await this.#robotsFor(url, budget)).allows(url.pathname + url.search)) {
         throw new FetchError('robots', `${url.origin} disallows ${url.pathname}`);
       }
-      const res = await this.#request(url, kind, maxBytes);
+      const res = await this.#request(url, kind, maxBytes, budget);
       if (REDIRECTS.has(res.status)) {
         if (hop >= MAX_REDIRECTS)
           throw new FetchError('redirects', `more than ${MAX_REDIRECTS} redirects from ${raw}`);
@@ -280,22 +290,22 @@ export class SafeFetcher {
     if (at > now) await sleep(at - now);
   }
 
-  #robotsFor(url: URL): Promise<Robots> {
+  #robotsFor(url: URL, budget: Budget): Promise<Robots> {
     let rules = this.#robotsCache.get(url.origin);
     if (!rules) {
-      rules = this.#loadRobots(url);
+      rules = this.#loadRobots(url, budget);
       this.#robotsCache.set(url.origin, rules);
     }
     return rules;
   }
 
   // RFC 9309: a 4xx means no rules; a 5xx or no answer means stay out for now.
-  async #loadRobots(url: URL): Promise<Robots> {
+  async #loadRobots(url: URL, budget: Budget): Promise<Robots> {
     let target = new URL('/robots.txt', url.origin);
     for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
       let res: RawResponse;
       try {
-        res = await this.#request(target, 'text', ROBOTS_MAX_BYTES);
+        res = await this.#request(target, 'text', ROBOTS_MAX_BYTES, budget);
       } catch {
         return Robots.disallowAll();
       }
@@ -316,10 +326,23 @@ export class SafeFetcher {
     return Robots.allowAll();
   }
 
-  async #request(url: URL, kind: Kind, maxBytes: number): Promise<RawResponse> {
-    const addresses = await this.#addresses(url);
+  async #request(url: URL, kind: Kind, maxBytes: number, budget: Budget): Promise<RawResponse> {
+    const timeout = () =>
+      new FetchError('timeout', `${url.href}: no answer in ${this.#timeout} ms`);
+    const left = () => budget.deadline - Date.now();
+    // The system resolver has its own timeouts, but nothing here should wait on them.
+    let timer: NodeJS.Timeout | undefined;
+    const addresses = await Promise.race([
+      this.#addresses(url),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(timeout()), Math.max(0, left()));
+      }),
+    ]).finally(() => clearTimeout(timer));
+    const waited = Date.now();
     await this.#slot(bareHost(url));
-    const signal = AbortSignal.timeout(this.#timeout);
+    budget.deadline += Date.now() - waited;
+    if (left() <= 0) throw timeout();
+    const signal = AbortSignal.timeout(left());
     // A host can be reachable on one of its addresses only: try the next when one doesn't connect.
     for (const [i, address] of addresses.entries()) {
       try {

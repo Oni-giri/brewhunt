@@ -1,5 +1,10 @@
-import { describe, expect, it } from 'vitest';
-import { checkRequest, readAnswers, THRESHOLD } from '../../scripts/crawl/jev-check.ts';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  checkRequest,
+  checkSentences,
+  readAnswers,
+  THRESHOLD,
+} from '../../scripts/crawl/jev-check.ts';
 
 const sentences = [
   {
@@ -34,5 +39,58 @@ describe('readAnswers', () => {
     expect(() =>
       readAnswers(sentences, { answers: { s1: { noul: 1.5 }, s2: { noul: 0 } } }),
     ).toThrow(/s1/);
+  });
+});
+
+describe('checkSentences', () => {
+  const answered = (usage?: unknown) =>
+    new Response(
+      JSON.stringify({
+        answers: { s1: { noul: 0.9 }, s2: { noul: 0.1 } },
+        ...(usage ? { usage } : {}),
+      }),
+      { status: 200 },
+    );
+
+  async function run(responses: Response[]) {
+    const calls: unknown[] = [];
+    vi.stubGlobal('fetch', async (...args: unknown[]) => {
+      calls.push(args);
+      return responses.shift()!;
+    });
+    vi.useFakeTimers();
+    try {
+      const result = checkSentences('key', 'tool', sentences);
+      result.catch(() => {});
+      await vi.runAllTimersAsync();
+      return { result: await result, calls: calls.length };
+    } finally {
+      vi.useRealTimers();
+      vi.unstubAllGlobals();
+    }
+  }
+
+  it('tries a rate limit again, and reads the usage', async () => {
+    const { result, calls } = await run([
+      new Response('slow down', { status: 429 }),
+      answered({ input_tokens: 1234 }),
+    ]);
+    expect(calls).toBe(2);
+    expect(result.checked.map((c) => c.keep)).toEqual([true, false]);
+    expect(result).toMatchObject({ inputTokens: 1234, usageReported: true });
+  });
+
+  it('doesn’t try a server error again: it may have been charged', async () => {
+    await expect(run([new Response('oops', { status: 503 }), answered()])).rejects.toThrow(
+      /HTTP 503/,
+    );
+  });
+
+  it('charges a reply without usage as the request’s size', async () => {
+    const { result } = await run([answered()]);
+    expect(result.usageReported).toBe(false);
+    expect(result.inputTokens).toBe(
+      Buffer.byteLength(JSON.stringify(checkRequest('tool', sentences))),
+    );
   });
 });

@@ -7,6 +7,23 @@ import type { ImageFormat } from './fetch.ts';
 
 /** About 7,000 × 7,000: far past any icon or screenshot. */
 const MAX_PIXELS = 50_000_000;
+/** The largest of 502 SVG icons in the answer key's run was 520 KB. */
+export const MAX_SVG_BYTES = 1_000_000;
+
+/**
+ * A reference to anything outside the SVG: an href or src that isn't `#fragment` or `data:`, a
+ * CSS `url()` that isn't, or an `@import`. librsvg loads none of these for an image given as
+ * bytes, but an SVG logo has no need for them, so it's refused rather than trusted to that.
+ */
+export function svgExternalReference(svg: string): string | null {
+  const attribute = /\b(?:xlink:)?(?:href|src)\s*=\s*(["'])\s*([^"']*)\1/gi;
+  for (const [, , value] of svg.matchAll(attribute))
+    if (!/^(?:#|data:)/i.test(value)) return value || '(empty)';
+  for (const [, value] of svg.matchAll(/url\(\s*["']?([^"')]*)/gi))
+    if (!/^(?:#|data:)/i.test(value.trim())) return value;
+  if (/@import\b/i.test(svg)) return '@import';
+  return null;
+}
 
 export interface Measured {
   width: number | null;
@@ -50,6 +67,14 @@ export async function measure(body: Buffer, format: ImageFormat): Promise<Measur
   if (format === 'ico') {
     const size = icoSize(body);
     return { width: size, height: size, hash: null, animated: false };
+  }
+  // An SVG is checked before it's ever decoded. Rendering one can't be stopped midway (sharp's
+  // timeout doesn't reach into librsvg), but librsvg refuses past 500,000 referenced elements,
+  // which bounds the worst at a few seconds, and it runs off the event loop.
+  if (format === 'svg') {
+    if (body.length > MAX_SVG_BYTES) throw new Error(`SVG over ${MAX_SVG_BYTES} bytes`);
+    const reference = svgExternalReference(body.toString('utf8'));
+    if (reference) throw new Error(`the SVG refers to ${reference.slice(0, 80)}`);
   }
   const meta = await sharp(body, { limitInputPixels: MAX_PIXELS, failOn: 'error' }).metadata();
   return {

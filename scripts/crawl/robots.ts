@@ -5,19 +5,47 @@
 
 interface Rule {
   allow: boolean;
-  pattern: RegExp;
+  /** The rule's path split at each `*`. */
+  parts: string[];
+  /** A final `$`: the path must end where the rule does. */
+  anchored: boolean;
   /** The rule's length, to find the most specific match. */
   length: number;
 }
 
-const toPattern = (path: string): RegExp => {
+/** Longer rules are ignored: no real path rule comes close. */
+const MAX_RULE_LENGTH = 2_000;
+
+function toRule(allow: boolean, path: string): Rule {
   const anchored = path.endsWith('$');
-  const body = (anchored ? path.slice(0, -1) : path)
-    .split('*')
-    .map((part) => part.replace(/[.+?^${}()|[\]\\]/g, '\\$&'))
-    .join('.*');
-  return new RegExp(`^${body}${anchored ? '$' : ''}`);
-};
+  return {
+    allow,
+    parts: (anchored ? path.slice(0, -1) : path).split('*'),
+    anchored,
+    length: path.length,
+  };
+}
+
+/**
+ * Whether the rule matches the path, in linear time: a regular expression built from a hostile
+ * rule like `/*a*a*a…*b` backtracks exponentially, and robots.txt is anyone's text. Each part
+ * after the first matches at its leftmost place after the one before, which finds a match
+ * whenever there is one.
+ */
+function matches(rule: Rule, path: string): boolean {
+  const { parts, anchored } = rule;
+  if (!path.startsWith(parts[0])) return false;
+  if (parts.length === 1) return !anchored || path.length === parts[0].length;
+  let at = parts[0].length;
+  const last = parts.length - 1;
+  for (let i = 1; i < last; i++) {
+    const found = path.indexOf(parts[i], at);
+    if (found < 0) return false;
+    at = found + parts[i].length;
+  }
+  if (!anchored) return path.indexOf(parts[last], at) >= 0;
+  return path.length - parts[last].length >= at && path.endsWith(parts[last]);
+}
 
 export class Robots {
   readonly #rules: Rule[];
@@ -60,8 +88,8 @@ export class Robots {
       if (key !== 'allow' && key !== 'disallow') continue;
       inRules = true;
       // An empty Disallow allows everything: no rule.
-      if (!value) continue;
-      const rule = { allow: key === 'allow', pattern: toPattern(value), length: value.length };
+      if (!value || value.length > MAX_RULE_LENGTH) continue;
+      const rule = toRule(key === 'allow', value);
       if (agents.includes(wanted)) ours.push(rule);
       if (agents.includes('*')) anyone.push(rule);
     }
@@ -75,7 +103,7 @@ export class Robots {
     if (path === '/robots.txt') return true;
     let best: Rule | null = null;
     for (const rule of this.#rules) {
-      if (!rule.pattern.test(path)) continue;
+      if (!matches(rule, path)) continue;
       if (!best || rule.length > best.length || (rule.length === best.length && rule.allow))
         best = rule;
     }

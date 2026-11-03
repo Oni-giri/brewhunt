@@ -112,6 +112,20 @@ describe('checkDraft', () => {
     ).toEqual(['number 2 not in its quotes', 'number 2.1 not in its quotes']);
   });
 
+  it('reads full-width digits and letters, and refuses other digits', () => {
+    const quote = cite('It searches 1,000 files in 20 ms');
+    expect(
+      reasons(
+        draft([
+          { text: 'It searches 1,000 files in ２０ ms.', citations: [quote] },
+          { text: 'It searches 1,000 files in ９９ ms.', citations: [quote] },
+          { text: 'It searches ١٠٠٠ files in 20 ms.', citations: [quote] },
+          { text: 'See ｔｏｏｌ．ｄｅｖ for more.', citations: [quote] },
+        ]),
+      ),
+    ).toEqual(['number 99 not in its quotes', 'digits other than 0–9', 'link']);
+  });
+
   it('drops links, HTML and markdown', () => {
     const c = [cite('Tool is a fast file finder')];
     expect(
@@ -140,11 +154,16 @@ describe('checkDraft', () => {
             text: 'It runs beside Docker Desktop.',
             citations: [cite('Tool is a fast file finder')],
           },
+          {
+            text: 'Unlike Ripgrep and Docker Desktop, it indexes archives.',
+            citations: [cite('Unlike Ripgrep, it also indexes archives.')],
+          },
         ]),
       ),
     ).toEqual([
       'names Ripgrep without a quote that does',
       'names ripgrep without a quote that does',
+      'names Docker Desktop without a quote that does',
       'names Docker Desktop without a quote that does',
     ]);
   });

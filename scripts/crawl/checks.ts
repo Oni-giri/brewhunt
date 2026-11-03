@@ -183,13 +183,18 @@ function phrases(text: string, n = 4): { text: string; first: boolean }[] {
  * lowercase and a sentence capitalises them (ripgrep → "Ripgrep"), capitalised mid-sentence. A
  * lowercase common word ("watch files") or a sentence's first word isn't a name.
  */
-function namedProduct(text: string, exact: Set<string>, lower: Set<string>): string | null {
+function namedProducts(text: string, exact: Set<string>, lower: Set<string>): string[] {
+  const names = new Set<string>();
   for (const p of phrases(text)) {
-    if (exact.has(p.text)) return p.text;
-    if (!p.first && /^\p{Lu}/u.test(p.text) && lower.has(p.text.toLowerCase())) return p.text;
+    if (exact.has(p.text)) names.add(p.text);
+    else if (!p.first && /^\p{Lu}/u.test(p.text) && lower.has(p.text.toLowerCase()))
+      names.add(p.text);
   }
-  return null;
+  return [...names];
 }
+
+/** Decimal digits other than 0–9 (Arabic-Indic, Devanagari…), which the number check can't read. */
+const OTHER_DIGITS = /(?![0-9])\p{Nd}/u;
 
 const containsWord = (text: string, name: string) =>
   new RegExp(
@@ -208,7 +213,9 @@ export function checkDraft(draft: Draft, sources: Source[], ctx: CheckContext): 
   const problems: string[] = [];
 
   const sentenceProblem = (s: Sentence, maxWords: number, maxChars: number): string | null => {
-    const text = collapse(s.text);
+    // Checked in compatibility form, so full-width letters and digits (ｗｗｗ, ９９) can't slip
+    // past the patterns. The sentence is kept as written.
+    const text = collapse(s.text).normalize('NFKC');
     if (!text) return 'empty';
     if (!s.citations?.length) return 'no citation';
     for (const c of s.citations) {
@@ -218,11 +225,12 @@ export function checkDraft(draft: Draft, sources: Source[], ctx: CheckContext): 
     const format = formatProblem(text);
     if (format) return format;
     if (words(text) > maxWords || text.length > maxChars) return 'too long';
-    const quoted = fold(s.citations.map((c) => collapse(c.quote)).join(' '));
+    const quoted = fold(s.citations.map((c) => collapse(c.quote)).join(' ')).normalize('NFKC');
+    if (OTHER_DIGITS.test(text)) return 'digits other than 0–9';
     const missing = numbersIn(text).find((n) => !hasNumber(quoted, n));
     if (missing) return `number ${missing} not in its quotes`;
-    const named = namedProduct(text, others, othersLower);
-    if (named && !containsWord(quoted, named)) return `names ${named} without a quote that does`;
+    const named = namedProducts(text, others, othersLower).find((n) => !containsWord(quoted, n));
+    if (named) return `names ${named} without a quote that does`;
     return null;
   };
 

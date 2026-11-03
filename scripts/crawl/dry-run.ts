@@ -23,6 +23,7 @@ import { getCatalog, type Entry } from '../../src/lib/catalog.ts';
 import { repoKey } from '../data/repos.ts';
 import {
   LIBRARY_LISTS,
+  MAX_ICON_CANDIDATES,
   MAX_PAGE_REPOS,
   MAX_SCREENSHOTS,
   ICON_MIN_SIZE,
@@ -229,7 +230,7 @@ await pool(selected, concurrency, async (entry) => {
           .map((k) => details.get(k))
           .find((d) => d && d.nameWithOwner === repo?.name) ?? null);
 
-  const candidates: LogoCandidate[] = [
+  const all: LogoCandidate[] = [
     ...homepageIcons(entry.homepage, facts, manifests.get(entry.id) ?? []),
     ...libraryIcons(nameKeys(entry.token, entry.name), libraries, repoInfo?.owner ?? null),
     ...(pageLogos.get(entry.id) ?? []),
@@ -239,6 +240,10 @@ await pool(selected, concurrency, async (entry) => {
     ),
     ...(await makerCandidates(fetcher, entry.homepage, repoInfo?.owner ?? null)),
   ];
+  // Each is a fetch: a cap whatever the sources list.
+  const candidates = all
+    .filter((c, i) => all.findIndex((d) => d.url === c.url) === i)
+    .slice(0, MAX_ICON_CANDIDATES);
   const dir = filesDir(entry.id);
   const icons: IconResult[] = [];
   const seenHashes = new Set<string>();

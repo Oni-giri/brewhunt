@@ -9,6 +9,7 @@
 // The key is JEV_API_KEY.
 
 import type { Sentence } from './checks.ts';
+import { estimateTokens } from './cost.ts';
 
 export const ENDPOINT = 'https://api.typesafe.ai/v1/systemone';
 export const MODEL = 'jev-latest';
@@ -67,36 +68,39 @@ export function readAnswers(sentences: readonly Sentence[], reply: unknown): Che
   });
 }
 
-/** Asks Jev about one package's sentences, retrying rate limits and server errors. */
+/**
+ * Asks Jev about one package's sentences. Only a rate limit is tried again: a timeout or a
+ * server error may still have been charged, and the request has no idempotency key, so it fails
+ * the check instead (the sentences can't be kept). A reply without usage is charged as the
+ * request's size in bytes, the most it could cost.
+ */
 export async function checkSentences(
   key: string,
   packageName: string,
   sentences: readonly Sentence[],
-): Promise<{ checked: Checked[]; inputTokens: number }> {
-  if (!sentences.length) return { checked: [], inputTokens: 0 };
-  let last: Error | undefined;
-  for (let attempt = 0; attempt < 4; attempt++) {
-    try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-        body: JSON.stringify(checkRequest(packageName, sentences)),
-        signal: AbortSignal.timeout(120_000),
-      });
-      if (res.status === 429 || res.status >= 500) throw new Error(`HTTP ${res.status}`);
-      if (!res.ok) {
-        attempt = 4; // a bad request won't get better
-        throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
-      }
-      const reply = (await res.json()) as { usage?: { input_tokens?: number } };
-      return {
-        checked: readAnswers(sentences, reply),
-        inputTokens: reply.usage?.input_tokens ?? 0,
-      };
-    } catch (error) {
-      last = error as Error;
-      if (attempt < 3) await new Promise((done) => setTimeout(done, 2_000 * 2 ** attempt));
+): Promise<{ checked: Checked[]; inputTokens: number; usageReported: boolean }> {
+  if (!sentences.length) return { checked: [], inputTokens: 0, usageReported: true };
+  const body = JSON.stringify(checkRequest(packageName, sentences));
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+      body,
+      signal: AbortSignal.timeout(120_000),
+    });
+    if (res.status === 429 && attempt < 3) {
+      await new Promise((done) => setTimeout(done, 2_000 * 2 ** attempt));
+      continue;
     }
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    const reply = (await res.json()) as { usage?: { input_tokens?: unknown } };
+    const reported = reply.usage?.input_tokens;
+    const usageReported =
+      typeof reported === 'number' && Number.isFinite(reported) && reported >= 0;
+    return {
+      checked: readAnswers(sentences, reply),
+      inputTokens: usageReported ? reported : estimateTokens(body),
+      usageReported,
+    };
   }
-  throw last;
 }

@@ -12,6 +12,9 @@
 import { createHash } from 'node:crypto';
 import sharp, { type OutputInfo, type Sharp } from 'sharp';
 import type { ImageFormat } from './fetch.ts';
+import { svgExternalReference } from './images.ts';
+
+export { svgExternalReference };
 
 export const ASSET_VERSION = 'v1';
 /** Icons are square, on a transparent background. */
@@ -64,21 +67,6 @@ const sha256 = (body: Buffer) => createHash('sha256').update(body).digest('hex')
 
 export const assetKey = (kind: AssetKind, sourceHash: string) =>
   `${kind}s/${ASSET_VERSION}/${sourceHash}.webp`;
-
-/**
- * A reference to anything outside the SVG: an href or src that isn't `#fragment` or `data:`, a
- * CSS `url()` that isn't, or an `@import`. librsvg loads none of these for an image given as
- * bytes, but an SVG logo has no need for them, so it's refused rather than trusted to that.
- */
-export function svgExternalReference(svg: string): string | null {
-  const attribute = /\b(?:xlink:)?(?:href|src)\s*=\s*(["'])\s*([^"']*)\1/gi;
-  for (const [, , value] of svg.matchAll(attribute))
-    if (!/^(?:#|data:)/i.test(value)) return value || '(empty)';
-  for (const [, value] of svg.matchAll(/url\(\s*["']?([^"')]*)/gi))
-    if (!/^(?:#|data:)/i.test(value.trim())) return value;
-  if (/@import\b/i.test(svg)) return '@import';
-  return null;
-}
 
 const open = (body: Buffer, frame: number | 'all' = 0) =>
   sharp(body, {

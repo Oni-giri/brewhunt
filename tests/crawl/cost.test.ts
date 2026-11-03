@@ -54,9 +54,9 @@ describe('actualCost', () => {
 });
 
 describe('estimateTokens', () => {
-  it('estimates high: a token per two bytes', () => {
-    expect(estimateTokens('abcd')).toBe(2);
-    expect(estimateTokens('é')).toBe(1);
+  it('bounds tokens by bytes: no token is shorter than one', () => {
+    expect(estimateTokens('abcd')).toBe(4);
+    expect(estimateTokens('é')).toBe(2);
   });
 });
 

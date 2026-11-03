@@ -28,6 +28,13 @@ export const MAX_SCREENSHOTS = 6;
 export const SCREENSHOT_MAX_BYTES = 8_000_000;
 /** Repositories linked from a homepage that are worth asking GitHub about. */
 export const MAX_PAGE_REPOS = 5;
+/**
+ * Icon links read from one page: a page decides how many it lists, and each is a fetch (the
+ * most in the answer key's run was 10).
+ */
+export const MAX_PAGE_ICONS = 20;
+/** Icon candidates fetched per package, from every source (the most in that run was 19). */
+export const MAX_ICON_CANDIDATES = 30;
 
 // --- HTML ---
 
@@ -184,7 +191,7 @@ export function readPage(html: string, pageUrl: string): PageFacts {
         : rels.includes('icon')
           ? 'icon'
           : null;
-      if (rel) {
+      if (rel && icons.length < MAX_PAGE_ICONS && !icons.some((i) => i.url === url)) {
         const type =
           attrs.type?.toLowerCase() ?? (/\.svg(?:$|[?#])/i.test(url) ? 'image/svg+xml' : null);
         icons.push({ url, rel, size: largestSize(attrs.sizes), type });

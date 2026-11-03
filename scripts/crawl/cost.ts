@@ -46,10 +46,13 @@ export interface Usage {
 }
 
 /**
- * Text tokens, estimated high: one per two bytes of UTF-8. English runs about four bytes a
- * token, so this overestimates; use count_tokens when there's a key.
+ * Text tokens, at most: one per byte of UTF-8. Every token covers at least one byte, so no text
+ * can beat this, however it's written (crawled text is anyone's; one per two bytes, which English
+ * stays well under, isn't a bound for punctuation or rare scripts). English runs about four
+ * bytes a token, so it's four times too high there: count_tokens gives the real number before
+ * a batch once there's a key.
  */
-export const estimateTokens = (text: string) => Math.ceil(Buffer.byteLength(text, 'utf8') / 2);
+export const estimateTokens = (text: string) => Buffer.byteLength(text, 'utf8');
 
 function rates(model: Model, promptTokens: number): { input: number; output: number } {
   const price = PRICES[model];

@@ -259,6 +259,25 @@ describe('against a local server', () => {
     expect(await reason(make({ timeoutMs: 200 }).get(url('/slow'), 'html'))).toBe('timeout');
   });
 
+  it('gives one get one timeout, DNS and every redirect included', async () => {
+    const hanging = make({ timeoutMs: 200, resolve: () => new Promise(() => {}) });
+    const start = Date.now();
+    expect(await reason(hanging.get(url('/page'), 'html'))).toBe('timeout');
+    expect(Date.now() - start).toBeLessThan(1000);
+    // Each hop answers in 120 ms: three fit in 300 ms only if each got its own.
+    const slow = make({
+      timeoutMs: 300,
+      resolve: async () => {
+        await new Promise((done) => setTimeout(done, 120));
+        return [{ address: '127.0.0.1', family: 4 }];
+      },
+    });
+    expect(await reason(slow.get(url('/hop/2'), 'html'))).toBe('timeout');
+    // Waiting for the host's turn doesn't count.
+    const paced = make({ timeoutMs: 300, hostIntervalMs: 250 });
+    expect(await reason(paced.get(url('/hop/2'), 'html'))).toBe('ok');
+  });
+
   it('obeys robots.txt, and stays out when robots.txt fails', async () => {
     robotsTxt = { status: 200, body: 'User-agent: *\nDisallow: /page\n' };
     expect(await reason(make({ robots: true }).get(url('/page'), 'html'))).toBe('robots');

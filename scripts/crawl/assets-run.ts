@@ -26,7 +26,7 @@ import { sniffImage } from './fetch.ts';
 import type { PackageResult } from './dry-run.ts';
 import type { ModelPicks } from './icon-check.ts';
 import type { KeyEntry } from './score.ts';
-import { applyTakedowns, readTakedowns } from './takedown.ts';
+import { applyTakedowns, isTakenDown, readTakedowns } from './takedown.ts';
 
 /** A folder standing in for the R2 bucket. */
 export class LocalStore implements AssetStore {
@@ -95,6 +95,12 @@ if (values.key) {
 }
 
 const store = new LocalStore(OUT);
+const takedowns = readTakedowns(loadContent(values.content).takedown);
+// The previous run's assets, so one taken down since is deleted too.
+const manifestFile = join(OUT, 'manifest.json');
+const stored: AssetRecord[] = existsSync(manifestFile)
+  ? (JSON.parse(readFileSync(manifestFile, 'utf8')) as { assets: AssetRecord[] }).assets
+  : [];
 const records: AssetRecord[] = [];
 const failures: Failure[] = [];
 let notInRun = 0;
@@ -112,8 +118,11 @@ async function take(
     const format = sniffImage(body);
     if (!format) throw new AssetError('format', 'not an image');
     const asset = await processAsset(kind, body, format);
-    if (!(await store.has(asset.key))) await store.put(asset.key, asset.body);
-    records.push(assetRecord(asset, { package: p.id, sourceUrl: file.url, ...origin }));
+    const record = assetRecord(asset, { package: p.id, sourceUrl: file.url, ...origin });
+    // A taken-down image is never written.
+    if (!isTakenDown(record, takedowns) && !(await store.has(asset.key)))
+      await store.put(asset.key, asset.body);
+    records.push(record);
   } catch (error) {
     failures.push({
       package: p.id,
@@ -140,10 +149,8 @@ for (const p of run.packages) {
     });
 }
 
-const { kept, removed } = applyTakedowns(
-  records,
-  readTakedowns(loadContent(values.content).takedown),
-);
+const { kept, removed, deleteKeys } = applyTakedowns(records, takedowns, stored);
+for (const key of deleteKeys) await store.delete(key);
 mkdirSync(OUT, { recursive: true });
 writeFileSync(
   join(OUT, 'manifest.json'),
@@ -172,6 +179,7 @@ const bytes = (kind: AssetKind) =>
     .filter((a) => a.kind === kind)
     .reduce((n, a) => n + readFileSync(join(OUT, a.key)).length, 0);
 console.log(`Assets: ${by(kept, (a) => a.kind) || 'none'} → ${OUT}`);
+if (deleteKeys.length) console.log(`Deleted ${deleteKeys.length} taken down`);
 console.log(
   `Icons ${(bytes('icon') / 1024).toFixed(0)} KB, screenshots ${(bytes('screenshot') / 1024).toFixed(0)} KB`,
 );
