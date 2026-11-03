@@ -94,9 +94,12 @@ async function encode(image: Sharp, kind: AssetKind): Promise<{ data: Buffer; in
     .toBuffer({ resolveWithObject: true });
 }
 
-/** One colour across the whole image, transparent included: a failed render or a spacer. */
-async function blank(body: Buffer): Promise<boolean> {
-  const { channels } = await sharp(body).stats();
+/**
+ * One colour across the whole image, every frame of an animation and transparency included: a
+ * failed render or a spacer.
+ */
+async function blank(body: Buffer, animated: boolean): Promise<boolean> {
+  const { channels } = await sharp(body, { animated }).stats();
   return channels.every((c) => c.min === c.max);
 }
 
@@ -187,7 +190,8 @@ export async function processAsset(
     throw new AssetError('decode', (error as Error).message);
   }
 
-  if (await blank(out.data)) throw new AssetError('blank', 'the image is a single colour');
+  if (await blank(out.data, animated))
+    throw new AssetError('blank', 'the image is a single colour');
   const sourceHash = sha256(body);
   return {
     kind,

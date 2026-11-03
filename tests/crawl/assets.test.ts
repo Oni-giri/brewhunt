@@ -121,6 +121,15 @@ describe('processAsset', () => {
     expect(short).toMatchObject({ animated: true, poster: false, width: 400, height: 400 });
     expect((await sharp(short.body).metadata()).pages).toBe(3);
 
+    // A demo that opens on an empty terminal isn't blank.
+    const flatStart = await sharp(
+      await Promise.all(['#000000', '#000000', '#00ff00'].map((c) => png(400, 400, c))),
+      { join: { animated: true } },
+    )
+      .gif()
+      .toBuffer();
+    expect(await processAsset('screenshot', flatStart, 'gif')).toMatchObject({ animated: true });
+
     const long = await processAsset('screenshot', await gif(ANIMATION.maxFrames + 1, 16), 'gif');
     expect(long).toMatchObject({ animated: false, poster: true });
     expect((await sharp(long.body).metadata()).pages ?? 1).toBe(1);

@@ -57,6 +57,25 @@ describe('parseContent', () => {
     });
   });
 
+  it('checks takedowns: one entry per package, a date, a reason and full hashes', () => {
+    expect(
+      issues((raw) => {
+        raw['takedown.yaml'] = [
+          { id: 'wget', date: '3 Nov', reason: 'Asked.', hashes: ['abc'] },
+          { id: 'curl', date: '2026-11-03' },
+        ];
+      }),
+    ).toEqual([
+      'takedown.yaml [0].hashes[0]: Use the 64-character hash from the image’s URL.',
+      'takedown.yaml [0].date: Use a date like 2026-10-28.',
+      'takedown.yaml [1].reason: Invalid input: expected string, received undefined',
+    ]);
+    const entry = { id: 'wget', date: '2026-11-03', reason: 'Asked by the developer.' };
+    expect(
+      issues((raw) => (raw['takedown.yaml'] = [entry, { ...entry, hashes: ['a'.repeat(64)] }])),
+    ).toEqual(['takedown.yaml [1].id: Duplicate package "wget".']);
+  });
+
   it('rejects a sub-category the category does not have', () => {
     expect(
       issues((raw) => {
