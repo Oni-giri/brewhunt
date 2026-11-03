@@ -1,0 +1,8 @@
+/* /new without JavaScript: every week shown, no "last week" button (new.astro). A file, since
+   the Content-Security-Policy allows no inline styles. */
+[data-week][hidden] {
+  display: flex !important;
+}
+[data-last-week] {
+  display: none !important;
+}

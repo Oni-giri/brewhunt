@@ -1,0 +1,12 @@
+/* /charts without JavaScript: every period's list in full, no tabs (charts/[...period].astro).
+   A file, since the Content-Security-Policy allows no inline styles. */
+[role='tabpanel'][hidden] {
+  display: block !important;
+}
+[role='tablist'],
+[data-more] {
+  display: none !important;
+}
+ol[data-collapsed] > li {
+  display: flex !important;
+}

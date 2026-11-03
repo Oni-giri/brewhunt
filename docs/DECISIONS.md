@@ -70,6 +70,16 @@ A cask that installs only command-line programs (`binary`, no app, pkg or plugin
 
 **To reverse:** when phase C/D brings real screenshots, a pick that has one shows it in that space; a pick without one keeps the compact card.
 
+## Content-Security-Policy (3 Nov 2026)
+
+**In `public/_headers`**, not Astro's `security.csp`: Astro's puts per-page hashes in a `<meta>` tag, which can't set `frame-ancestors`, and still wouldn't allow the icons' inline `onerror` handlers. So nothing is inline: Astro emits every script and stylesheet as a file (`vite.build.assetsInlineLimit: 0`, `build.inlineStylesheets: 'never'`; a page loads up to eight small stylesheets, cached), the no-JavaScript rules are files in `public/` loaded from `<noscript>`, and a failed icon falls back to its tile through one listener (`watchIconFailures`). JSON-LD is a data block, which the policy doesn't touch.
+
+**Style attributes stay allowed** (`style-src-attr 'unsafe-inline'`): tiles get their size and colour as CSS variables at build time, never from crawled text. Safari before 15.4 ignores `style-src-attr` and would drop them.
+
+**External links** go through `externalUrl` (`src/lib/urls.ts`): an absolute `http:` or `https:` URL without credentials, as given, or no link. The plan said `https:` only; 177 of Homebrew's 18,065 homepages are `http:`, and the danger is `javascript:` or `data:`, not the scheme, so they stay. To go https-only, change one line.
+
+**Not covered:** `astro preview` (and the tailnet preview) doesn't read `_headers`, so only the deployed site and the browser tests run under the policy. The crawler's asset domain joins `img-src` once it exists.
+
 ## Crawled images: keys, rights and takedowns (3 Nov 2026)
 
 **Keys** are `icons/v1/<hash>.webp` and `screenshots/v1/<hash>.webp`, where the hash is the source file's sha256, not the WebP's. A takedown by hash keeps matching after the encoder changes, and changing how images are encoded bumps `v1` instead of changing what a live URL serves. The record keeps both hashes, and a takedown matches either.

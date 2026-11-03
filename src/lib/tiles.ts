@@ -46,12 +46,6 @@ export interface Tileable {
 export const iconBase = (commit: string) =>
   `https://cdn.jsdelivr.net/gh/alielsokary/CaskFlow@${commit}/`;
 
-/**
- * `onerror` for an icon image: drop it and show the tile. An attribute rather than a listener,
- * so it also catches images that fail before any script has run.
- */
-export const ICON_FALLBACK = "this.parentNode.classList.remove('has-icon');this.remove()";
-
 export const iconUrl = (base: string, token: string) => `${base}${encodeURIComponent(token)}.png`;
 
 export function tileFor(p: Tileable): TileLook {

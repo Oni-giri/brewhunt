@@ -64,18 +64,7 @@ const title = period.key === 'd30' ? 'Top charts' : `Top charts · ${period.labe
   description={`The most-installed Mac apps and command-line tools on Homebrew over the last ${period.label}, from its public install analytics.`}
 >
   <noscript>
-    <style>
-      [role='tabpanel'][hidden] {
-        display: block !important;
-      }
-      [role='tablist'],
-      [data-more] {
-        display: none !important;
-      }
-      ol[data-collapsed] > li {
-        display: flex !important;
-      }
-    </style>
+    <link rel="stylesheet" href="/noscript-charts.css" />
   </noscript>
 
   <div class="container page">

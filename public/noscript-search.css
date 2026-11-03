@@ -1,0 +1,5 @@
+/* /search without JavaScript: hide the results layout (search.astro, in <noscript>). A file, since
+   the Content-Security-Policy allows no inline styles. */
+[data-layout] {
+  display: none !important;
+}

@@ -193,7 +193,7 @@ pre {
   background: var(--tile-terminal);
 }
 /* A real icon draws its own shape and shadow (macOS icons are padded squircles): no tile,
-   initials or ring behind it until the image fails (ICON_FALLBACK). Important because
+   initials or ring behind it until the image fails (watchIconFailures in icon-image.ts). Important because
    components give their tiles highlights and shadows, which would frame an empty square. */
 .app-icon {
   position: relative;

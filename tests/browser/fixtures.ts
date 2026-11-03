@@ -2,20 +2,36 @@
 // tests don't depend on a third-party CDN (every icon falls back to its letter tile). Tests that
 // need the real icons opt in with `test.use({ cdn: true })`. Every page fails its test on a
 // JavaScript error or a console error, except failed loads from URLs in `ignoreErrorsFrom` and
-// skipped page transitions.
+// skipped page transitions. `astro preview` doesn't read public/_headers, so every page is served
+// here with its Content-Security-Policy: a violation logs a console error and fails the test.
 
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { test as base, expect, type Page } from '@playwright/test';
 
 export { expect };
 
 const CDN = 'cdn.jsdelivr.net';
 
+/** The Content-Security-Policy from public/_headers. */
+export const CSP = (() => {
+  const line = readFileSync('public/_headers', 'utf8').match(/^\s+Content-Security-Policy: (.+)$/m);
+  if (!line) throw new Error('No Content-Security-Policy in public/_headers');
+  return line[1];
+})();
+
 export const test = base.extend<{ cdn: boolean; ignoreErrorsFrom: string[]; errors: string[] }>({
   cdn: [false, { option: true }],
   ignoreErrorsFrom: [[], { option: true }],
   context: async ({ context, cdn }, use) => {
     if (!cdn) await context.route(`**/${CDN}/**`, (route) => route.abort());
+    await context.route('**/*', async (route) => {
+      if (route.request().resourceType() !== 'document') return route.fallback();
+      const response = await route.fetch();
+      await route.fulfill({
+        response,
+        headers: { ...response.headers(), 'content-security-policy': CSP },
+      });
+    });
     await use(context);
   },
   errors: [

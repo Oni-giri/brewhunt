@@ -14,6 +14,7 @@ import type { CaskCategories } from '../../scripts/data/categories.ts';
 import type { IconSet } from '../../scripts/data/icons.ts';
 import type { History, Meta, Package, Tap, WindowCounts } from '../../scripts/data/types.ts';
 import { iconBase, iconUrl } from './tiles.ts';
+import { externalUrl } from './urls.ts';
 
 export interface Entry extends Package {
   /** One line for lists: the editorial tagline, else Homebrew's description. */
@@ -196,8 +197,9 @@ function build(): Catalog {
     const page = hasPage(p);
     return {
       ...p,
+      homepage: externalUrl(p.homepage),
       // Data from before repositories were looked up has no field.
-      repo: p.repo ?? null,
+      repo: p.repo && externalUrl(p.repo.url) ? p.repo : null,
       commandLine:
         p.kind === 'formula' ||
         (editorial.type ? editorial.type === 'cli' : installsOnlyPrograms(p)),
