@@ -56,6 +56,11 @@ const drafts = () => waitingDrafts(enrichment, readApprovals(readFile()), takedo
 // Fails now, not at the first click, when the approvals file is broken.
 const total = drafts().length;
 
+// The address the page was started on: a request for any other Host (a DNS rebinding page) is
+// refused, and a verdict needs this launch's token, which only the served page has.
+const HOST = `${args.host.includes(':') ? `[${args.host}]` : args.host}:${args.port}`;
+const TOKEN = randomBytes(24).toString('base64url');
+
 const today = () => new Date().toISOString().slice(0, 10);
 
 const escape = (s: string | null | undefined) =>
@@ -272,7 +277,7 @@ document.addEventListener('change', async (e) => {
   const status = li.querySelector('.saved');
   status.textContent = 'Saving…';
   try {
-    const res = await fetch('/verdict', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: li.dataset.id, draft: li.dataset.draft, verdict: input.value || null }) });
+    const res = await fetch('/verdict', { method: 'POST', headers: { 'content-type': 'application/json', 'x-review-token': '${TOKEN}' }, body: JSON.stringify({ id: li.dataset.id, draft: li.dataset.draft, verdict: input.value || null }) });
     if (!res.ok) throw new Error(await res.text());
     const body = await res.json();
     count.textContent = body.decided;
@@ -298,6 +303,10 @@ function saveVerdict(body: string): number {
 }
 
 const server = createServer((req, res) => {
+  if (req.headers.host !== HOST) {
+    res.writeHead(421, { 'content-type': 'text/plain' });
+    return res.end(`Open http://${HOST}/`);
+  }
   const url = new URL(req.url ?? '/', 'http://review');
   if (req.method === 'GET' && url.pathname === '/') {
     const nonce = randomBytes(16).toString('base64');
@@ -314,7 +323,8 @@ const server = createServer((req, res) => {
     // Only this page writes verdicts: a page elsewhere can't post here from the owner's browser.
     // Origin, not Sec-Fetch-Site: browsers don't send the latter to a plain-HTTP tailnet address.
     if (
-      req.headers.origin !== `http://${req.headers.host}` ||
+      req.headers.origin !== `http://${HOST}` ||
+      req.headers['x-review-token'] !== TOKEN ||
       !req.headers['content-type']?.startsWith('application/json')
     ) {
       res.writeHead(403, { 'content-type': 'text/plain' });
