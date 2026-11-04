@@ -63,7 +63,15 @@ A package can be in several categories. Its first category in file order is its 
 
 A takedown stays when its package leaves Homebrew (the check warns), in case it comes back.
 
-**approvals.yaml**: a list of verdicts on the crawler's drafts (summary, tags, icon, screenshots) that wait for review: the whole first run, every community package, and any package whose sources changed. The review page shows each draft with its hash.
+**approvals.yaml**: a list of verdicts on the crawler's drafts (summary, tags, icon, screenshots) that wait for review: the whole first run, every community package, and any package whose sources changed. The review page shows each draft with its hash and writes your verdicts here as you click:
+
+```sh
+npm run data:pull
+npm run enrichment:pull
+npm run review:drafts -- --host <your tailnet address>
+```
+
+Then commit and push `content/approvals.yaml`. You can also write entries by hand.
 
 - `id`: the package.
 - `draft`: the draft's 64-character hash. A verdict holds for that exact draft only: when a later crawl writes a different one, it waits for a new verdict and the approved one stays on the site.

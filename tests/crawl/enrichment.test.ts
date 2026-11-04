@@ -116,6 +116,39 @@ describe('nextEnrichment', () => {
     expect(again.enrichment.packages.wget.pending?.since).toBe('2026-11-10');
   });
 
+  it('ends the first run with the owner’s first approval, in the run that applies it', () => {
+    const first = nextEnrichment(null, { wget: item('wget') }, ctx()).enrichment;
+    const draft = first.packages.wget.pending!.hash;
+    const second = nextEnrichment(
+      first,
+      { curl: item('curl') },
+      ctx({
+        run: { id: '43', date: '2026-11-17' },
+        approvals: [{ id: 'wget', draft, verdict: 'approve', date: '2026-11-12' }],
+      }),
+    );
+    expect(second.outcomes.curl).toBe('published');
+  });
+
+  it('keeps an unanswered first-run draft waiting when it’s rewritten', () => {
+    const first = nextEnrichment(
+      null,
+      { wget: item('wget'), curl: item('curl') },
+      ctx(),
+    ).enrichment;
+    const draft = first.packages.wget.pending!.hash;
+    const second = nextEnrichment(
+      first,
+      { curl: item('curl', 'rewritten') },
+      ctx({
+        run: { id: '43', date: '2026-11-17' },
+        approvals: [{ id: 'wget', draft, verdict: 'approve', date: '2026-11-12' }],
+      }),
+    );
+    expect(second.outcomes.curl).toBe('pending');
+    expect(second.enrichment.packages.curl.pending?.reason).toBe('first-run');
+  });
+
   it('promotes an approved draft and drops a rejected one, deleting its images', () => {
     const first = nextEnrichment(
       null,

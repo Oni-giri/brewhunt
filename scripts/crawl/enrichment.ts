@@ -7,9 +7,10 @@
 // promotes approved drafts and drops rejected ones, so a verdict takes effect at the next build
 // and the branch catches up at the next crawl.
 //
-// Who reviews (plan step 7): the whole first run (until anything is published), every community
-// package, and any package whose sources changed since what's published. After the first run, a
-// new official package, or a new draft from unchanged sources, publishes directly. "Changed" is
+// Who reviews (plan step 7): the whole first run (until anything is published, counting the
+// approvals this run applies), every community package, and any package whose sources changed
+// since what's published. After the first run, a new official package, or a new draft from
+// unchanged sources, publishes directly. "Changed" is
 // any source text's hash: stricter than the plan's "README rewritten" until it's measured.
 //
 // Asset keys are immutable (assets.ts), so the store should hold exactly the keys the file
@@ -163,7 +164,7 @@ export function referencedKeys(enrichment: Enrichment | null): Set<string> {
 }
 
 /** The item without images taken down by hash. */
-function withoutTakenDown(item: Item, takedowns: Takedowns): Item {
+export function withoutTakenDown(item: Item, takedowns: Takedowns): Item {
   const keep = (a: AssetRecord) => !isTakenDown(a, takedowns);
   return {
     ...item,
@@ -231,7 +232,6 @@ export function nextEnrichment(
   ctx: RunContext,
 ): NextEnrichment {
   const verdict = verdicts(ctx.approvals);
-  const firstRun = !Object.values(previous?.packages ?? {}).some((p) => p.published);
   const packages: Record<string, PackageEnrichment> = {};
   const outcomes: NextEnrichment['outcomes'] = {};
 
@@ -243,6 +243,8 @@ export function nextEnrichment(
     else if (v === 'reject') packages[id] = { published: p.published, pending: null };
     else packages[id] = p;
   }
+  // Until the owner has approved something, every draft waits.
+  const firstRun = !Object.values(packages).some((p) => p.published);
 
   for (const [id, draft] of Object.entries(drafts)) {
     if (ctx.takedowns.packages.has(id)) {
@@ -266,11 +268,14 @@ export function nextEnrichment(
           ? null
           : firstRun
             ? 'first-run'
-            : !ctx.isOfficial(id)
-              ? 'community'
-              : current.published && sourcesChanged(current.published, item)
-                ? 'sources-changed'
-                : null;
+            : // A first-run draft nobody answered keeps waiting when it's rewritten.
+              !current.published && current.pending
+              ? current.pending.reason
+              : !ctx.isOfficial(id)
+                ? 'community'
+                : current.published && sourcesChanged(current.published, item)
+                  ? 'sources-changed'
+                  : null;
       packages[id] = reason
         ? {
             published: current.published,

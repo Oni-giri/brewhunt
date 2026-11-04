@@ -16,6 +16,7 @@
     "data": "node scripts/data/run.ts",
     "data:pull": "git fetch origin data && rm -rf data && mkdir data && git archive FETCH_HEAD | tar -x -C data",
     "enrichment:pull": "git fetch origin enrichment && rm -rf enrichment && mkdir enrichment && git archive FETCH_HEAD | tar -x -C enrichment",
+    "review:drafts": "node scripts/crawl/review-drafts.ts",
     "validate:content": "node scripts/content/validate.ts --packages data/site/packages.json"
   },
   "dependencies": {
