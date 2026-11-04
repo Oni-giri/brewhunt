@@ -135,11 +135,22 @@ jobs:
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       # Downloads Chromium unless cached; always installs the system libraries it needs. Usually
       # 15s; the apt step once hung for half an hour, so it gets 4 minutes and one retry.
+      # System packages first: Azure's Ubuntu mirror can take minutes over a few fonts, and a
+      # timeout stops npx but not its apt-get, whose lock then fails a retry at once. So apt gets
+      # its own retries and a long limit, and a retry waits for the lock; only the browser
+      # download (Playwright's CDN) is retried as a whole.
       - name: Install Chromium
         run: |
+          echo 'Acquire::Retries "3";' | sudo tee /etc/apt/apt.conf.d/80-retries >/dev/null
           for attempt in 1 2; do
-            timeout 240 npx playwright install --with-deps --only-shell chromium && exit 0
-            echo "::warning::Installing Chromium failed or hung (attempt $attempt)"
+            while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 5; done
+            timeout 600 npx playwright install-deps chromium-headless-shell && break
+            echo "::warning::Installing Chromium's system packages failed (attempt $attempt)"
+            [ "$attempt" = 2 ] && exit 1
+          done
+          for attempt in 1 2; do
+            timeout 240 npx playwright install --only-shell chromium && exit 0
+            echo "::warning::Downloading Chromium failed or hung (attempt $attempt)"
           done
           exit 1
       # The daily data run (data.yml passes data-ref) changes only data: it runs the checks new
