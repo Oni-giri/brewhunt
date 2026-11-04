@@ -8,7 +8,13 @@
 import { isMap, isSeq, parseDocument, type Document } from 'yaml';
 import { approvalsSchema, type Approval } from '../content/schema.ts';
 import type { Package } from '../data/types.ts';
-import { withoutTakenDown, type Enrichment, type Item, type Pending } from './enrichment.ts';
+import {
+  showsScreenshots,
+  withoutTakenDown,
+  type Enrichment,
+  type Item,
+  type Pending,
+} from './enrichment.ts';
 import type { Takedowns } from './takedown.ts';
 
 const REASONS: readonly Pending['reason'][] = ['first-run', 'sources-changed', 'community'];
@@ -18,11 +24,14 @@ export interface WaitingDraft {
   /** From today's catalog; null when the package has left it. */
   pkg: Package | null;
   pending: Pending;
-  /** The draft as it would be shown: images taken down since the run are left out. */
+  /**
+   * The draft as it would be shown: images taken down since the run are left out, and screenshots
+   * unless it's a Mac app.
+   */
   item: Item;
   /** How many of the draft's images were taken down since the run. */
   takenDown: number;
-  /** What the site shows now, when anything. */
+  /** What the site shows now, when anything, the same way. */
   published: Item | null;
   verdict: Approval['verdict'] | null;
 }
@@ -44,14 +53,20 @@ export function waitingDrafts(
   const out: WaitingDraft[] = [];
   for (const [id, p] of Object.entries(enrichment.packages)) {
     if (!p.pending || takedowns.packages.has(id)) continue;
-    const item = withoutTakenDown(p.pending.item, takedowns);
+    const pkg = byId.get(id) ?? null;
+    const shown = (it: Item): Item => {
+      const item = withoutTakenDown(it, takedowns);
+      return pkg && showsScreenshots(pkg.kind) ? item : { ...item, screenshots: [] };
+    };
+    const item = shown(p.pending.item);
     out.push({
       id,
-      pkg: byId.get(id) ?? null,
+      pkg,
       pending: p.pending,
       item,
-      takenDown: imageCount(p.pending.item) - imageCount(item),
-      published: p.published && withoutTakenDown(p.published, takedowns),
+      takenDown:
+        imageCount(p.pending.item) - imageCount(withoutTakenDown(p.pending.item, takedowns)),
+      published: p.published && shown(p.published),
       verdict: verdicts.get(`${id} ${p.pending.hash}`) ?? null,
     });
   }

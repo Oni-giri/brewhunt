@@ -22,6 +22,7 @@ import {
   type AssetRecord,
   type AssetStore,
 } from './assets.ts';
+import { showsScreenshots } from './enrichment.ts';
 import { sniffImage } from './fetch.ts';
 import type { PackageResult } from './dry-run.ts';
 import type { ModelPicks } from './icon-check.ts';
@@ -141,7 +142,9 @@ for (const p of run.packages) {
     if (icon) await take(p, 'icon', icon, { sourceRevision: run.generatedAt, basis });
     else notInRun++;
   }
-  for (const shot of p.screenshots.filter((s) => s.status === 'ok'))
+  // Runs from before the rule have formulae's screenshots: not taken.
+  const shots = showsScreenshots(p.kind) ? p.screenshots : [];
+  for (const shot of shots.filter((s) => s.status === 'ok'))
     await take(p, 'screenshot', shot, {
       sourceRevision: p.repo?.readmeRevision ?? run.generatedAt,
       basis: 'rules',

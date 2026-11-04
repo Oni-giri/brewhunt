@@ -7,6 +7,7 @@ import { readTakedowns } from '../../scripts/crawl/takedown.ts';
 import { allowedImageOrigins, enrichedPackages, readEnrichment } from '../../src/lib/enrichment.ts';
 
 const h = (c: string) => c.repeat(64);
+const cask = () => 'cask' as const;
 const BASE = 'https://assets.example.com';
 
 const item = (sourceUrl = 'https://github.com/x/y/raw/demo.png'): Item => ({
@@ -106,15 +107,26 @@ describe('readEnrichment', () => {
 
 describe('enrichedPackages', () => {
   it('turns keys into URLs and drops links that aren’t web links', () => {
-    const shown = enrichedPackages(published(), { approvals: [], takedown: [] }).get('wget')!;
+    const shown = enrichedPackages(published(), { approvals: [], takedown: [] }, cask).get('wget')!;
     expect(shown.summary).toEqual(['Downloads files.']);
     expect(shown.sources).toEqual([{ kind: 'readme', url: 'https://github.com/x/y' }]);
     expect(shown.screenshots[0].url).toBe(`${BASE}/screenshots/v1/${h('2')}.webp`);
   });
 
+  it('shows screenshots on Mac apps only', () => {
+    const formula = enrichedPackages(published(), { approvals: [], takedown: [] }, () => 'formula');
+    expect(formula.get('wget')?.screenshots).toEqual([]);
+    expect(formula.get('wget')?.summary).toEqual(['Downloads files.']);
+    // Not in the catalog: no screenshots either.
+    expect(
+      enrichedPackages(published(), { approvals: [], takedown: [] }, () => undefined).get('wget')
+        ?.screenshots,
+    ).toEqual([]);
+  });
+
   it('shows nothing for a package taken down or still waiting for review', () => {
     const takedown = [{ id: 'wget', hashes: [], date: '2026-11-12', reason: 'Asked.' }];
-    expect(enrichedPackages(published(), { approvals: [], takedown }).size).toBe(0);
+    expect(enrichedPackages(published(), { approvals: [], takedown }, cask).size).toBe(0);
     const waiting = nextEnrichment(
       null,
       { wget: item() },
@@ -126,6 +138,6 @@ describe('enrichedPackages', () => {
         isOfficial: () => true,
       },
     ).enrichment;
-    expect(enrichedPackages(waiting, { approvals: [], takedown: [] }).size).toBe(0);
+    expect(enrichedPackages(waiting, { approvals: [], takedown: [] }, cask).size).toBe(0);
   });
 });

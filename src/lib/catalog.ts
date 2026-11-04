@@ -181,7 +181,8 @@ function build(): Catalog {
     ? readJson<CaskCategories>('caskflow-categories.json')
     : null;
   // Optional as well: the crawler's output, from the `enrichment` branch.
-  const enriched = enrichedPackages(readEnrichment(), content);
+  const kinds = new Map(packages.map((p) => [p.id, p.kind]));
+  const enriched = enrichedPackages(readEnrichment(), content, (id) => kinds.get(id));
 
   const slugForCaskflow = new Map(
     content.categories.flatMap((c) => c.caskflow.map((id) => [id, c.slug] as const)),

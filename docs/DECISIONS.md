@@ -90,6 +90,16 @@ A cask that installs only command-line programs (`binary`, no app, pkg or plugin
 
 **Takedowns** (`content/takedown.yaml`, how to ask: `/developers#remove`): an entry without hashes removes everything crawled for the package and its CaskFlow icon; hashes remove just those images, for every package showing them. An entry stays when the package leaves Homebrew.
 
+## README screenshots for Mac apps only (4 Nov 2026)
+
+**The plan said** README images become screenshots for every package (step 9), while CLAUDE.md still said no real screenshots until a developer claims a listing.
+
+**Owner's call:** Mac apps (casks) get README screenshots; command-line tools get none until a developer claims the listing. In the 30-package test run, 4 of 23 formulae had README images kept, and half were not screenshots: mole's two mascot drawings, a photo of fzf mugs and a colour banner, next to gh's, mise's and fzf's useful terminal captures. A CLI's page leads with its summary and install command, and the crawl can't tell a terminal capture from a mascot without the classifier.
+
+**Where:** `showsScreenshots` in `scripts/crawl/enrichment.ts`. The dry run doesn't fetch a formula's README images, `assets-run.ts` skips them in older runs, and the site and the review page leave them out whatever the branch holds.
+
+**To reverse:** let `showsScreenshots` take formulae too, perhaps only those a classifier calls terminal captures.
+
 ## The crawl's review: verdicts on `main`, drafts on the branch (3 Nov 2026)
 
 **The plan said** the first run, community packages and changed sources go to a review page before publishing, without saying where the verdicts live.

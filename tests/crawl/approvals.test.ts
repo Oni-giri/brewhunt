@@ -42,8 +42,12 @@ const item = (text: string, source = 'a', icon = false): Item => ({
   screenshots: [],
 });
 
-const pkg = (id: string, d30: number, source: 'official' | 'community' = 'official') =>
-  ({ id, name: id, source, installs: { d30, d90: 0, d365: 0 } }) as unknown as Package;
+const pkg = (
+  id: string,
+  d30: number,
+  source: 'official' | 'community' = 'official',
+  kind: 'formula' | 'cask' = 'formula',
+) => ({ id, name: id, kind, source, installs: { d30, d90: 0, d365: 0 } }) as unknown as Package;
 
 const ctx = (date: string, approvals: Parameters<typeof nextEnrichment>[2]['approvals'] = []) => ({
   run: { id: date, date },
@@ -152,6 +156,36 @@ describe('waitingDrafts', () => {
     const list = waitingDrafts(second, approvals, readTakedowns([]), packages);
     expect(list.find((d) => d.id === 'jq')?.verdict).toBe('reject');
     expect(list.find((d) => d.id === 'wget')?.verdict).toBeNull();
+  });
+
+  it('shows screenshots on Mac apps only, as the site does', () => {
+    const withShot = (pkgId: string): Item => {
+      const base = item('Shows windows.', 'a', true);
+      return {
+        ...base,
+        screenshots: [
+          {
+            ...base.icon!,
+            kind: 'screenshot',
+            package: pkgId,
+            key: `screenshots/v1/${h('3')}.webp`,
+          },
+        ],
+      };
+    };
+    const run = nextEnrichment(
+      null,
+      { rectangle: withShot('rectangle'), jq: withShot('jq') },
+      ctx('2026-11-03'),
+    ).enrichment;
+    const list = waitingDrafts(run, [], readTakedowns([]), [
+      pkg('rectangle', 1, 'official', 'cask'),
+      pkg('jq', 1),
+    ]);
+    expect(Object.fromEntries(list.map((d) => [d.id, d.item.screenshots.length]))).toEqual({
+      rectangle: 1,
+      jq: 0,
+    });
   });
 
   it('leaves out taken-down packages and images', () => {

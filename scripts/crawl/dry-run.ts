@@ -45,6 +45,7 @@ import {
   type PageFacts,
 } from './extract.ts';
 import type { Source } from './checks.ts';
+import { showsScreenshots } from './enrichment.ts';
 import { SafeFetcher, decodeText, type ImageFormat } from './fetch.ts';
 import { fetchDetails, type RepoDetails } from './github.ts';
 import { measure } from './images.ts';
@@ -284,7 +285,7 @@ await pool(selected, concurrency, async (entry) => {
   }
 
   const screenshots: ShotResult[] = [];
-  if (!iconsOnly && repo && repoInfo?.readme) {
+  if (!iconsOnly && showsScreenshots(entry.kind) && repo && repoInfo?.readme) {
     let kept = 0;
     for (const [i, image] of readmeImages(repoInfo.readme, repo.name).slice(0, 12).entries()) {
       if (kept >= MAX_SCREENSHOTS) break;

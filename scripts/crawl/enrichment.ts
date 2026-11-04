@@ -21,11 +21,19 @@
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import type { Approval } from '../content/schema.ts';
+import type { PackageKind } from '../data/types.ts';
 import type { AssetRecord } from './assets.ts';
 import type { Sentence, Source } from './checks.ts';
 import { isTakenDown, type Takedowns } from './takedown.ts';
 
 export const ENRICHMENT_VERSION = 1;
+
+/**
+ * Owner's call (4 Nov 2026): README screenshots for Mac apps only. A command-line tool's README
+ * images are as often mascots, banners and merch as terminal captures, and its page leads with
+ * the summary and the install command; it gets screenshots when a developer claims it.
+ */
+export const showsScreenshots = (kind: PackageKind): boolean => kind === 'cask';
 
 const SHA256 = /^[0-9a-f]{64}$/;
 const ASSET_KEY = /^(?:icons|screenshots)\/v\d+\/[0-9a-f]{64}\.webp$/;

@@ -10,8 +10,10 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Content } from '../../scripts/content/schema.ts';
+import type { PackageKind } from '../../scripts/data/types.ts';
 import {
   enrichmentSchema,
+  showsScreenshots,
   shownItem,
   type Enrichment,
   type Item,
@@ -72,14 +74,14 @@ export function readEnrichment(root = process.cwd()): Enrichment | null {
   return enrichment;
 }
 
-function toEnriched(item: Item, assetBase: string | null): Enriched | null {
+function toEnriched(item: Item, assetBase: string | null, screenshots: boolean): Enriched | null {
   const assetUrl = (key: string) => (assetBase ? `${assetBase.replace(/\/$/, '')}/${key}` : null);
   const enriched: Enriched = {
     summary: item.summary.map((s) => s.text),
     bullets: item.bullets.map((s) => s.text),
     tags: item.tags,
     icon: item.icon ? assetUrl(item.icon.key) : null,
-    screenshots: item.screenshots.flatMap((s) => {
+    screenshots: (screenshots ? item.screenshots : []).flatMap((s) => {
       const url = assetUrl(s.key);
       return url
         ? [
@@ -109,17 +111,23 @@ function toEnriched(item: Item, assetBase: string | null): Enriched | null {
   return empty ? null : enriched;
 }
 
-/** Each package's shown content, by id: only packages with something to show. */
+/**
+ * Each package's shown content, by id: only packages with something to show. Screenshots only on
+ * Mac apps (showsScreenshots), whatever the branch holds.
+ */
 export function enrichedPackages(
   enrichment: Enrichment | null,
   content: Pick<Content, 'approvals' | 'takedown'>,
+  kindOf: (id: string) => PackageKind | undefined,
 ): Map<string, Enriched> {
   const out = new Map<string, Enriched>();
   if (!enrichment) return out;
   const takedowns = readTakedowns(content.takedown);
   for (const [id, p] of Object.entries(enrichment.packages)) {
     const item = shownItem(id, p, content.approvals, takedowns);
-    const enriched = item && toEnriched(item, enrichment.assetBase);
+    const kind = kindOf(id);
+    const enriched =
+      item && toEnriched(item, enrichment.assetBase, !!kind && showsScreenshots(kind));
     if (enriched) out.set(id, enriched);
   }
   return out;
