@@ -77,7 +77,7 @@ const sourceSchema = z.strictObject({
   hash,
 });
 
-const itemSchema = z.strictObject({
+export const itemSchema = z.strictObject({
   sources: z.array(sourceSchema).max(10),
   summary: z.array(sentenceSchema).max(20),
   bullets: z.array(sentenceSchema).max(20),

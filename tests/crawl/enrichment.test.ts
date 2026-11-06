@@ -4,6 +4,7 @@ import type { AssetRecord } from '../../scripts/crawl/assets.ts';
 import {
   enrichmentSchema,
   itemHash,
+  itemSchema,
   nextEnrichment,
   shownItem,
   type Enrichment,
@@ -240,6 +241,14 @@ describe('nextEnrichment', () => {
     ]);
     // curl's pending draft shares wget's screenshot and icon key ('1').
     expect(nextEnrichment(before, {}, ctx({ takedowns })).remove).toEqual([]);
+  });
+});
+
+describe('itemSchema', () => {
+  it('refuses a draft past the file’s limits, which enrich.ts then skips', () => {
+    const many = { ...item('wget'), summary: Array(21).fill(item('wget').summary[0]) };
+    expect(itemSchema.safeParse(item('wget')).success).toBe(true);
+    expect(itemSchema.safeParse(many).success).toBe(false);
   });
 });
 

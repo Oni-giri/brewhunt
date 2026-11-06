@@ -65,7 +65,7 @@ import {
   type Usage,
 } from './cost.ts';
 import type { IconResult, PackageResult, ShotResult } from './dry-run.ts';
-import { draftsSchema, showsScreenshots, sourceRef, type Item } from './enrichment.ts';
+import { draftsSchema, itemSchema, showsScreenshots, sourceRef, type Item } from './enrichment.ts';
 import { sniffImage } from './fetch.ts';
 import type { ModelPick, ModelPicks } from './icon-check.ts';
 import { checkSentences, type Checked } from './jev-check.ts';
@@ -195,7 +195,11 @@ function requestCost(params: Anthropic.Messages.MessageCreateParamsNonStreaming)
   return { model: MODEL, inputTokens: estimateTokens(text), images, maxTokens: params.max_tokens };
 }
 
-/** Jev's request for a package, at most: its instructions and the summary's sentences and quotes. */
+/**
+ * Jev's request for a package, reserved before the summary exists. Not a strict bound: the
+ * quotes are source spans, not the summary's output, and can be longer. A Jev request past it
+ * shows in `reconcile` (overReserved), which stops the run; at Jev's price that's cents.
+ */
 const JEV_RESERVED: RequestCost = {
   model: 'jev-latest',
   inputTokens: OVERHEAD_TOKENS + 2 * MAX_TOKENS.summary,
@@ -428,8 +432,12 @@ async function finish(
     icon ||
     screenshots.length
   ) {
-    drafts[p.id] = item;
-    report.drafted = true;
+    // One draft the file can't hold (limits the checks don't apply) mustn't lose the batch.
+    const valid = itemSchema.safeParse(item);
+    if (valid.success) {
+      drafts[p.id] = item;
+      report.drafted = true;
+    } else report.failures.push(`draft: ${valid.error.issues[0]?.message ?? 'invalid'}`);
   }
   return jevTokens;
 }
