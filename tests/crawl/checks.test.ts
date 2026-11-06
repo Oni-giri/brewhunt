@@ -140,6 +140,20 @@ describe('checkDraft', () => {
     ).toEqual(['link', 'HTML', 'markdown', 'markdown']);
   });
 
+  it('drops the developer’s first person', () => {
+    const c = [cite('Tool is a fast file finder')];
+    expect(
+      reasons(
+        draft([
+          { text: 'Our tool is a fast file finder.', citations: c },
+          { text: 'We built a fast file finder.', citations: c },
+          { text: 'It lets you find files fast.', citations: c },
+          { text: 'It is a fast file finder used in the US.', citations: c },
+        ]),
+      ),
+    ).toEqual(['first person', 'first person']);
+  });
+
   it('drops a sentence naming another product its quotes don’t name', () => {
     expect(
       reasons(

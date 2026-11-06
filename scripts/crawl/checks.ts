@@ -8,6 +8,8 @@
 // must point at the same span. Then, per sentence:
 // - every number written in digits must appear in its quotes (spelled-out numbers aren't checked);
 // - no links, HTML or markdown;
+// - no first person ("we", "our"): Brewhunt writes the summary, so the developer's own voice would
+//   read as Brewhunt's ("Our software is tested daily");
 // - another catalog package named in the sentence must be named in its quotes too: as the catalog
 //   writes it, or capitalised mid-sentence (formula names are lowercase: "faster than Ripgrep").
 //   A name that is also a common word can still drop a good sentence: measure before tuning;
@@ -121,6 +123,9 @@ const fold = (text: string) =>
 const collapse = (text: string) => text.replace(/\s+/g, ' ').trim();
 const words = (text: string) => text.split(/\s+/).filter(Boolean).length;
 
+/** "We", "our", "us": lowercase "us" only, so the US stays. */
+const FIRST_PERSON = /\b(?:[Ww]e|[Oo]urs?|us)\b/;
+
 const LINK =
   /https?:\/\/|\bwww\.|\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|org|net|io|dev|app|sh|ai|co|me|so|xyz|gg|edu|gov|info|us|uk|de|fr|eu)\b/i;
 const HTML = /<\/?[a-z][^>]*>|&(?:[a-z]+|#\d+|#x[0-9a-f]+);/i;
@@ -224,6 +229,7 @@ export function checkDraft(draft: Draft, sources: Source[], ctx: CheckContext): 
     }
     const format = formatProblem(text);
     if (format) return format;
+    if (FIRST_PERSON.test(text)) return 'first person';
     if (words(text) > maxWords || text.length > maxChars) return 'too long';
     const quoted = fold(s.citations.map((c) => collapse(c.quote)).join(' ')).normalize('NFKC');
     if (OTHER_DIGITS.test(text)) return 'digits other than 0–9';

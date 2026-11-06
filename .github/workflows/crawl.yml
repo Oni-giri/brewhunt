@@ -12,9 +12,9 @@ name: Crawl
 # Drafts wait for the owner's review in the file's `pending` (content/approvals.yaml approves
 # them); a failed job leaves the branch as it was.
 #
-# Until the AI step exists (scripts/crawl/enrich.ts, waiting on the owner's choice of models)
-# and its keys are set, the weekly run does nothing; a manual run still fetches, to try the
-# crawler. Publishing images needs the R2 secrets and the ASSET_BASE_URL variable, whose origin
+# Until the AI step's keys are set (ANTHROPIC_API_KEY and JEV_API_KEY), the weekly run does
+# nothing; a manual run still fetches, to try the crawler. Try the first real run by hand with a
+# small `top`. Publishing images needs the R2 secrets and the ASSET_BASE_URL variable, whose origin
 # public/_headers' img-src must allow.
 on:
   schedule:

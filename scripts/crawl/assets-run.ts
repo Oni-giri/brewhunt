@@ -9,8 +9,8 @@
 // --picks: a judge's picks in icon-check.ts's shape (basis "judge").
 // Screenshots: every README image the dry run kept (basis "rules", until the classifier runs).
 
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { loadContent } from '../content/schema.ts';
 import {
@@ -20,7 +20,7 @@ import {
   type AssetBasis,
   type AssetKind,
   type AssetRecord,
-  type AssetStore,
+  LocalStore,
 } from './assets.ts';
 import { showsScreenshots } from './enrichment.ts';
 import { sniffImage } from './fetch.ts';
@@ -28,29 +28,6 @@ import type { PackageResult } from './dry-run.ts';
 import type { ModelPicks } from './icon-check.ts';
 import type { KeyEntry } from './score.ts';
 import { applyTakedowns, isTakenDown, readTakedowns } from './takedown.ts';
-
-/** A folder standing in for the R2 bucket. */
-export class LocalStore implements AssetStore {
-  private readonly dir: string;
-  constructor(dir: string) {
-    this.dir = dir;
-  }
-  private path(key: string): string {
-    if (!/^[a-z]+\/v\d+\/[0-9a-f]{64}\.webp$/.test(key))
-      throw new Error(`not an asset key: ${key}`);
-    return join(this.dir, key);
-  }
-  async has(key: string) {
-    return existsSync(this.path(key));
-  }
-  async put(key: string, body: Buffer) {
-    mkdirSync(dirname(this.path(key)), { recursive: true });
-    writeFileSync(this.path(key), body);
-  }
-  async delete(key: string) {
-    rmSync(this.path(key), { force: true });
-  }
-}
 
 const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 

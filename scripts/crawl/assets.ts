@@ -10,6 +10,8 @@
 // encoded bumps `v1` rather than changing the bytes behind a live URL.
 
 import { createHash } from 'node:crypto';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import sharp, { type OutputInfo, type Sharp } from 'sharp';
 import type { ImageFormat } from './fetch.ts';
 import { svgExternalReference } from './images.ts';
@@ -267,4 +269,27 @@ export interface AssetStore {
   has(key: string): Promise<boolean>;
   put(key: string, body: Buffer): Promise<void>;
   delete(key: string): Promise<void>;
+}
+
+/** A folder standing in for the R2 bucket. */
+export class LocalStore implements AssetStore {
+  private readonly dir: string;
+  constructor(dir: string) {
+    this.dir = dir;
+  }
+  private path(key: string): string {
+    if (!/^[a-z]+\/v\d+\/[0-9a-f]{64}\.webp$/.test(key))
+      throw new Error(`not an asset key: ${key}`);
+    return join(this.dir, key);
+  }
+  async has(key: string) {
+    return existsSync(this.path(key));
+  }
+  async put(key: string, body: Buffer) {
+    mkdirSync(dirname(this.path(key)), { recursive: true });
+    writeFileSync(this.path(key), body);
+  }
+  async delete(key: string) {
+    rmSync(this.path(key), { force: true });
+  }
 }

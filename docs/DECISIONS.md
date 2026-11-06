@@ -90,6 +90,16 @@ A cask that installs only command-line programs (`binary`, no app, pkg or plugin
 
 **Takedowns** (`content/takedown.yaml`, how to ask: `/developers#remove`): an entry without hashes removes everything crawled for the package and its CaskFlow icon; hashes remove just those images, for every package showing them. An entry stays when the package leaves Homebrew.
 
+## The AI step: Claude Haiku through the API (6 Nov 2026)
+
+**The plan said** Claude Haiku 5.5 on the Message Batches API, with the icon judge and the summary writer left open (GLM through Inco had been measured as the judge).
+
+**Owner's call:** Haiku for the whole batch (summary, labels, icon judge, screenshot classifier), paid with an Anthropic API key, not run through Claude Code on the owner's plan, which would share the owner's own usage limits. `scripts/crawl/enrich.ts`. On the 30-package test run it cost $0.03 (about $1 per 1,000 packages), against a $10 cap per run.
+
+**Also (my calls, the owner can change them):** a summary sentence in the first person ("we", "our") is dropped, since Brewhunt writes the summary and "Our software is tested daily" would read as Brewhunt's claim; second person ("lets you switch versions") stays. Haiku as the icon judge, on the owner's answer key: 2 wrong of 296, as GLM, but 43 missed against GLM's 17, mostly organisation avatars the owner accepted as the tool's logo, and 31 picks the owner hasn't seen. The first run's review catches a wrong icon; a missed one is a letter tile.
+
+**To reverse:** `enrich.ts` takes its requests from `ai.ts`; a different judge needs only `iconRequest` and `readIcon` swapped (icon-check.ts still runs GLM).
+
 ## README screenshots for Mac apps only (4 Nov 2026)
 
 **The plan said** README images become screenshots for every package (step 9), while CLAUDE.md still said no real screenshots until a developer claims a listing.
