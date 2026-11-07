@@ -1,12 +1,11 @@
 // The AI step's requests to Claude Haiku and how their replies are read (M5 C6), for enrich.ts.
 // Pure: no I/O, so the parsing can be tested on made-up replies.
 //
-// Four requests per package, all in one Message Batch:
+// Three requests per package, all in one Message Batch (the icon judge is GLM's, judge.ts):
 // - summary: the sources as documents with citations on. Citations and structured outputs can't
 //   be combined, and a JSON-only prompt gets few citations, so the reply is plain lines under two
 //   headings, SUMMARY and FEATURES, and each line carries the source spans its text block cites;
 // - labels: tags and a category, as JSON constrained by a schema (the category to the catalog's);
-// - icon: the judge (judge.ts) over the candidates' images, its choice constrained to them;
 // - screenshots (Mac apps only): what each README image shows.
 //
 // Every reply is untrusted: the summary goes through checks.ts and Jev, a choice must be one of
@@ -15,7 +14,6 @@
 import type Anthropic from '@anthropic-ai/sdk';
 import type { Citation, Sentence, Source } from './checks.ts';
 import { MAX_TOKENS } from './cost.ts';
-import { SYSTEM_JUDGE } from './judge.ts';
 
 type Params = Anthropic.Messages.MessageCreateParamsNonStreaming;
 type Content = Anthropic.Messages.ContentBlockParam;
@@ -129,36 +127,6 @@ export function labelsRequest(
     messages: user([
       ...documents(sources, false),
       { type: 'text', text: `Package details:\n${details}\n\nGive its tags and category.` },
-    ]),
-  };
-}
-
-/** The icon judge over `candidates` (a label and a PNG each, numbered from 1 in this order). */
-export function iconRequest(
-  details: string,
-  candidates: readonly { label: string; image: Buffer }[],
-): Params {
-  return {
-    model: MODEL,
-    max_tokens: MAX_TOKENS.icon,
-    system: SYSTEM_JUDGE,
-    output_config: jsonFormat({
-      type: 'object',
-      properties: {
-        choice: { type: 'string', enum: ['none', ...candidates.map((_, i) => String(i + 1))] },
-        kind: { type: 'string', enum: ['own', 'maker'] },
-        confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
-        reason: { type: 'string' },
-      },
-      required: ['choice', 'kind', 'confidence', 'reason'],
-      additionalProperties: false,
-    }),
-    messages: user([
-      { type: 'text', text: `Package details:\n${details}` },
-      ...candidates.flatMap((c): Content[] => [
-        { type: 'text', text: c.label },
-        image(c.image, 'image/png'),
-      ]),
     ]),
   };
 }
@@ -378,28 +346,6 @@ export function readLabels(message: Anthropic.Messages.Message): {
   if (reply.category !== null && typeof reply.category !== 'string')
     throw new ReplyError('category missing');
   return { tags: reply.tags as string[], category: reply.category };
-}
-
-export interface IconChoice {
-  /** The chosen candidate's index in the request's list, or null for the letter tile. */
-  index: number | null;
-  kind: 'own' | 'maker' | null;
-  confidence: 'high' | 'medium' | 'low';
-  reason: string;
-}
-
-export function readIcon(message: Anthropic.Messages.Message, candidates: number): IconChoice {
-  const reply = readJson(message) as Record<string, unknown>;
-  const confidence = ['high', 'medium', 'low'].includes(reply.confidence as string)
-    ? (reply.confidence as IconChoice['confidence'])
-    : 'low';
-  const kind = reply.kind === 'own' || reply.kind === 'maker' ? reply.kind : null;
-  const reason = typeof reply.reason === 'string' ? reply.reason.slice(0, 200) : '';
-  if (reply.choice === 'none') return { index: null, kind, confidence, reason };
-  const n = Number(reply.choice);
-  if (!Number.isInteger(n) || n < 1 || n > candidates)
-    throw new ReplyError(`not a choice: ${JSON.stringify(reply.choice)}`);
-  return { index: n - 1, kind, confidence, reason };
 }
 
 /** What each of `count` images shows; an image the reply leaves out is "other". */

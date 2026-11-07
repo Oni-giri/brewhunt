@@ -27,16 +27,17 @@ import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import type { IconResult, PackageResult } from './dry-run.ts';
 import {
+  JUDGE_MODEL,
   SYSTEM_JUDGE,
-  candidateLabel,
+  askJudge,
   judgeCandidates,
+  judgeParts,
   packageDetails,
-  showable as showablePng,
+  type JudgePart,
 } from './judge.ts';
 
-const ENDPOINT = 'https://api.inco.ai/v1/chat/completions';
 /** Cheapest model on Inco that reads images and answers without a long think (1 Nov 2026). */
-const DEFAULT_MODEL = 'glm-5.3-flash';
+const DEFAULT_MODEL = JUDGE_MODEL;
 
 const { values: args } = parseArgs({
   options: {
@@ -120,27 +121,9 @@ Reply with only a JSON object: {"choice": <number> | "none", "kind": "own" | "ma
 
 The owner reads the reason next to the images in a different order, so in it name candidates by their look or source ("the black cat mark", "the organisation avatar"), never by number.`;
 
-type Part = { type: 'text'; text: string } | { type: 'image_url'; image_url: { url: string } };
-
-async function showable(icon: IconResult): Promise<string | null> {
-  const png = await showablePng(DIR, icon);
-  return png && `data:image/png;base64,${png.toString('base64')}`;
-}
-
-async function prompt(p: PackageResult): Promise<{ parts: Part[]; choices: IconResult[] }> {
-  const details = packageDetails(p);
-  const parts: Part[] = [{ type: 'text', text: `Package details:\n${details}` }];
-  const choices: IconResult[] = [];
+async function prompt(p: PackageResult): Promise<{ parts: JudgePart[]; choices: IconResult[] }> {
   const shown = args.judge ? judgeCandidates(p) : p.icons;
-  for (const icon of shown) {
-    const image = await showable(icon);
-    if (!image) continue;
-    choices.push(icon);
-    parts.push(
-      { type: 'text', text: candidateLabel(icon, choices.length) },
-      { type: 'image_url', image_url: { url: image } },
-    );
-  }
+  const { parts, choices } = await judgeParts(DIR, packageDetails(p), shown);
   if (!choices.length) parts.push({ type: 'text', text: 'No candidates were found.' });
   return { parts, choices };
 }
@@ -179,31 +162,11 @@ async function ask(p: PackageResult): Promise<ModelPick> {
   let last: Error | undefined;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-        body: JSON.stringify({
-          model: args.model,
-          max_tokens: 4000,
-          temperature: 0,
-          messages: [
-            {
-              role: 'system',
-              content: args.judge ? SYSTEM_JUDGE : args.findable ? SYSTEM_FINDABLE : SYSTEM,
-            },
-            { role: 'user', content: parts },
-          ],
-        }),
-        signal: AbortSignal.timeout(120_000),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
-      const body = (await res.json()) as {
-        choices?: { message?: { content?: string | null } }[];
-        usage?: { prompt_tokens: number; completion_tokens: number };
-      };
-      usage.input += body.usage?.prompt_tokens ?? 0;
-      usage.output += body.usage?.completion_tokens ?? 0;
-      return readPick(body.choices?.[0]?.message?.content ?? '', choices);
+      const system = args.judge ? SYSTEM_JUDGE : args.findable ? SYSTEM_FINDABLE : SYSTEM;
+      const reply = await askJudge(key!, system, parts, args.model);
+      usage.input += reply.usage.input_tokens;
+      usage.output += reply.usage.output_tokens;
+      return readPick(reply.text, choices);
     } catch (error) {
       last = error as Error;
       await new Promise((done) => setTimeout(done, 2_000 * (attempt + 1)));

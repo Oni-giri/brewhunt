@@ -5,9 +5,11 @@
 // one's real usage is reconciled, and when the cap can't cover the next batch the run stops
 // before submitting it. Pure: the caller submits, polls and reports usage.
 //
-// Prices are list prices per million tokens (checked 3 Nov 2026). Anthropic's Message Batches
-// API charges half of them on every token; TypeSafe's Jev (the summary check, jev-check.ts)
-// answers at once, charges for input only and has no batches.
+// Prices are list prices per million tokens (checked 3 Nov 2026; GLM on Inco 7 Nov 2026).
+// Anthropic's Message Batches API charges half of them on every token; TypeSafe's Jev (the
+// summary check, jev-check.ts) answers at once and charges for input only, and GLM (the icon
+// judge, judge.ts) answers at once: neither has batches. `image` is the most tokens one image
+// can take.
 
 export const PRICES = {
   'claude-haiku-5-5': {
@@ -15,16 +17,21 @@ export const PRICES = {
     output: 0.5,
     long: { above: 100_000, input: 0.5, output: 2.5 },
     batches: true,
+    // A high-resolution model, 2576px on the long edge.
+    image: 4784,
   },
-  'jev-latest': { input: 0.042, output: 0, batches: false },
+  'jev-latest': { input: 0.042, output: 0, batches: false, image: 0 },
+  // The judge's images are its own numbered 128 × 160 candidates, about 32 tokens each (measured
+  // 7 Nov 2026: GLM's count grows with the pixels, 5,201 for 2000 × 2000).
+  'glm-5.3-flash': { input: 0.15, output: 0.5, batches: false, image: 256 },
 } as const;
 export type Model = keyof typeof PRICES;
 
 export const BATCH_DISCOUNT = 0.5;
 /** Cache writes (5-minute) and reads, as multiples of the input price. */
 export const CACHE = { write: 1.25, read: 0.1 };
-/** The most tokens one image can take (a high-resolution model, 2576px on the long edge). */
-export const IMAGE_MAX_TOKENS = 4784;
+/** The most tokens one image can take on Haiku. */
+export const IMAGE_MAX_TOKENS = PRICES['claude-haiku-5-5'].image;
 /** The run's cap in dollars, unless set otherwise. */
 export const DEFAULT_CAP = 10;
 
@@ -64,7 +71,7 @@ const discount = (model: Model, batch: boolean) =>
 
 /** Dollars for a request at its worst: every image at its largest, all of `max_tokens` used. */
 export function worstCase(request: RequestCost, batch = true): number {
-  const prompt = request.inputTokens + request.images * IMAGE_MAX_TOKENS;
+  const prompt = request.inputTokens + request.images * PRICES[request.model].image;
   const { input, output } = rates(request.model, prompt);
   return ((prompt * input + request.maxTokens * output) / 1e6) * discount(request.model, batch);
 }
@@ -153,12 +160,14 @@ export class CostGuard {
 export const MAX_TOKENS = {
   summary: 8000,
   labels: 4000,
-  icon: 2000,
+  // GLM thinks too: at `max` effort about 1,300 tokens a package on the answer key, sometimes all
+  // of them (judge.ts JUDGE_EFFORT).
+  icon: 4000,
   screenshots: 2000,
 };
 /** Instructions and package details per call, allowed for generously. */
 export const OVERHEAD_TOKENS = 2000;
-/** The icon judge's candidates at most (icon-check.ts). */
+/** The icon judge's candidates at most (judge.ts JUDGE_MAX). */
 export const ICON_CANDIDATES = 12;
 
 export interface PackageWork {
@@ -169,8 +178,8 @@ export interface PackageWork {
 }
 
 /**
- * Every request the AI step makes for one package: summary, labels, icon judge and screenshot
- * classifier on Haiku, then Jev checking the summary, whose input is at most the summary's own
+ * Every request the AI step makes for one package: summary, labels and screenshot classifier on
+ * Haiku, the icon judge on GLM, then Jev checking the summary, whose input is at most the summary's own
  * output plus the spans it cites (no longer than the summary's `max_tokens`).
  */
 export function packageRequests(work: PackageWork): RequestCost[] {
@@ -186,7 +195,14 @@ export function packageRequests(work: PackageWork): RequestCost[] {
     requests.push(haiku(sources, 0, MAX_TOKENS.summary), haiku(sources, 0, MAX_TOKENS.labels));
   }
   const icons = Math.min(work.iconCandidates, ICON_CANDIDATES);
-  if (icons > 0) requests.push(haiku(0, icons, MAX_TOKENS.icon));
+  if (icons > 0)
+    requests.push({
+      model: 'glm-5.3-flash' as const,
+      // The judge's prompt is longer than the others: its sources and rules.
+      inputTokens: 3 * OVERHEAD_TOKENS,
+      images: icons,
+      maxTokens: MAX_TOKENS.icon,
+    });
   if (work.screenshots > 0) requests.push(haiku(0, work.screenshots, MAX_TOKENS.screenshots));
   if (sources > 0) {
     requests.push({

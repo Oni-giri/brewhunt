@@ -2,9 +2,7 @@ import type Anthropic from '@anthropic-ai/sdk';
 import { describe, expect, it } from 'vitest';
 import {
   ReplyError,
-  iconRequest,
   labelsRequest,
-  readIcon,
   readLabels,
   readScreenshots,
   readSummary,
@@ -154,7 +152,7 @@ describe('utf16Offsets', () => {
   });
 });
 
-describe('labels, icon and screenshots', () => {
+describe('labels and screenshots', () => {
   it('reads labels and refuses a reply without them', () => {
     expect(readLabels(message([text('{"tags":["download"],"category":null}')]))).toEqual({
       tags: ['download'],
@@ -162,21 +160,6 @@ describe('labels, icon and screenshots', () => {
     });
     expect(() => readLabels(message([text('{"category":"x"}')]))).toThrow(/tags/);
     expect(() => readLabels(message([text('no')]))).toThrow(/not JSON/);
-  });
-
-  it('reads the icon choice among the candidates only', () => {
-    const reply = (choice: string) =>
-      message([
-        text(JSON.stringify({ choice, kind: 'own', confidence: 'high', reason: 'Its logo.' })),
-      ]);
-    expect(readIcon(reply('2'), 3)).toEqual({
-      index: 1,
-      kind: 'own',
-      confidence: 'high',
-      reason: 'Its logo.',
-    });
-    expect(readIcon(reply('none'), 3).index).toBeNull();
-    expect(() => readIcon(reply('4'), 3)).toThrow(/not a choice/);
   });
 
   it('reads each image’s kind, unanswered ones as other', () => {
@@ -211,15 +194,10 @@ describe('requests', () => {
     expect(r).not.toHaveProperty('temperature');
   });
 
-  it('limits labels to the catalog’s categories and the icon to its candidates', () => {
+  it('limits labels to the catalog’s categories', () => {
     const labels = labelsRequest('{}', sources, [
       { slug: 'developer-tools', name: 'Developer tools', description: 'Code.' },
     ]);
     expect(JSON.stringify(labels.output_config)).toContain('"enum":["developer-tools"]');
-    const icon = iconRequest('{}', [
-      { label: 'Candidate 1', image: Buffer.from('a') },
-      { label: 'Candidate 2', image: Buffer.from('b') },
-    ]);
-    expect(JSON.stringify(icon.output_config)).toContain('"enum":["none","1","2"]');
   });
 });

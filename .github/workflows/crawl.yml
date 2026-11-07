@@ -12,10 +12,10 @@ name: Crawl
 # Drafts wait for the owner's review in the file's `pending` (content/approvals.yaml approves
 # them); a failed job leaves the branch as it was.
 #
-# Until the AI step's keys are set (ANTHROPIC_API_KEY and JEV_API_KEY), the weekly run does
-# nothing; a manual run still fetches, to try the crawler. Try the first real run by hand with a
-# small `top`. Publishing images needs the R2 secrets and the ASSET_BASE_URL variable, whose origin
-# public/_headers' img-src must allow.
+# Until the AI step's keys are set (ANTHROPIC_API_KEY, JEV_API_KEY and INCO_AI_API_KEY), the
+# weekly run does nothing; a manual run still fetches, to try the crawler. Try the first real run
+# by hand with a small `top`. Publishing images needs the R2 secrets and the ASSET_BASE_URL
+# variable, whose origin public/_headers' img-src must allow.
 on:
   schedule:
     # Mondays, clear of the daily data runs (06:17 and 14:17).
@@ -53,14 +53,14 @@ jobs:
       - name: Check the AI step and its keys
         id: check
         env:
-          HAS_KEYS: ${{ secrets.ANTHROPIC_API_KEY != '' && secrets.JEV_API_KEY != '' }}
+          HAS_KEYS: ${{ secrets.ANTHROPIC_API_KEY != '' && secrets.JEV_API_KEY != '' && secrets.INCO_AI_API_KEY != '' }}
           EVENT: ${{ github.event_name }}
         run: |
           enrich=false
           if [ ! -f scripts/crawl/enrich.ts ]; then
             echo "::notice::No AI step yet (scripts/crawl/enrich.ts): nothing is enriched or published."
           elif [ "$HAS_KEYS" != "true" ]; then
-            echo "::notice::ANTHROPIC_API_KEY / JEV_API_KEY not set: nothing is enriched or published."
+            echo "::notice::ANTHROPIC_API_KEY / JEV_API_KEY / INCO_AI_API_KEY not set: nothing is enriched or published."
           else
             enrich=true
           fi
@@ -145,6 +145,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           JEV_API_KEY: ${{ secrets.JEV_API_KEY }}
+          INCO_AI_API_KEY: ${{ secrets.INCO_AI_API_KEY }}
         run: node scripts/crawl/enrich.ts --from "$RUNNER_TEMP/crawl" --out "$RUNNER_TEMP/drafts"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

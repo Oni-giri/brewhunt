@@ -1,23 +1,25 @@
 // The crawl's AI step (M5 C6–7, crawl.yml's `enrich` job): a crawl's sources and image candidates
 // (dry-run.ts) → checked drafts for publish.ts. Claude Haiku 5.5 through the Message Batches API
-// (owner's call, 6 Nov 2026), with TypeSafe's Jev checking the summary (jev-check.ts). Writes, in
-// --out:
+// (owner's call, 6 Nov 2026) writes the summary, labels and screenshot kinds, with TypeSafe's Jev
+// checking the summary (jev-check.ts); GLM 5.3 Flash through Inco picks the icon (judge.ts, owner's
+// call, 7 Nov 2026). Writes, in --out:
 //   drafts.json  what publish.ts merges (enrichment.ts draftsSchema): only packages with something
 //   assets/      the drafts' re-encoded images, at their keys
 //   report.json  per package: what each request returned, what the checks dropped and why, and
 //                the run's cost, for the quality gate (C8) and the owner
 //
-//   ANTHROPIC_API_KEY=… JEV_API_KEY=… node scripts/crawl/enrich.ts --from <crawl> --out <dir>
-//     [--cap 10] [--ids a,b | --limit N] [--batch 100] [--deadline 200] [--run-id 42]
-//   ANTHROPIC_API_KEY=… node scripts/crawl/enrich.ts --from <dry run> --out <dir> --icons-only
+//   ANTHROPIC_API_KEY=… JEV_API_KEY=… INCO_AI_API_KEY=… node scripts/crawl/enrich.ts --from <crawl>
+//     --out <dir> [--cap 10] [--ids a,b | --limit N] [--batch 100] [--deadline 200] [--run-id 42]
+//   INCO_AI_API_KEY=… node scripts/crawl/enrich.ts --from <dry run> --out <dir> --icons-only
 //
 // --icons-only runs only the icon judge and writes picks.json in icon-check.ts's shape, for
 // score.ts --picks against the answer key.
 //
 // Work goes in batches of --batch packages, one at a time under the cost guard (cost.ts): each
-// batch's worst case is reserved before it's submitted and reconciled from its real usage, Jev's
-// included, before the next. --deadline (minutes, under the job's timeout) cancels a batch still
-// running and keeps what it finished; no batch starts after it.
+// batch's worst case is reserved before it's submitted and reconciled from its real usage, the
+// judge's and Jev's included, before the next. The judge answers at once, so its requests run
+// while the batch does, JUDGES at a time. --deadline (minutes, under the job's timeout) cancels
+// a batch still running and keeps what it finished; no batch or judge request starts after it.
 //
 // Packages with a CaskFlow icon get no judge: the site shows CaskFlow's. Screenshots are for Mac
 // apps only (enrichment.ts showsScreenshots).
@@ -33,16 +35,13 @@ import {
   MODEL,
   ReplyError,
   SHOWN_KINDS,
-  iconRequest,
   labelsRequest,
-  readIcon,
   readLabels,
   readScreenshots,
   readSummary,
   screenshotsRequest,
   summaryRequest,
   type CategoryChoice,
-  type IconChoice,
   type ShotKind,
 } from './ai.ts';
 import { AssetError, LocalStore, assetRecord, processAsset, type AssetRecord } from './assets.ts';
@@ -61,6 +60,7 @@ import {
   OVERHEAD_TOKENS,
   estimateTokens,
   worstCase,
+  type Model,
   type RequestCost,
   type Usage,
 } from './cost.ts';
@@ -69,7 +69,20 @@ import { draftsSchema, itemSchema, showsScreenshots, sourceRef, type Item } from
 import { sniffImage } from './fetch.ts';
 import type { ModelPick, ModelPicks } from './icon-check.ts';
 import { checkSentences, type Checked } from './jev-check.ts';
-import { candidateLabel, judgeCandidates, packageDetails, showable } from './judge.ts';
+import {
+  JUDGE_MODEL,
+  JudgeError,
+  JudgeRequestError,
+  SYSTEM_JUDGE,
+  askJudge,
+  judgeCandidates,
+  judgeParts,
+  judgeTextTokens,
+  packageDetails,
+  readJudge,
+  type IconChoice,
+  type JudgePart,
+} from './judge.ts';
 import { safeName } from './util.ts';
 
 const { values: args } = parseArgs({
@@ -90,9 +103,15 @@ const { values: args } = parseArgs({
 });
 const iconsOnly = args['icons-only'];
 const jevKey = process.env.JEV_API_KEY;
-if (!args.from || !args.out || !process.env.ANTHROPIC_API_KEY || (!iconsOnly && !jevKey)) {
+const judgeKey = process.env.INCO_AI_API_KEY;
+if (
+  !args.from ||
+  !args.out ||
+  !judgeKey ||
+  (!iconsOnly && (!process.env.ANTHROPIC_API_KEY || !jevKey))
+) {
   console.error(
-    'Usage: ANTHROPIC_API_KEY=… JEV_API_KEY=… node scripts/crawl/enrich.ts --from <crawl> --out <dir> [--icons-only]',
+    'Usage: ANTHROPIC_API_KEY=… JEV_API_KEY=… INCO_AI_API_KEY=… node scripts/crawl/enrich.ts --from <crawl> --out <dir> [--icons-only]',
   );
   process.exit(2);
 }
@@ -105,8 +124,10 @@ const log = (line: string) => console.log(`${new Date().toISOString().slice(11, 
 const MAX_BATCH_BYTES = 150_000_000;
 /** README images are shown to the classifier at most this size, as JPEG. */
 const SHOT_PREVIEW = 1024;
+/** Judge requests out at once. */
+const JUDGES = 8;
 
-const client = new Anthropic({ maxRetries: 4 });
+const client = iconsOnly ? null : new Anthropic({ maxRetries: 4 });
 const guard = new CostGuard(Number(args.cap));
 const store = new LocalStore(join(OUT, 'assets'));
 
@@ -143,13 +164,15 @@ function checkContext(p: PackageResult): CheckContext {
 
 // --- One package's work ---
 
-type Part = 'summary' | 'labels' | 'icon' | 'screenshots';
+type Part = 'summary' | 'labels' | 'screenshots';
 
 interface Work {
   p: PackageResult;
   sources: Source[];
   details: string;
   requests: { part: Part; params: Anthropic.Messages.MessageCreateParamsNonStreaming }[];
+  /** The judge's request, when there are candidates to show. */
+  judge: { parts: JudgePart[]; cost: RequestCost } | null;
   /** The judge's candidates, in the order the request numbers them. */
   icons: IconResult[];
   shots: ShotResult[];
@@ -215,6 +238,7 @@ async function prepare(p: PackageResult): Promise<Work> {
     sources,
     details,
     requests: [],
+    judge: null,
     icons: [],
     shots: [],
     costs: [],
@@ -225,14 +249,18 @@ async function prepare(p: PackageResult): Promise<Work> {
     work.requests.push({ part: 'labels', params: labelsRequest(details, sources, categories) });
   }
   if (!p.caskflowIcon) {
-    const shown: { label: string; image: Buffer }[] = [];
-    for (const icon of judgeCandidates(p)) {
-      const image = await showable(FROM, icon);
-      if (!image) continue;
-      work.icons.push(icon);
-      shown.push({ label: candidateLabel(icon, shown.length + 1), image });
-    }
-    if (shown.length) work.requests.push({ part: 'icon', params: iconRequest(details, shown) });
+    const { parts, choices } = await judgeParts(FROM, details, judgeCandidates(p));
+    work.icons = choices;
+    if (choices.length)
+      work.judge = {
+        parts,
+        cost: {
+          model: JUDGE_MODEL,
+          inputTokens: judgeTextTokens(SYSTEM_JUDGE, parts),
+          images: choices.length,
+          maxTokens: MAX_TOKENS.icon,
+        },
+      };
   }
   if (!iconsOnly && showsScreenshots(p.kind)) {
     const previews: Buffer[] = [];
@@ -246,6 +274,7 @@ async function prepare(p: PackageResult): Promise<Work> {
       work.requests.push({ part: 'screenshots', params: screenshotsRequest(details, previews) });
   }
   work.costs = work.requests.map((r) => requestCost(r.params));
+  if (work.judge) work.costs.push(work.judge.cost);
   if (sources.length) work.costs.push(JEV_RESERVED);
   work.bytes = work.requests.reduce((n, r) => n + JSON.stringify(r.params).length, 0);
   return work;
@@ -296,10 +325,14 @@ async function asset(
   }
 }
 
-/** One package's replies → its checked draft. Returns Jev's usage. */
+/**
+ * One package's replies, the judge's being its choice or why it failed → its checked draft.
+ * Returns Jev's usage.
+ */
 async function finish(
   work: Work,
   replies: Map<Part, Anthropic.Messages.Message | string>,
+  judged: IconChoice | string | null,
 ): Promise<number> {
   const { p, sources } = work;
   const report: PackageReport = {
@@ -332,7 +365,8 @@ async function finish(
 
   // Icon.
   let icon: AssetRecord | null = null;
-  const choice = read('icon', (m) => readIcon(m, work.icons.length));
+  if (typeof judged === 'string') report.failures.push(`icon: ${judged}`);
+  const choice = typeof judged === 'string' ? null : judged;
   if (choice) {
     const picked = choice.index === null ? null : work.icons[choice.index];
     report.icon = { ...choice, url: picked?.url ?? null };
@@ -348,7 +382,7 @@ async function finish(
         sourceRevision: run.generatedAt,
         basis: 'judge',
       });
-  } else if (!replies.has('icon') && !p.caskflowIcon) {
+  } else if (!work.judge && !p.caskflowIcon) {
     picks[p.id] = { icon: null, source: 'none', confidence: 'high', reason: 'No candidates.' };
   }
   if (iconsOnly) return 0;
@@ -444,48 +478,91 @@ async function finish(
 
 // --- Batches ---
 
+/**
+ * The judge's answers for `works`, JUDGES at a time, with each request's usage (askJudge: what
+ * the reply reports, and the worst case of each try that may have been charged). None is started
+ * past the deadline.
+ */
+async function judgeAll(
+  works: readonly Work[],
+  usage: { model: Model; usage: Usage }[],
+): Promise<(IconChoice | string | null)[]> {
+  const answers: (IconChoice | string | null)[] = works.map(() => null);
+  let next = 0;
+  const one = async (work: Work, i: number) => {
+    const { parts } = work.judge!;
+    if (Date.now() > deadline) {
+      answers[i] = 'not asked: past the deadline';
+      return;
+    }
+    try {
+      const reply = await askJudge(judgeKey!, SYSTEM_JUDGE, parts);
+      usage.push({ model: JUDGE_MODEL, usage: reply.usage });
+      answers[i] = readJudge(reply.text, work.icons.length);
+    } catch (error) {
+      if (error instanceof JudgeRequestError)
+        usage.push({ model: JUDGE_MODEL, usage: error.charged });
+      else if (!(error instanceof JudgeError)) throw error;
+      answers[i] = (error as Error).message;
+    }
+  };
+  await Promise.all(
+    Array.from({ length: JUDGES }, async () => {
+      while (next < works.length) {
+        const i = next++;
+        if (works[i].judge) await one(works[i], i);
+      }
+    }),
+  );
+  return answers;
+}
+
 async function runBatch(works: Work[]) {
   const name = `batch-${++totals.batches}`;
   const reserved = guard.reserve(
     name,
     works.flatMap((w) => w.costs),
   );
+  const usage: { model: Model; usage: Usage }[] = [];
+  const judging = judgeAll(works, usage);
   const requests = works.flatMap((w, i) =>
     w.requests.map((r) => ({ custom_id: `p${i}-${r.part}`, params: r.params })),
   );
-  let batch = await client.messages.batches.create({ requests });
-  log(
-    `${name}: ${works.length} packages, ${requests.length} requests, $${reserved.toFixed(4)} reserved (${batch.id})`,
-  );
-  let cancelled = false;
-  while (batch.processing_status !== 'ended') {
-    await new Promise((done) => setTimeout(done, Number(args.poll) * 1000));
-    if (!cancelled && Date.now() > deadline) {
-      log(`${name}: past the deadline, cancelling; what it finished is kept`);
-      await client.messages.batches.cancel(batch.id);
-      cancelled = true;
-    }
-    batch = await client.messages.batches.retrieve(batch.id);
-  }
   const replies = works.map(() => new Map<Part, Anthropic.Messages.Message | string>());
-  const usage: { model: 'claude-haiku-5-5' | 'jev-latest'; usage: Usage }[] = [];
-  for await (const result of await client.messages.batches.results(batch.id)) {
-    const [, index, part] = result.custom_id.match(/^p(\d+)-(\w+)$/) ?? [];
-    const target = replies[Number(index)];
-    if (!target) continue;
-    if (result.result.type === 'succeeded') {
-      target.set(part as Part, result.result.message);
-      usage.push({ model: MODEL, usage: result.result.message.usage });
-    } else {
-      const why =
-        result.result.type === 'errored'
-          ? `errored: ${result.result.error.error?.type ?? 'unknown'}`
-          : result.result.type;
-      target.set(part as Part, why);
+  let cancelled = false;
+  if (requests.length) {
+    let batch = await client!.messages.batches.create({ requests });
+    log(
+      `${name}: ${works.length} packages, ${requests.length} requests, $${reserved.toFixed(4)} reserved (${batch.id})`,
+    );
+    while (batch.processing_status !== 'ended') {
+      await new Promise((done) => setTimeout(done, Number(args.poll) * 1000));
+      if (!cancelled && Date.now() > deadline) {
+        log(`${name}: past the deadline, cancelling; what it finished is kept`);
+        await client!.messages.batches.cancel(batch.id);
+        cancelled = true;
+      }
+      batch = await client!.messages.batches.retrieve(batch.id);
     }
-  }
+    for await (const result of await client!.messages.batches.results(batch.id)) {
+      const [, index, part] = result.custom_id.match(/^p(\d+)-(\w+)$/) ?? [];
+      const target = replies[Number(index)];
+      if (!target) continue;
+      if (result.result.type === 'succeeded') {
+        target.set(part as Part, result.result.message);
+        usage.push({ model: MODEL, usage: result.result.message.usage });
+      } else {
+        const why =
+          result.result.type === 'errored'
+            ? `errored: ${result.result.error.error?.type ?? 'unknown'}`
+            : result.result.type;
+        target.set(part as Part, why);
+      }
+    }
+  } else log(`${name}: ${works.length} packages, judge only, $${reserved.toFixed(4)} reserved`);
+  const judged = await judging;
   for (const [i, work] of works.entries()) {
-    const jevTokens = await finish(work, replies[i]);
+    const jevTokens = await finish(work, replies[i], judged[i]);
     totals.jevInputTokens += jevTokens;
     if (jevTokens)
       usage.push({ model: 'jev-latest', usage: { input_tokens: jevTokens, output_tokens: 0 } });
@@ -496,13 +573,14 @@ async function runBatch(works: Work[]) {
     `${name}: $${cost.toFixed(4)} (of $${reserved.toFixed(4)} reserved); $${guard.remaining.toFixed(2)} left`,
   );
   if (overReserved) totals.stopped = `${name} cost more than its worst case`;
-  if (cancelled) totals.stopped = 'deadline';
+  if (cancelled || judged.some((j) => j === 'not asked: past the deadline'))
+    totals.stopped = 'deadline';
 }
 
 function save() {
   mkdirSync(OUT, { recursive: true });
   if (iconsOnly) {
-    const out: ModelPicks = { model: MODEL, at: new Date().toISOString(), picks };
+    const out: ModelPicks = { model: JUDGE_MODEL, at: new Date().toISOString(), picks };
     writeFileSync(join(OUT, 'picks.json'), `${JSON.stringify(out, null, 1)}\n`);
   } else {
     const file = draftsSchema.parse({
@@ -536,8 +614,8 @@ while (next < queue.length && !totals.stopped) {
     worst += cost;
     bytes += work.bytes;
     // Nothing to ask: no sources and no candidates.
-    if (work.requests.length) works.push(work);
-    else await finish(work, new Map());
+    if (work.requests.length || work.judge) works.push(work);
+    else await finish(work, new Map(), null);
   }
   if (!works.length) {
     if (next < queue.length)

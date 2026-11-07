@@ -98,7 +98,17 @@ A cask that installs only command-line programs (`binary`, no app, pkg or plugin
 
 **Also (my calls, the owner can change them):** a summary sentence in the first person ("we", "our") is dropped, since Brewhunt writes the summary and "Our software is tested daily" would read as Brewhunt's claim; second person ("lets you switch versions") stays. Haiku as the icon judge, on the owner's answer key: 2 wrong of 296, as GLM, but 43 missed against GLM's 17, mostly organisation avatars the owner accepted as the tool's logo, and 31 picks the owner hasn't seen. The first run's review catches a wrong icon; a missed one is a letter tile.
 
-**To reverse:** `enrich.ts` takes its requests from `ai.ts`; a different judge needs only `iconRequest` and `readIcon` swapped (icon-check.ts still runs GLM).
+**To reverse:** `enrich.ts` takes its requests from `ai.ts`. The icon judge has since moved to GLM (next entry).
+
+## The icon judge: GLM through Inco, not Haiku (7 Nov 2026)
+
+**Owner's call**, after the first real drafts: Haiku's icons were wrong for node (a menu icon: it described the green hexagon but answered the hamburger's number) and uv (Astral's own logo, which it called uv's), where GLM 5.3 Flash picked right on the same candidates. On those 30 packages GLM had no wrong logo and Haiku 2, and Haiku left 1 icon the owner chose as a letter tile; Haiku's picks also changed with the candidates' order between two crawls. Haiku still writes the summary and labels and sorts the screenshots.
+
+**Where:** `judge.ts` (`askJudge`, `readJudge`), called by `enrich.ts` while the Haiku batch runs, under the same cost guard (GLM: $0.15/$0.50 per million tokens, no batches); `INCO_AI_API_KEY` is the third secret `crawl.yml` waits for.
+
+**Also (my call):** each candidate image now carries its number in a band above it, drawn as seven-segment digits (no font needed), so a model can't pair a label with the wrong image. On the answer key it made no difference to GLM that a run can show (2 wrong and 20 missed with numbers, 1 and 21 without, two fresh runs; the 17 missed measured before were on the picks the owner had approved wholesale), so it stays as a guard. The judge runs at Inco's `max` effort, set explicitly, and an empty answer is asked once more: at `high` it thought a sixth as long but chose about three times as many wrong images (a menu chevron, an arrow, a README screenshot), and at `max` it sometimes thinks through all 4,000 tokens without answering. Its picks still vary from run to run (uv over six tries at lower effort: the pink u three times, Astral's logo twice), which the owner's review of the first run is there to catch. On the key: $0.24 for 300 packages, about $0.80 per 1,000.
+
+**To reverse:** `enrich.ts`'s `judgeAll` calls `askJudge`; another model on an OpenAI-style endpoint is a different `model`, and Haiku would mean an icon request back in `ai.ts`.
 
 ## README screenshots for Mac apps only (4 Nov 2026)
 

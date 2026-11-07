@@ -28,6 +28,10 @@ describe('worstCase', () => {
     expect(
       worstCase({ model: 'jev-latest', inputTokens: 1_000_000, images: 0, maxTokens: 0 }),
     ).toBeCloseTo(0.042, 10);
+    // GLM: its own numbered images at 256 tokens, no batch discount.
+    expect(
+      worstCase({ model: 'glm-5.3-flash', inputTokens: 1000, images: 4, maxTokens: 4000 }),
+    ).toBeCloseTo(((1000 + 4 * 256) * 0.15 + 4000 * 0.5) / 1e6, 12);
   });
 
   it('uses Haiku’s long-prompt prices past 100,000 tokens', () => {
@@ -103,7 +107,7 @@ describe('CostGuard', () => {
 });
 
 describe('packageRequests', () => {
-  it('asks Jev to check only a package that has sources, and caps the icon candidates', () => {
+  it('asks Jev to check only a package that has sources, and caps the judge’s candidates', () => {
     const full = packageRequests({
       sourceText: 'x'.repeat(4000),
       iconCandidates: 20,
@@ -112,7 +116,7 @@ describe('packageRequests', () => {
     expect(full.map((r) => [r.model, r.images])).toEqual([
       ['claude-haiku-5-5', 0],
       ['claude-haiku-5-5', 0],
-      ['claude-haiku-5-5', ICON_CANDIDATES],
+      ['glm-5.3-flash', ICON_CANDIDATES],
       ['claude-haiku-5-5', 3],
       ['jev-latest', 0],
     ]);
