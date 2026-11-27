@@ -1,6 +1,6 @@
 {
 "analytics":{"d30":{"end":"2026-11-27","start":"2026-10-28"},"d365":{"end":"2026-11-27","start":"2025-11-27"},"d90":{"end":"2026-11-27","start":"2026-08-29"}},
-"counts":{"casks":7855,"community":3197,"formulae":8745,"taps":100},
+"counts":{"casks":7855,"community":3198,"formulae":8745,"taps":100},
 "generatedOn":"2026-11-27",
 "history":{"days":27,"first":"2026-10-28","last":"2026-11-27"},
 "schemaVersion":1,
